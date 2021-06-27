@@ -14,9 +14,18 @@
 #include "Services/GGacResourceService.h"
 #include "Services/GGacScreenService.h"
 
+#include "GGacControllerListener.h"
+#include "Renderers/GuiSolidBorderElementRenderer.h"
+#include "Renderers/Gui3DBorderElementRenderer.h"
+#include "Renderers/GuiSoldBackgroundElementRenderer.h"
+#include "Renderers/GuiSolidLabelElementRenderer.h"
+
 namespace vl {
+
 	namespace presentation {
+
 		namespace gtk {
+
 			using namespace collections;
 			void GlobalTimerFunc();
 
@@ -34,6 +43,9 @@ namespace vl {
 				GGacClipboardService                   clipboardService;
 				GGacImageService                       imageService;
 				GGacDialogService                      dialogService;
+
+			private:
+				GtkApplication *app;
 
 			public:
 				GGacController():
@@ -64,7 +76,7 @@ namespace vl {
 						windows.Remove(gWin);
 
 						if(gWin == mainWindow)
-							[NSApp stop:nil];
+							g_application_quit(G_APPLICATION(app));
 						delete gWin;
 					}
 				}
@@ -79,7 +91,6 @@ namespace vl {
 					mainWindow = window;
 					mainWindow->Show();
 
-					GtkApplication *app;
 					app = gtk_application_new("net.gaclib.app", G_APPLICATION_FLAGS_NONE);
 					g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
 					g_application_run(G_APPLICATION(app), argc, argv);
@@ -88,37 +99,7 @@ namespace vl {
 
 				INativeWindow* GetWindow(NativePoint location)
 				{
-					GtkWindow* result = 0;
-					NativeRect minRect(0, 0, 99999, 99999);
-					for(vint i=0; i<windows.Count(); ++i)
-					{
-						GtkWindow* window = (GtkWindow*)windows[i];
-						NativeRect r = window->GetClientBoundsInScreen();
-						if(r.Contains(location))
-						{
-							if(!result)
-							{
-								result = window;
-								minRect = r;
-								continue;
-							}
-
-							if(([window->GetNativeWindow() level] > [result->GetNativeWindow() level]) || [window->GetNativeWindow() level] == NSFloatingWindowLevel)
-							{
-								minRect = r;
-								result = window;
-							}
-							else if([window->GetNativeWindow() level] == [result->GetNativeWindow() level])
-							{
-								// encapsulates
-								if(r.Width() * r.Height() < minRect.Width() * minRect.Height())
-								{
-									minRect = r;
-									result = window;
-								}
-							}
-						}
-					}
+					GGacWindow* result = 0;
 					return result;
 				}
 
@@ -193,7 +174,7 @@ namespace vl {
 				return new GGacController();
 			}
 
-			void DestroyGtkNativeController(INativeController* controller)
+			void DestroyGGacController(INativeController* controller)
 			{
 				delete controller;
 			}
@@ -202,6 +183,48 @@ namespace vl {
 			{
 				dynamic_cast<GGacController*>(GetCurrentController())->InvokeGlobalTimer();
 			}
-		};
+
+			void SetupRenderer()
+			{
+				elements::gtk::GuiSolidBorderElementRenderer::Register();
+				elements::gtk::Gui3DBorderElementRenderer::Register();
+				elements::gtk::GuiSolidBackgroundElementRenderer::Register();
+				elements::gtk::GuiSolidLabelElementRenderer::Register();
+				/*Gui3DSplitterElementRenderer::Register();
+				GuiGradientBackgroundElementRenderer::Register();
+				GuiImageFrameElementRenderer::Register();
+				GuiPolygonElementRenderer::Register();
+				GuiColorizedTextElementRenderer::Register();
+				GuiGGacElementRenderer::Register();
+				GuiInnerShadowElementRenderer::Register();
+				GuiFocusRectangleElementRenderer::Register();*/
+				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();
+			}
+
+			int GGacMain()
+			{
+				INativeController* controller = CreateGGacController();
+				SetCurrentController(controller);
+				{
+					GGacControllerListener *gListener = new GGacControllerListener();
+					GetCurrentController()->CallbackService()->InstallListener(gListener);
+					/*CoreGraphicsResourceManager resourceManager;
+					SetGuiGraphicsResourceManager(&resourceManager);
+					SetCoreGraphicsResourceManager(&resourceManager);
+					GetCurrentController()->CallbackService()->InstallListener(&resourceManager);*/
+					SetupRenderer();
+					{
+						GuiApplicationMain();
+					}
+					GetCurrentController()->CallbackService()->UninstallListener(gListener);
+					delete gListener;
+				}
+				DestroyGGacController(controller);
+				return 0;
+			}
+
+		}
+
 	}
+
 }
