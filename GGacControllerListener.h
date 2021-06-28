@@ -15,7 +15,11 @@ namespace vl {
 
 			class GGacControllerListener : public Object, public INativeControllerListener
 			{
-
+			public:
+				void GlobalTimer() override;
+				void ClipboardUpdated() override;
+				void NativeWindowCreated(INativeWindow *window) override;
+				void NativeWindowDestroying(INativeWindow *window) override;
 			};
 
 		}

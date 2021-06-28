@@ -17,8 +17,16 @@
 #include "GGacControllerListener.h"
 #include "Renderers/GuiSolidBorderElementRenderer.h"
 #include "Renderers/Gui3DBorderElementRenderer.h"
+#include "Renderers/Gui3DSplitterElementRenderer.h"
 #include "Renderers/GuiSoldBackgroundElementRenderer.h"
 #include "Renderers/GuiSolidLabelElementRenderer.h"
+#include "Renderers/GuiGradientBackgroundElementRenderer.h"
+#include "Renderers/GuiImageFrameElementRenderer.h"
+#include "Renderers/GuiPolygonElementRenderer.h"
+#include "Renderers/GuiColorizedTextElementRenderer.h"
+#include "Renderers/GuiInnerShadowElementRenderer.h"
+#include "Renderers/GuiFocusRectangleElementRenderer.h"
+
 
 namespace vl {
 
@@ -46,6 +54,9 @@ namespace vl {
 
 			private:
 				GtkApplication *app;
+				static void activate(GtkWidget* window, gpointer* data) {
+					GGacController* controller = reinterpret_cast<GGacController*>(data);
+				}
 
 			public:
 				GGacController():
@@ -58,6 +69,14 @@ namespace vl {
 				{
 					inputService.StopTimer();
 				}
+
+				void InvokeGlobalTimer()
+				{
+					//asyncService.ExecuteAsyncTasks();
+					callbackService.InvokeGlobalTimer();
+				}
+
+				//========================================[INativeWindowService]========================================
 
 				INativeWindow* CreateNativeWindow()
 				{
@@ -92,8 +111,8 @@ namespace vl {
 					mainWindow->Show();
 
 					app = gtk_application_new("net.gaclib.app", G_APPLICATION_FLAGS_NONE);
-					g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-					g_application_run(G_APPLICATION(app), argc, argv);
+					g_signal_connect(app, "activate", G_CALLBACK(activate), this);
+					g_application_run(G_APPLICATION(app), 0, NULL);
 					g_object_unref(app);
 				}
 
@@ -103,7 +122,7 @@ namespace vl {
 					return result;
 				}
 
-				//=======================================================================
+				//========================================[INativeController]========================================
 
 				INativeCallbackService* CallbackService()
 				{
@@ -152,22 +171,18 @@ namespace vl {
 
 				WString GetOSVersion()
 				{
-					return NSStringToWString(vl::presentation::gtk::GetOSVersion());
+					return L"";
+					//return NSStringToWString(vl::presentation::gtk::GetOSVersion());
 				}
 
 				WString GetExecutablePath()
 				{
-					return GetApplicationPath();
-				}
-
-				//=======================================================================
-
-				void InvokeGlobalTimer()
-				{
-					asyncService.ExecuteAsyncTasks();
-					callbackService.InvokeGlobalTimer();
+					return L"";
+					//return GetApplicationPath();
 				}
 			};
+
+			//========================================[Global Functions]========================================
 
 			INativeController* CreateGGacController()
 			{
@@ -190,14 +205,14 @@ namespace vl {
 				elements::gtk::Gui3DBorderElementRenderer::Register();
 				elements::gtk::GuiSolidBackgroundElementRenderer::Register();
 				elements::gtk::GuiSolidLabelElementRenderer::Register();
-				/*Gui3DSplitterElementRenderer::Register();
-				GuiGradientBackgroundElementRenderer::Register();
-				GuiImageFrameElementRenderer::Register();
-				GuiPolygonElementRenderer::Register();
-				GuiColorizedTextElementRenderer::Register();
-				GuiGGacElementRenderer::Register();
-				GuiInnerShadowElementRenderer::Register();
-				GuiFocusRectangleElementRenderer::Register();*/
+				elements::gtk::Gui3DSplitterElementRenderer::Register();
+				elements::gtk::GuiGradientBackgroundElementRenderer::Register();
+				elements::gtk::GuiImageFrameElementRenderer::Register();
+				elements::gtk::GuiPolygonElementRenderer::Register();
+				elements::gtk::GuiColorizedTextElementRenderer::Register();
+				//elements::gtk::GuiGGacElementRenderer::Register();
+				elements::gtk::GuiInnerShadowElementRenderer::Register();
+				elements::gtk::GuiFocusRectangleElementRenderer::Register();
 				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();
 			}
 
