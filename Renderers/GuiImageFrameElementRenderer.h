@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiImageFrameElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiImageFrameElement, GuiImageFrameElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiImageFrameElement, GuiImageFrameElementRenderer, Color)
 				};
 
 			}

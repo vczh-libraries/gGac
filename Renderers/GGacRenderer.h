@@ -6,9 +6,9 @@
 #define GGAC_GGACRENDERER_H
 
 #include "GacUI.h"
-#include <gtk/gtk.h>
+#include <gtkmm.h>
 
-#define DEFINE_ELEMENT_RENDERER(TELEMENT, TRENDERER)\
+#define DEFINE_ELEMENT_RENDERER(TELEMENT, TRENDERER, TBRUSHCOLOR)\
 	    DEFINE_GUI_GRAPHICS_RENDERER(TELEMENT, TRENDERER, IGGacRenderTarget)\
 				public:\
 				TRENDERER();\
@@ -48,10 +48,10 @@ namespace vl {
 				class IGGacRenderTarget : public Object, public IGuiGraphicsRenderTarget
 				{
 				public:
-					virtual cairo_t* GetGGacContext() const = 0;
+					virtual Cairo::RefPtr<Cairo::Context> GetGGacContext();
 				};
 
-				inline cairo_t* GetCurrentGGacContextFromRenderTarget();
+				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget();
 				extern IGGacRenderTarget* GetCurrentRenderTarget();
 
 			}

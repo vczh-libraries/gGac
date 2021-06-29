@@ -12,8 +12,8 @@ namespace vl {
 
 			namespace gtk {
 
-				inline cairo_t* GetCurrentGGacContextFromRenderTarget() {
-					return (cairo_t*)(GetCurrentRenderTarget()->GetGGacContext());
+				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {
+					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}
 
 			}

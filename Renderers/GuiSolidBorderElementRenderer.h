@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiSolidBorderElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiSolidBorderElement, GuiSolidBorderElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiSolidBorderElement, GuiSolidBorderElementRenderer, Color)
 				};
 
 			}

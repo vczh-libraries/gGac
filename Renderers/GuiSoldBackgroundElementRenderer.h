@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiSolidBackgroundElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiSolidBackgroundElement, GuiSolidBackgroundElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiSolidBackgroundElement, GuiSolidBackgroundElementRenderer, Color)
 				};
 
 			}

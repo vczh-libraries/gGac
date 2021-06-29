@@ -17,7 +17,16 @@ namespace vl {
 
 				class GuiGradientBackgroundElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiGradientBackgroundElement, GuiGradientBackgroundElementRenderer)
+					typedef collections::Pair<Color, Color> ColorPair;
+					DEFINE_ELEMENT_RENDERER(GuiGradientBackgroundElement, GuiGradientBackgroundElementRenderer, ColorPair)
+
+					virtual ~GuiGradientBackgroundElementRenderer();
+
+				protected:
+					collections::Pair<Color, Color>     oldColor;
+					Cairo::RefPtr<Cairo::LinearGradient> gGradient;
+
+					void CreateGGacGradient();
 				};
 
 			}

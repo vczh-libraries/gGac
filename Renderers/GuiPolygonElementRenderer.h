@@ -17,7 +17,24 @@ namespace vl {
 
 				class GuiPolygonElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiPolygonElement, GuiPolygonElementRenderer)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiPolygonElement, GuiPolygonElementRenderer, IGGacRenderTarget)
+
+				public:
+					GuiPolygonElementRenderer();
+					~GuiPolygonElementRenderer();
+
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
+
+				protected:
+					collections::Array<Point>   oldPoints;
+
+					void CreateGeometry();
+					void DestroyGeometry();
+
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
 				};
 
 			}
