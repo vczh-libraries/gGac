@@ -14,7 +14,6 @@ namespace vl {
 
 				IMPLEMENT_ELEMENT_RENDERER(GuiFocusRectangleElementRenderer)
 				{
-					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 				}
 
 			}

@@ -202,7 +202,7 @@ namespace vl {
 			void SetupRenderer()
 			{
 				elements::gtk::GuiSolidBorderElementRenderer::Register();
-				elements::gtk::Gui3DBorderElementRenderer::Register();
+				/*elements::gtk::Gui3DBorderElementRenderer::Register();
 				elements::gtk::GuiSolidBackgroundElementRenderer::Register();
 				elements::gtk::GuiSolidLabelElementRenderer::Register();
 				elements::gtk::Gui3DSplitterElementRenderer::Register();
@@ -213,7 +213,7 @@ namespace vl {
 				//elements::gtk::GuiGGacElementRenderer::Register();
 				elements::gtk::GuiInnerShadowElementRenderer::Register();
 				elements::gtk::GuiFocusRectangleElementRenderer::Register();
-				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();
+				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();*/
 			}
 
 			int GGacMain()

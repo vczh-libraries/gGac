@@ -4,12 +4,43 @@
 
 #include "GGacCallbackService.h"
 
-bool
-vl::presentation::gtk::GGacCallbackService::InstallListener(vl::presentation::INativeControllerListener *listener) {
-	return false;
-}
+namespace vl {
 
-bool
-vl::presentation::gtk::GGacCallbackService::UninstallListener(vl::presentation::INativeControllerListener *listener) {
-	return false;
+	namespace presentation {
+
+		namespace gtk {
+
+			bool GGacCallbackService::InstallListener(INativeControllerListener *listener)
+			{
+				return true;
+			}
+
+			bool GGacCallbackService::UninstallListener(INativeControllerListener *listener)
+			{
+				return true;
+			}
+
+			void GGacCallbackService::InvokeGlobalTimer()
+			{
+
+			}
+
+			void GGacCallbackService::InvokeClipboardUpdated()
+			{
+
+			}
+
+			void GGacCallbackService::InvokeNativeWindowCreated(INativeWindow* window)
+			{
+
+			}
+
+			void GGacCallbackService::InvokeNativeWindowDestroyed(INativeWindow* window)
+			{
+
+			}
+		}
+
+	}
+
 }

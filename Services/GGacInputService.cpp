@@ -10,8 +10,6 @@ namespace vl {
 
 		namespace gtk {
 
-
-
 			void GGacInputService::StartTimer() {
 
 			}

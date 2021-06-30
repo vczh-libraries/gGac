@@ -12,7 +12,7 @@ namespace vl {
 
 			namespace gtk {
 
-				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {
+				Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {
 					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}
 

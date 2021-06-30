@@ -17,7 +17,19 @@ namespace vl {
 
 				class GuiFocusRectangleElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiFocusRectangleElement, GuiFocusRectangleElementRenderer, Color)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiFocusRectangleElement, GuiFocusRectangleElementRenderer, IGGacRenderTarget)
+
+				protected:
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
+
+				public:
+					GuiFocusRectangleElementRenderer();
+					~GuiFocusRectangleElementRenderer();
+
+					void Render(Rect bounds)override;
+					void OnElementStateChanged()override;
 				};
 
 			}

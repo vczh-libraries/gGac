@@ -17,7 +17,18 @@ namespace vl {
 
 				class GuiInnerShadowElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, Color)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, IGGacRenderTarget)
+
+				protected:
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
+				public:
+					GuiInnerShadowElementRenderer();
+					~GuiInnerShadowElementRenderer();
+
+					void Render(Rect bounds)override;
+					void OnElementStateChanged()override;
 				};
 
 			}
