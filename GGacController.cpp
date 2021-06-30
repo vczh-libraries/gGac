@@ -63,6 +63,8 @@ namespace vl {
 						mainWindow(0),
 						inputService(&GlobalTimerFunc)
 				{
+					app = gtk_application_new("net.gaclib.app", G_APPLICATION_FLAGS_NONE);
+					g_signal_connect(app, "activate", G_CALLBACK(activate), this);
 				}
 
 				~GGacController()
@@ -110,8 +112,6 @@ namespace vl {
 					mainWindow = window;
 					mainWindow->Show();
 
-					app = gtk_application_new("net.gaclib.app", G_APPLICATION_FLAGS_NONE);
-					g_signal_connect(app, "activate", G_CALLBACK(activate), this);
 					g_application_run(G_APPLICATION(app), 0, NULL);
 					g_object_unref(app);
 				}

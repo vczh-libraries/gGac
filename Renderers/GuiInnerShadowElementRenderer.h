@@ -17,12 +17,12 @@ namespace vl {
 
 				class GuiInnerShadowElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_GUI_GRAPHICS_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, IGGacRenderTarget)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, GGacRenderTarget)
 
 				protected:
 					void InitializeInternal();
 					void FinalizeInternal();
-					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
+					void RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget);
 				public:
 					GuiInnerShadowElementRenderer();
 					~GuiInnerShadowElementRenderer();

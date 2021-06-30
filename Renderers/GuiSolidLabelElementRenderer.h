@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_GUI_GRAPHICS_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, IGGacRenderTarget)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)
 
 				protected:
 					void CreateFont();
@@ -27,7 +27,7 @@ namespace vl {
 
 					void InitializeInternal();
 					void FinalizeInternal();
-					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
+					void RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget);
 
 				public:
 					GuiSolidLabelElementRenderer();
