@@ -10,6 +10,11 @@ namespace vl {
 
 		namespace gtk {
 
+			GGacInputService::GGacInputService(TimerFunc timer)
+			{
+
+			}
+
 			void GGacInputService::StartTimer() {
 
 			}

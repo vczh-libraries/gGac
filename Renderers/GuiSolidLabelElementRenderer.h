@@ -17,24 +17,7 @@ namespace vl {
 
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_GUI_GRAPHICS_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)
-
-				protected:
-					void CreateFont();
-					void CreateColor();
-					void UpdateParagraphStyle();
-					void UpdateMinSize();
-
-					void InitializeInternal();
-					void FinalizeInternal();
-					void RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget);
-
-				public:
-					GuiSolidLabelElementRenderer();
-					~GuiSolidLabelElementRenderer();
-
-					void Render(Rect bounds) override;
-					void OnElementStateChanged() override;
+				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)
 				};
 
 			}

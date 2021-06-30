@@ -14,7 +14,7 @@ namespace vl {
 
 				IMPLEMENT_ELEMENT_RENDERER(GuiSolidBorderElementRenderer)
 				{
-					Cairo::RefPtr<Cairo::Context> cr = GetCurrentRenderTarget()->GetGGacContext();
+					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();
 					cr->set_source_rgba(c.r, c.g, c.b, c.a);
 

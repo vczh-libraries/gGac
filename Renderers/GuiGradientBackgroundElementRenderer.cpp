@@ -31,7 +31,7 @@ namespace vl {
 
 				}
 
-				void GuiGradientBackgroundElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+				void GuiGradientBackgroundElementRenderer::RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget)
 				{
 					CreateGGacGradient();
 				}
