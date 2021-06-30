@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, Color)
 				};
 
 			}

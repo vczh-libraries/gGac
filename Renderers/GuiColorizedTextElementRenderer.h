@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiColorizedTextElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiColorizedTextElement, GuiColorizedTextElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiColorizedTextElement, GuiColorizedTextElementRenderer, Color)
 				};
 
 			}

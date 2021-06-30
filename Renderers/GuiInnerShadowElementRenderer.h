@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiInnerShadowElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer)
+				DEFINE_ELEMENT_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, Color)
 				};
 
 			}

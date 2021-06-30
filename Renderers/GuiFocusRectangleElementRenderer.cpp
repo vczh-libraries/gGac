@@ -3,3 +3,24 @@
 //
 
 #include "GuiFocusRectangleElementRenderer.h"
+
+namespace vl {
+
+	namespace presentation {
+
+		namespace elements {
+
+			namespace gtk {
+
+				IMPLEMENT_ELEMENT_RENDERER(GuiFocusRectangleElementRenderer)
+				{
+					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
+				}
+
+			}
+
+		}
+
+	}
+
+}

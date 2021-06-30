@@ -17,7 +17,7 @@ namespace vl {
 
 				class Gui3DBorderElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_ELEMENT_RENDERER(Gui3DBorderElement, Gui3DBorderElementRenderer)
+				DEFINE_ELEMENT_RENDERER(Gui3DBorderElement, Gui3DBorderElementRenderer, Color)
 				};
 
 			}

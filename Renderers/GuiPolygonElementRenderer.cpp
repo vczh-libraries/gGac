@@ -12,7 +12,7 @@ namespace vl {
 
 			namespace gtk {
 
-				GuiPolygonElementRenderer::GuiPolygonElementRenderer():
+				GuiPolygonElementRenderer::GuiPolygonElementRenderer()
 				{
 				}
 
