@@ -14,47 +14,51 @@ namespace vl {
 			GGacWindow::GGacWindow()
 					:window(0)
 			{
-				window = MakePtr<Gtk::Window>();
+				window = new Gtk::Window();
 			}
 
 			GGacWindow::~GGacWindow()
 			{
 				window->close();
+				delete window;
 			}
 
 			Gtk::Window* GGacWindow::GetNativeWindow() const
 			{
-				return window.Obj();
+				return window;
 			}
 
 			///
 
 			Point GGacWindow::Convert(NativePoint value) {
-				return vl::presentation::Point();
+				return Point(value.x.value, value.y.value);
 			}
 
 			NativePoint GGacWindow::Convert(Point value) {
-				return vl::presentation::NativePoint();
+				return NativePoint(value.x, value.y);
 			}
 
 			Size GGacWindow::Convert(NativeSize value) {
-				return vl::presentation::Size();
+				return Size(value.x.value, value.y.value);
 			}
 
 			NativeSize GGacWindow::Convert(Size value) {
-				return vl::presentation::NativeSize();
+				return NativeSize(value.x, value.y);
 			}
 
 			Margin GGacWindow::Convert(NativeMargin value) {
-				return vl::presentation::Margin();
+				return Margin(value.left.value, value.top.value, value.right.value, value.bottom.value);
 			}
 
 			NativeMargin GGacWindow::Convert(Margin value) {
-				return vl::presentation::NativeMargin();
+				return NativeMargin(value.left, value.top, value.right, value.bottom);
 			}
 
 			NativeRect GGacWindow::GetBounds() {
-				return vl::presentation::NativeRect();
+				int x, y, width, height;
+				window->get_position(x, y);
+				window->get_size(width, height);
+				return NativeRect(x, y, width, height);
 			}
 
 			void GGacWindow::SetBounds(const NativeRect &bounds) {
@@ -62,11 +66,13 @@ namespace vl {
 			}
 
 			NativeSize GGacWindow::GetClientSize() {
-				return vl::presentation::NativeSize();
+				int x, y;
+				window->get_size(x, y);
+				return NativeSize(x, y);
 			}
 
 			void GGacWindow::SetClientSize(NativeSize size) {
-
+				window->set_default_size(size.x.value, size.y.value);
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen() {
@@ -78,7 +84,7 @@ namespace vl {
 			}
 
 			void GGacWindow::SetTitle(WString title) {
-
+				window->set_title(Glib::ustring::format(title.Buffer()));
 			}
 
 			INativeCursor *GGacWindow::GetWindowCursor() {

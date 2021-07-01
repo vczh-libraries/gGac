@@ -17,7 +17,7 @@ namespace vl {
 			class GGacWindow : public Object, public INativeWindow
 			{
 			protected:
-				Ptr<Gtk::Window> window;
+				Gtk::Window* window;
 			public:
 				GGacWindow();
 				virtual ~GGacWindow();

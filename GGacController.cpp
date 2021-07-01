@@ -63,7 +63,6 @@ namespace vl {
 			private:
 				Glib::RefPtr<Gtk::Application> app;
 				void onActive() {
-					app->hold();
 				}
 
 			public:
@@ -99,12 +98,12 @@ namespace vl {
 				void DestroyNativeWindow(INativeWindow* window)
 				{
 					GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
-					if(gWin != 0 && windows.Contains(gWin))
+					if (gWin != 0 && windows.Contains(gWin))
 					{
 						callbackService.InvokeNativeWindowDestroyed(window);
 						windows.Remove(gWin);
 
-						if(gWin == mainWindow)
+						if (gWin == mainWindow)
 							app->quit();
 						delete gWin;
 					}
@@ -119,7 +118,7 @@ namespace vl {
 				{
 					mainWindow = window;
 					mainWindow->Show();
-					app->run();
+					app->run(*dynamic_cast<GGacWindow*>(window)->GetNativeWindow());
 				}
 
 				INativeWindow* GetWindow(NativePoint location)
