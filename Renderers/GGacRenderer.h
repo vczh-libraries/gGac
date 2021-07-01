@@ -9,14 +9,14 @@
 #include <gtkmm.h>
 
 #define DEFINE_ELEMENT_RENDERER(TELEMENT, TRENDERER, TBRUSHCOLOR)\
-	    DEFINE_GUI_GRAPHICS_RENDERER(TELEMENT, TRENDERER, GGacRenderTarget)\
+	    DEFINE_GUI_GRAPHICS_RENDERER(TELEMENT, TRENDERER, IGGacRenderTarget)\
 				public:\
 				TRENDERER();\
 				void Render(Rect bounds) override;\
 				void OnElementStateChanged() override;\
 				void InitializeInternal();\
 				void FinalizeInternal();\
-				void RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget); \
+				void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget); \
 
 
 #define IMPLEMENT_ELEMENT_RENDERER(TRENDERER)\
@@ -29,7 +29,7 @@
     void TRENDERER::FinalizeInternal()\
     {\
     }\
-    void TRENDERER::RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget)\
+    void TRENDERER::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)\
     {\
     }\
     void TRENDERER::OnElementStateChanged()\
@@ -45,14 +45,14 @@ namespace vl {
 
 			namespace gtk {
 
-				class GGacRenderTarget : public IGuiGraphicsRenderTarget
+				class IGGacRenderTarget : public IGuiGraphicsRenderTarget
 				{
 				public:
 					virtual Cairo::RefPtr<Cairo::Context> GetGGacContext() = 0;
 				};
 
-				extern void SetCurrentRenderTarget(GGacRenderTarget* renderTarget);
-				extern GGacRenderTarget* GetCurrentRenderTarget();
+				extern void SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
+				extern IGGacRenderTarget* GetCurrentRenderTarget();
 				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {
 					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}

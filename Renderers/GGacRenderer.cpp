@@ -12,7 +12,7 @@ namespace vl {
 
 			namespace gtk {
 
-				class CoreGraphicsRenderTarget: public GGacRenderTarget
+				class GGacRenderTarget: public IGGacRenderTarget
 				{
 				protected:
 					//CoreGraphicsView*       nativeView;
@@ -50,15 +50,15 @@ namespace vl {
 				};
 
 				namespace {
-					GGacRenderTarget*      g_currentRenderTarget;
+					IGGacRenderTarget*      g_currentRenderTarget;
 				}
 
-				void SetCurrentRenderTarget(GGacRenderTarget* renderTarget)
+				void SetCurrentRenderTarget(IGGacRenderTarget* renderTarget)
 				{
 					g_currentRenderTarget = renderTarget;
 				}
 
-				GGacRenderTarget* GetCurrentRenderTarget()
+				IGGacRenderTarget* GetCurrentRenderTarget()
 				{
 					return g_currentRenderTarget;
 				}

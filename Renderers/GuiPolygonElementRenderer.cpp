@@ -30,7 +30,7 @@ namespace vl {
 
 				}
 
-				void GuiPolygonElementRenderer::RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget)
+				void GuiPolygonElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
 					CreateGeometry();
 				}

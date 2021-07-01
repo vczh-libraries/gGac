@@ -4,7 +4,6 @@
 
 #include "GGacController.h"
 #include "GGacWindow.h"
-#include <gtk/gtk.h>
 #include "Services/GGacAsyncService.h"
 #include "Services/GGacCallbackService.h"
 #include "Services/GGacClipboardService.h"
@@ -14,7 +13,6 @@
 #include "Services/GGacResourceService.h"
 #include "Services/GGacScreenService.h"
 
-#include "GGacControllerListener.h"
 #include "Renderers/GuiSolidBorderElementRenderer.h"
 #include "Renderers/Gui3DBorderElementRenderer.h"
 #include "Renderers/Gui3DSplitterElementRenderer.h"
@@ -26,7 +24,17 @@
 #include "Renderers/GuiColorizedTextElementRenderer.h"
 #include "Renderers/GuiInnerShadowElementRenderer.h"
 #include "Renderers/GuiFocusRectangleElementRenderer.h"
+#include "Renderers/GGacResourceManager.h"
 
+#include "GGacControllerListener.h"
+
+#include <gtk/gtk.h>
+#include <GacUI.h>
+
+using namespace vl::presentation;
+using namespace vl::presentation::gtk;
+using namespace vl::presentation::elements;
+using namespace vl::presentation::elements::gtk;
 
 namespace vl {
 
@@ -202,7 +210,7 @@ namespace vl {
 			void SetupRenderer()
 			{
 				elements::gtk::GuiSolidBorderElementRenderer::Register();
-				/*elements::gtk::Gui3DBorderElementRenderer::Register();
+				elements::gtk::Gui3DBorderElementRenderer::Register();
 				elements::gtk::GuiSolidBackgroundElementRenderer::Register();
 				elements::gtk::GuiSolidLabelElementRenderer::Register();
 				elements::gtk::Gui3DSplitterElementRenderer::Register();
@@ -213,7 +221,7 @@ namespace vl {
 				//elements::gtk::GuiGGacElementRenderer::Register();
 				elements::gtk::GuiInnerShadowElementRenderer::Register();
 				elements::gtk::GuiFocusRectangleElementRenderer::Register();
-				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();*/
+				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();
 			}
 
 			int GGacMain()
@@ -221,18 +229,17 @@ namespace vl {
 				INativeController* controller = CreateGGacController();
 				SetCurrentController(controller);
 				{
-					GGacControllerListener *gListener = new GGacControllerListener();
+					auto gListener = new GGacControllerListener();
 					GetCurrentController()->CallbackService()->InstallListener(gListener);
-					/*CoreGraphicsResourceManager resourceManager;
+					GGacResourceManager resourceManager;
 					SetGuiGraphicsResourceManager(&resourceManager);
-					SetCoreGraphicsResourceManager(&resourceManager);
-					GetCurrentController()->CallbackService()->InstallListener(&resourceManager);*/
+					//SetGGacResourceManager(&resourceManager);
+					GetCurrentController()->CallbackService()->InstallListener(&resourceManager);
 					SetupRenderer();
 					{
 						GuiApplicationMain();
 					}
 					GetCurrentController()->CallbackService()->UninstallListener(gListener);
-					delete gListener;
 				}
 				DestroyGGacController(controller);
 				return 0;

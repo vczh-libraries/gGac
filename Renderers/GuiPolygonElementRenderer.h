@@ -17,7 +17,7 @@ namespace vl {
 
 				class GuiPolygonElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
-				DEFINE_GUI_GRAPHICS_RENDERER(GuiPolygonElement, GuiPolygonElementRenderer, GGacRenderTarget)
+				DEFINE_GUI_GRAPHICS_RENDERER(GuiPolygonElement, GuiPolygonElementRenderer, IGGacRenderTarget)
 
 				public:
 					GuiPolygonElementRenderer();
@@ -34,7 +34,7 @@ namespace vl {
 
 					void InitializeInternal();
 					void FinalizeInternal();
-					void RenderTargetChangedInternal(GGacRenderTarget* oldRenderTarget, GGacRenderTarget* newRenderTarget);
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
 				};
 
 			}
