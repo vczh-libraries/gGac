@@ -1,4 +1,5 @@
 #include "GGacController.h"
+#include <Skins/DarkSkin/DarkSkin.h>
 
 using namespace vl;
 using namespace vl::presentation;
@@ -7,6 +8,26 @@ using namespace vl::presentation::compositions;
 using namespace vl::presentation::controls;
 using namespace vl::presentation::theme;
 using namespace vl::presentation::templates;
+
+class DefaultSkinPlugin : public Object, public IGuiPlugin
+{
+public:
+
+	GUI_PLUGIN_NAME(Custom_DefaultSkinPlugin)
+	{
+		GUI_PLUGIN_DEPEND(GacGen_DarkSkinResourceLoader);
+	}
+
+	void Load()override
+	{
+		RegisterTheme(MakePtr<darkskin::Theme>());
+	}
+
+	void Unload()override
+	{
+	}
+};
+GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
 void GuiMain()
 {

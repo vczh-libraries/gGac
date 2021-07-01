@@ -15,6 +15,7 @@ add_library(GacUI
         GacUI/Import/VlppReflection.cpp
         GacUI/Import/VlppParser.cpp
         GacUI/Import/VlppWorkflowLibrary.cpp
+        GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
         )
 
 include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import)

@@ -6,7 +6,7 @@
 #define GGAC_GGACWINDOW_H
 
 #include "GacUI.h"
-#include <gtk/gtk.h>
+#include <gtkmm.h>
 
 namespace vl {
 
@@ -16,7 +16,13 @@ namespace vl {
 
 			class GGacWindow : public Object, public INativeWindow
 			{
+			protected:
+				Ptr<Gtk::Window> window;
 			public:
+				GGacWindow();
+				virtual ~GGacWindow();
+				Gtk::Window* GetNativeWindow() const;
+
 				Point Convert(NativePoint value) override;
 
 				NativePoint Convert(Point value) override;

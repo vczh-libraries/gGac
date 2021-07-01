@@ -10,6 +10,25 @@ namespace vl {
 	namespace presentation {
 
 		namespace gtk {
+
+			GGacWindow::GGacWindow()
+					:window(0)
+			{
+				window = MakePtr<Gtk::Window>();
+			}
+
+			GGacWindow::~GGacWindow()
+			{
+				window->close();
+			}
+
+			Gtk::Window* GGacWindow::GetNativeWindow() const
+			{
+				return window.Obj();
+			}
+
+			///
+
 			Point GGacWindow::Convert(NativePoint value) {
 				return vl::presentation::Point();
 			}
@@ -123,7 +142,7 @@ namespace vl {
 			}
 
 			void GGacWindow::Show() {
-
+				window->show();
 			}
 
 			void GGacWindow::ShowDeactivated() {

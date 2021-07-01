@@ -28,7 +28,7 @@
 
 #include "GGacControllerListener.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm.h>
 #include <GacUI.h>
 
 using namespace vl::presentation;
@@ -61,9 +61,9 @@ namespace vl {
 				GGacDialogService                      dialogService;
 
 			private:
-				GtkApplication *app;
-				static void activate(GtkWidget* window, gpointer* data) {
-					GGacController* controller = reinterpret_cast<GGacController*>(data);
+				Glib::RefPtr<Gtk::Application> app;
+				void onActive() {
+					app->hold();
 				}
 
 			public:
@@ -71,8 +71,8 @@ namespace vl {
 						mainWindow(0),
 						inputService(&GlobalTimerFunc)
 				{
-					app = gtk_application_new("net.gaclib.app", G_APPLICATION_FLAGS_NONE);
-					g_signal_connect(app, "activate", G_CALLBACK(activate), this);
+					app = Gtk::Application::create("org.gtkmm.examples.base");
+					app->signal_activate().connect(sigc::mem_fun(*this, &GGacController::onActive));
 				}
 
 				~GGacController()
@@ -105,7 +105,7 @@ namespace vl {
 						windows.Remove(gWin);
 
 						if(gWin == mainWindow)
-							g_application_quit(G_APPLICATION(app));
+							app->quit();
 						delete gWin;
 					}
 				}
@@ -119,9 +119,7 @@ namespace vl {
 				{
 					mainWindow = window;
 					mainWindow->Show();
-
-					g_application_run(G_APPLICATION(app), 0, NULL);
-					g_object_unref(app);
+					app->run();
 				}
 
 				INativeWindow* GetWindow(NativePoint location)
