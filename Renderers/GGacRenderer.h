@@ -51,6 +51,7 @@ namespace vl {
 					virtual Cairo::RefPtr<Cairo::Context> GetGGacContext() = 0;
 				};
 
+				extern int SetupGGacRenderer();
 				extern void SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
 				extern IGGacRenderTarget* GetCurrentRenderTarget();
 				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {

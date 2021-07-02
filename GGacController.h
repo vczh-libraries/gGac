@@ -15,7 +15,6 @@ namespace vl {
 
 			extern INativeController*   CreateGGacController();
 			extern void                 DestroyGGacController(INativeController* controller);
-			extern int 					GGacMain();
 
 		}
 

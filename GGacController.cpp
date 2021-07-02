@@ -13,18 +13,6 @@
 #include "Services/GGacResourceService.h"
 #include "Services/GGacScreenService.h"
 
-#include "Renderers/GuiSolidBorderElementRenderer.h"
-#include "Renderers/Gui3DBorderElementRenderer.h"
-#include "Renderers/Gui3DSplitterElementRenderer.h"
-#include "Renderers/GuiSoldBackgroundElementRenderer.h"
-#include "Renderers/GuiSolidLabelElementRenderer.h"
-#include "Renderers/GuiGradientBackgroundElementRenderer.h"
-#include "Renderers/GuiImageFrameElementRenderer.h"
-#include "Renderers/GuiPolygonElementRenderer.h"
-#include "Renderers/GuiColorizedTextElementRenderer.h"
-#include "Renderers/GuiInnerShadowElementRenderer.h"
-#include "Renderers/GuiFocusRectangleElementRenderer.h"
-#include "Renderers/GGacResourceManager.h"
 
 #include "GGacControllerListener.h"
 
@@ -34,7 +22,6 @@
 using namespace vl::presentation;
 using namespace vl::presentation::gtk;
 using namespace vl::presentation::elements;
-using namespace vl::presentation::elements::gtk;
 
 namespace vl {
 
@@ -199,44 +186,6 @@ namespace vl {
 			void GlobalTimerFunc()
 			{
 				dynamic_cast<GGacController*>(GetCurrentController())->InvokeGlobalTimer();
-			}
-
-			void SetupRenderer()
-			{
-				elements::gtk::GuiSolidBorderElementRenderer::Register();
-				elements::gtk::Gui3DBorderElementRenderer::Register();
-				elements::gtk::GuiSolidBackgroundElementRenderer::Register();
-				elements::gtk::GuiSolidLabelElementRenderer::Register();
-				elements::gtk::Gui3DSplitterElementRenderer::Register();
-				elements::gtk::GuiGradientBackgroundElementRenderer::Register();
-				elements::gtk::GuiImageFrameElementRenderer::Register();
-				elements::gtk::GuiPolygonElementRenderer::Register();
-				elements::gtk::GuiColorizedTextElementRenderer::Register();
-				//elements::gtk::GuiGGacElementRenderer::Register();
-				elements::gtk::GuiInnerShadowElementRenderer::Register();
-				elements::gtk::GuiFocusRectangleElementRenderer::Register();
-				elements::GuiDocumentElement::GuiDocumentElementRenderer::Register();
-			}
-
-			int GGacMain()
-			{
-				INativeController* controller = CreateGGacController();
-				SetCurrentController(controller);
-				{
-					auto gListener = new GGacControllerListener();
-					GetCurrentController()->CallbackService()->InstallListener(gListener);
-					GGacResourceManager resourceManager;
-					SetGuiGraphicsResourceManager(&resourceManager);
-					//SetGGacResourceManager(&resourceManager);
-					GetCurrentController()->CallbackService()->InstallListener(&resourceManager);
-					SetupRenderer();
-					{
-						GuiApplicationMain();
-					}
-					GetCurrentController()->CallbackService()->UninstallListener(gListener);
-				}
-				DestroyGGacController(controller);
-				return 0;
 			}
 
 		}

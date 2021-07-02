@@ -1,4 +1,4 @@
-#include "GGacController.h"
+#include "Renderers/GGacRenderer.h"
 #include <Skins/DarkSkin/DarkSkin.h>
 
 using namespace vl;
@@ -53,5 +53,5 @@ void GuiMain()
 
 int main(int argc, char **argv)
 {
-    return vl::presentation::gtk::GGacMain();
+    return vl::presentation::elements::gtk::SetupGGacRenderer();
 }
