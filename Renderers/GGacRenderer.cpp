@@ -62,6 +62,8 @@ namespace vl {
 				{
 					return g_currentRenderTarget;
 				}
+
+
 			}
 
 		}

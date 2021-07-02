@@ -4,18 +4,36 @@
 
 #include "GGacControllerListener.h"
 
-void vl::presentation::gtk::GGacControllerListener::GlobalTimer() {
-	INativeControllerListener::GlobalTimer();
-}
+namespace vl {
 
-void vl::presentation::gtk::GGacControllerListener::ClipboardUpdated() {
-	INativeControllerListener::ClipboardUpdated();
-}
+	namespace presentation {
 
-void vl::presentation::gtk::GGacControllerListener::NativeWindowCreated(vl::presentation::INativeWindow *window) {
-	INativeControllerListener::NativeWindowCreated(window);
-}
+		namespace gtk {
 
-void vl::presentation::gtk::GGacControllerListener::NativeWindowDestroying(vl::presentation::INativeWindow *window) {
-	INativeControllerListener::NativeWindowDestroying(window);
+			void GGacControllerListener::GlobalTimer()
+			{
+			}
+
+			void GGacControllerListener::ClipboardUpdated()
+			{
+			}
+
+			void GGacControllerListener::NativeWindowCreated(vl::presentation::INativeWindow *window)
+			{
+				Ptr<GGacWindowListener> listener = MakePtr<GGacWindowListener>(window);
+				window->InstallListener(listener.Obj());
+				nativeWindowListeners.Add(window, listener);
+			}
+
+			void GGacControllerListener::NativeWindowDestroying(vl::presentation::INativeWindow *window)
+			{
+				Ptr<GGacWindowListener> listener = nativeWindowListeners.Get(window);
+				nativeWindowListeners.Remove(window);
+				window->UninstallListener(listener.Obj());
+			}
+
+		}
+
+	}
+
 }

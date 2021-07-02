@@ -6,6 +6,7 @@
 #define GGAC_GGACCONTROLLERLISTENER_H
 
 #include "GacUI.h"
+#include "GGacWindowListener.h"
 
 namespace vl {
 
@@ -13,8 +14,13 @@ namespace vl {
 
 		namespace gtk {
 
+			using namespace collections;
+
 			class GGacControllerListener : public Object, public INativeControllerListener
 			{
+			protected:
+				Dictionary<INativeWindow*, Ptr<GGacWindowListener>>  nativeWindowListeners;
+
 			public:
 				void GlobalTimer() override;
 				void ClipboardUpdated() override;
