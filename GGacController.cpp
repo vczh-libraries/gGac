@@ -102,9 +102,6 @@ namespace vl {
 					{
 						callbackService.InvokeNativeWindowDestroyed(window);
 						windows.Remove(gWin);
-
-						if (gWin == mainWindow)
-							app->quit();
 						delete gWin;
 					}
 				}
