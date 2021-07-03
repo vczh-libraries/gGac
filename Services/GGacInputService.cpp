@@ -3,6 +3,7 @@
 //
 
 #include "GGacInputService.h"
+#include <gtkmm.h>
 
 namespace vl {
 
@@ -10,13 +11,21 @@ namespace vl {
 
 		namespace gtk {
 
-			GGacInputService::GGacInputService(TimerFunc timer)
+			GGacInputService::GGacInputService(TimerFunc _timer)
+					:timer(_timer)
 			{
-
 			}
 
-			void GGacInputService::StartTimer() {
+			bool GGacInputService::StartGDKTimer()
+			{
+				printf("!!!\n");
+				timer();
+				return true;
+			}
 
+			void GGacInputService::StartTimer()
+			{
+				Glib::signal_timeout().connect(sigc::mem_fun(*this, &GGacInputService::StartGDKTimer), 16);
 			}
 
 			void GGacInputService::StopTimer() {

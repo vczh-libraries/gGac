@@ -28,6 +28,16 @@ namespace vl {
 				return window;
 			}
 
+			void GGacWindow::SetGraphicsHandler(Interface* handler)
+			{
+				graphicsHandler = handler;
+			}
+
+			Interface* GGacWindow::GetGraphicsHandler() const
+			{
+				return graphicsHandler;
+			}
+
 			///
 
 			Point GGacWindow::Convert(NativePoint value) {

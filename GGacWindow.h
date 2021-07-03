@@ -18,10 +18,15 @@ namespace vl {
 			{
 			protected:
 				Gtk::Window* window;
+				Interface* graphicsHandler;
 			public:
 				GGacWindow();
 				virtual ~GGacWindow();
 				Gtk::Window* GetNativeWindow() const;
+				void SetGraphicsHandler(Interface* handelr);
+				Interface* GetGraphicsHandler() const;
+
+				///
 
 				Point Convert(NativePoint value) override;
 

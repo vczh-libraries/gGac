@@ -3,7 +3,7 @@
 //
 
 #include "GGacRenderer.h"
-
+#include "GGacLayoutProvider.h"
 #include "GuiSolidBorderElementRenderer.h"
 #include "Gui3DBorderElementRenderer.h"
 #include "Gui3DSplitterElementRenderer.h"
@@ -18,6 +18,7 @@
 
 #include "../GGacController.h"
 #include "../GGacControllerListener.h"
+#include "../GGacWindow.h"
 
 using namespace vl::collections;
 using namespace vl::presentation::gtk;
@@ -30,6 +31,12 @@ namespace vl {
 
 			namespace gtk {
 
+				namespace
+				{
+					IGGacRenderTarget* g_currentRenderTarget;
+					IGGacObjectProvider* g_gGacObjectProvider;
+				}
+
 				class GGacRenderTarget: public IGGacRenderTarget
 				{
 				protected:
@@ -38,44 +45,101 @@ namespace vl {
 					vint                    clipperCoverWholeTargetCounter;
 					INativeWindow*          window;
 				public:
-					void StartRendering() override {
+					GGacRenderTarget(INativeWindow* _window)
+					:window(_window)
+					{
 
 					}
 
-					RenderTargetFailure StopRendering() override {
+					void StartRendering() override
+					{
+						printf("!!!!!!!!!!!!!!!!");
+					}
+
+					RenderTargetFailure StopRendering() override
+					{
 						return None;
 					}
 
-					void PushClipper(Rect clipper) override {
+					void PushClipper(Rect clipper) override
+					{
 
 					}
 
-					void PopClipper() override {
+					void PopClipper() override
+					{
 
 					}
 
-					Rect GetClipper() override {
+					Rect GetClipper() override
+					{
 						return vl::presentation::Rect();
 					}
 
-					bool IsClipperCoverWholeTarget() override {
+					bool IsClipperCoverWholeTarget() override
+					{
 						return false;
 					}
 
-					Cairo::RefPtr<Cairo::Context> GetGGacContext() override {
+					Cairo::RefPtr<Cairo::Context> GetGGacContext() override
+					{
 						return Cairo::RefPtr<Cairo::Context>();
 					}
 				};
 
 				///
 
-				class GGacResourceManager : public GuiGraphicsResourceManager, public INativeControllerListener {
+				class GGacObjectProvider: public IGGacObjectProvider
+				{
+
+					void RecreateRenderTarget(INativeWindow* window)
+					{
+						// todo
+					}
+
+					IGGacRenderTarget* GetGGacRenderTarget(INativeWindow* window)
+					{
+						GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
+						if (gWin)
+							return dynamic_cast<IGGacRenderTarget*>(gWin->GetGraphicsHandler());
+						return 0;
+					}
+
+					IGGacRenderTarget* GetBindedRenderTarget(INativeWindow* window)
+					{
+						GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
+						if (gWin)
+							return dynamic_cast<IGGacRenderTarget*>(gWin->GetGraphicsHandler());
+						return 0;
+					}
+
+					void SetBindedRenderTarget(INativeWindow* window, IGGacRenderTarget* renderTarget)
+					{
+						GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
+						if (gWin)
+							gWin->SetGraphicsHandler(renderTarget);
+					}
+
+				};
+
+				///
+
+				class GGacResourceManager : public GuiGraphicsResourceManager, public INativeControllerListener
+				{
 				protected:
 					SortedList<Ptr<GGacRenderTarget>> renderTargets;
+					Ptr<GGacLayoutProvider>           layoutProvider;
 				public:
+
+					GGacResourceManager()
+					:layoutProvider(new GGacLayoutProvider())
+					{
+						g_gGacObjectProvider = new GGacObjectProvider;
+					}
+
 					IGuiGraphicsRenderTarget *GetRenderTarget(INativeWindow *window) override
 					{
-						return nullptr;
+						return GetGGacObjectProvider()->GetBindedRenderTarget(window);
 					}
 
 					void RecreateRenderTarget(INativeWindow *window) override
@@ -92,13 +156,23 @@ namespace vl {
 					{
 						return nullptr;
 					}
+
+					void NativeWindowCreated(INativeWindow *window) override
+					{
+						GGacRenderTarget* renderTarget = new GGacRenderTarget(window);
+						renderTargets.Add(renderTarget);
+						GetGGacObjectProvider()->SetBindedRenderTarget(window, renderTarget);
+					}
+
+					void NativeWindowDestroying(INativeWindow *window) override
+					{
+						GGacRenderTarget* renderTarget=dynamic_cast<GGacRenderTarget*>(GetGGacObjectProvider()->GetBindedRenderTarget(window));
+						GetGGacObjectProvider()->SetBindedRenderTarget(window, 0);
+						renderTargets.Remove(renderTarget);
+					}
 				};
 
 				///
-
-				namespace {
-					IGGacRenderTarget*      g_currentRenderTarget;
-				}
 
 				void SetCurrentRenderTarget(IGGacRenderTarget* renderTarget)
 				{
@@ -110,9 +184,18 @@ namespace vl {
 					return g_currentRenderTarget;
 				}
 
+				IGGacObjectProvider* GetGGacObjectProvider()
+				{
+					return g_gGacObjectProvider;
+				}
+
+				void SetGGacObjectProvider(IGGacObjectProvider* provider)
+				{
+					g_gGacObjectProvider = provider;
+				}
+
 				int SetupGGacRenderer()
 				{
-
 					INativeController *controller = CreateGGacController();
 					SetCurrentController(controller);
 					{

@@ -45,18 +45,37 @@ namespace vl {
 
 			namespace gtk {
 
-				class IGGacRenderTarget : public IGuiGraphicsRenderTarget
+				class IGGacRenderTarget : public Object, public IGuiGraphicsRenderTarget
 				{
 				public:
 					virtual Cairo::RefPtr<Cairo::Context> GetGGacContext() = 0;
 				};
 
-				extern int SetupGGacRenderer();
-				extern void SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
-				extern IGGacRenderTarget* GetCurrentRenderTarget();
-				inline Cairo::RefPtr<Cairo::Context> GetCurrentGGacContextFromRenderTarget() {
+				class IGGacObjectProvider : public Interface
+				{
+				public:
+					virtual void						RecreateRenderTarget(INativeWindow* window) = 0;
+					virtual IGGacRenderTarget*			GetGGacRenderTarget(INativeWindow* window) = 0;
+					virtual IGGacRenderTarget*          GetBindedRenderTarget(INativeWindow* window) = 0;
+					virtual void						SetBindedRenderTarget(INativeWindow* window, IGGacRenderTarget* renderTarget) = 0;
+				};
+
+				class IGGacResourceManager: public Interface
+				{
+				public:
+					virtual Ptr<elements::text::CharMeasurer>   CreateCharMeasurer(const FontProperties& fontProperties) = 0;
+					virtual void                                DestroyCharMeasurer(const FontProperties& fontProperties) = 0;
+				};
+
+				extern void                             SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
+				extern IGGacRenderTarget*               GetCurrentRenderTarget();
+				extern IGGacObjectProvider*				GetGGacObjectProvider();
+				extern void								SetGGacObjectProvider(IGGacObjectProvider* provider);
+				extern IGGacResourceManager*            GetGGacResourceManager();
+				inline Cairo::RefPtr<Cairo::Context>    GetCurrentGGacContextFromRenderTarget() {
 					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}
+				extern int                              SetupGGacRenderer();
 
 			}
 
