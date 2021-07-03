@@ -48,7 +48,7 @@ namespace vl {
 					GGacRenderTarget(INativeWindow* _window)
 					:window(_window)
 					{
-
+						//todo: create gdkview
 					}
 
 					void StartRendering() override
@@ -154,7 +154,7 @@ namespace vl {
 
 					IGuiGraphicsLayoutProvider *GetLayoutProvider() override
 					{
-						return nullptr;
+						return layoutProvider.Obj();
 					}
 
 					void NativeWindowCreated(INativeWindow *window) override
