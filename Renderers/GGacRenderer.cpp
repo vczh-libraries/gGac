@@ -19,6 +19,7 @@
 #include "../GGacController.h"
 #include "../GGacControllerListener.h"
 #include "../GGacWindow.h"
+#include "../GGacView.h"
 
 using namespace vl::collections;
 using namespace vl::presentation::gtk;
@@ -40,20 +41,20 @@ namespace vl {
 				class GGacRenderTarget: public IGGacRenderTarget
 				{
 				protected:
-					//CoreGraphicsView*       nativeView;
+					Ptr<GGacView>           view;
 					//List<Rect>              clippers;
-					vint                    clipperCoverWholeTargetCounter;
+					//vint                    clipperCoverWholeTargetCounter;
 					INativeWindow*          window;
 				public:
 					GGacRenderTarget(INativeWindow* _window)
 					:window(_window)
 					{
-						//todo: create gdkview
+						view = MakePtr<GGacView>(_window);
 					}
 
 					void StartRendering() override
 					{
-						printf("!!!!!!!!!!!!!!!!");
+						SetCurrentRenderTarget(this);
 					}
 
 					RenderTargetFailure StopRendering() override
@@ -83,7 +84,7 @@ namespace vl {
 
 					Cairo::RefPtr<Cairo::Context> GetGGacContext() override
 					{
-						return Cairo::RefPtr<Cairo::Context>();
+						return view->GetContext();
 					}
 				};
 

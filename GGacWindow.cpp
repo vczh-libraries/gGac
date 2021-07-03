@@ -182,7 +182,7 @@ namespace vl {
 			}
 
 			bool GGacWindow::IsVisible() {
-				return false;
+				return true;
 			}
 
 			void GGacWindow::Enable() {
