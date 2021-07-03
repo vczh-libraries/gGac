@@ -18,7 +18,6 @@ namespace vl {
 
 			bool GGacInputService::StartGDKTimer()
 			{
-				printf("!!!\n");
 				timer();
 				return true;
 			}
