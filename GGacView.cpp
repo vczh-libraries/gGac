@@ -29,11 +29,17 @@ namespace vl {
 
 			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
 			{
-				cr->set_source(surface, this->get_width(), this->get_height());
+				printf("on draw\n");
+				cr->set_source(surface, 0, 0);
 				cr->paint();
 			}
 
-			::Cairo::RefPtr<::Cairo::Context> GGacView::GetGGacContext()
+			void GGacView::resize(int width, int height)
+			{
+				this->set_size_request(width, height);
+			}
+
+			Cairo::RefPtr<::Cairo::Context> GGacView::GetGGacContext()
 			{
 				return Cairo::Context::create(surface);
 			}

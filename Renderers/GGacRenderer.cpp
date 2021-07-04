@@ -36,6 +36,7 @@ namespace vl {
 				{
 					IGGacRenderTarget* g_currentRenderTarget;
 					IGGacObjectProvider* g_gGacObjectProvider;
+					GGacControllerListener* g_gGacControllerListener;
 				}
 
 				class GGacRenderTarget: public IGGacRenderTarget
@@ -49,18 +50,19 @@ namespace vl {
 					GGacRenderTarget(INativeWindow* _window)
 					:window(_window)
 					{
-						view = MakePtr<GGacView>(_window);
-						dynamic_cast<GGacWindow*>(window)->GetNativeWindow()->add(*view.Obj());
-						view->show();
+						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
+						view = listener->GetGGacView();
 					}
 
 					void StartRendering() override
 					{
-						Cairo::RefPtr<Cairo::Context> context = GetGGacContext();
-						if (!context)
+						Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
+						if (!cr)
 							return;
 
 						SetCurrentRenderTarget(this);
+						cr->set_source_rgba(0, 0, 0, 0);
+						cr->fill_preserve();
 					}
 
 					RenderTargetFailure StopRendering() override
@@ -152,12 +154,18 @@ namespace vl {
 
 					void RecreateRenderTarget(INativeWindow *window) override
 					{
-
+						NativeWindowDestroying(window);
+						GetGGacObjectProvider()->RecreateRenderTarget(window);
+						NativeWindowCreated(window);
 					}
 
 					void ResizeRenderTarget(INativeWindow *window) override
 					{
-
+						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
+						if (listener)
+						{
+							return listener->ResizeRenderTarget();
+						}
 					}
 
 					IGuiGraphicsLayoutProvider *GetLayoutProvider() override
@@ -202,13 +210,15 @@ namespace vl {
 					g_gGacObjectProvider = provider;
 				}
 
+				///
+
 				int SetupGGacRenderer()
 				{
 					INativeController *controller = CreateGGacController();
 					SetCurrentController(controller);
 					{
-						auto controllerListener = new GGacControllerListener();
-						GetCurrentController()->CallbackService()->InstallListener(controllerListener);
+						g_gGacControllerListener = new GGacControllerListener();
+						GetCurrentController()->CallbackService()->InstallListener(g_gGacControllerListener);
 						GGacResourceManager resourceManager;
 						SetGuiGraphicsResourceManager(&resourceManager);
 						//SetGGacResourceManager(&resourceManager);
@@ -232,7 +242,7 @@ namespace vl {
 							GuiApplicationMain();
 						}
 						GetCurrentController()->CallbackService()->UninstallListener(&resourceManager);
-						GetCurrentController()->CallbackService()->UninstallListener(controllerListener);
+						GetCurrentController()->CallbackService()->UninstallListener(g_gGacControllerListener);
 					}
 					DestroyGGacController(controller);
 					return 0;

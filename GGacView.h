@@ -20,7 +20,8 @@ namespace vl {
 				GGacView(INativeWindow *window);
 				virtual ~GGacView();
 
-				::Cairo::RefPtr<::Cairo::Context> GetGGacContext();
+				void resize(int width, int height);
+				Cairo::RefPtr<::Cairo::Context> GetGGacContext();
 
 			protected:
 				INativeWindow *window;

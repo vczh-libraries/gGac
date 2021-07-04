@@ -26,6 +26,7 @@ namespace vl {
 				void ClipboardUpdated() override;
 				void NativeWindowCreated(INativeWindow *window) override;
 				void NativeWindowDestroying(INativeWindow *window) override;
+				Ptr<GGacWindowListener> GetGGacWindowListener(INativeWindow* window);
 			};
 
 		}

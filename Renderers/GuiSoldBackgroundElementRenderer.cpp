@@ -23,7 +23,7 @@ namespace vl {
 					{
 						case ElementShapeType::RoundRect:
 						case ElementShapeType::Rectangle:
-							cr->rectangle(bounds.x1, bounds.y1, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1);
+							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
 							cr->stroke();
 							break;
 

@@ -4,6 +4,8 @@
 
 #include "GGacWindowListener.h"
 
+#include "GGacWindow.h"
+#include "GGacView.h"
 
 namespace vl {
 
@@ -14,11 +16,62 @@ namespace vl {
 			GGacWindowListener::GGacWindowListener(INativeWindow *_window)
 					:window(_window)
 			{
+				view = MakePtr<GGacView>(_window);
+				dynamic_cast<GGacWindow*>(window)->GetNativeWindow()->add(*view.Obj());
+				view->show();
 			}
 
 			GGacWindowListener::~GGacWindowListener()
 			{
 
+			}
+
+			void GGacWindowListener::ResizeRenderTarget()
+			{
+				RebuildLayer(window->GetClientSize());
+			}
+
+			void GGacWindowListener::RebuildLayer(NativeSize size)
+			{
+				if (previousSize != size)
+				{
+					view->resize(size.x.value, size.y.value);
+					previousSize = size;
+				}
+			}
+
+			void GGacWindowListener::StartRendering()
+			{
+				rendering = true;
+			}
+
+			void GGacWindowListener::StopRendering()
+			{
+				rendering = false;
+			}
+
+			bool GGacWindowListener::RetrieveAndResetMovedWhileRendering()
+			{
+				bool result = movedWhileRendering;
+				movedWhileRendering = false;
+				return result;
+			}
+
+			void GGacWindowListener::Moved()
+			{
+				if (rendering)
+				{
+					movedWhileRendering = true;
+				}
+				else
+				{
+					RebuildLayer(window->GetClientSize());
+				}
+			}
+
+			Ptr<GGacView> GGacWindowListener::GetGGacView() const
+			{
+				return view;
 			}
 
 			INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location) {
@@ -27,10 +80,6 @@ namespace vl {
 
 			void GGacWindowListener::Moving(NativeRect &bounds, bool fixSizeOnly) {
 				INativeWindowListener::Moving(bounds, fixSizeOnly);
-			}
-
-			void GGacWindowListener::Moved() {
-				INativeWindowListener::Moved();
 			}
 
 			void GGacWindowListener::DpiChanged() {

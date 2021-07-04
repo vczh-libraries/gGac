@@ -6,6 +6,7 @@
 #define GGAC_GGACWINDOWLISTENER_H
 
 #include <GacUI.h>
+#include "GGacView.h"
 
 namespace vl {
 
@@ -16,13 +17,24 @@ namespace vl {
 			class GGacWindowListener : public Object, public INativeWindowListener
 			{
 			protected:
-				INativeWindow *window;
+				INativeWindow* 	window;
+				Ptr<GGacView> 	view;
+				NativeSize    	previousSize;
+				bool          	rendering = false;
+				bool          	movedWhileRendering = false;
+
+				void RebuildLayer(NativeSize size);
+				void StartRendering();
+				void StopRendering();
+				bool RetrieveAndResetMovedWhileRendering();
 
 			public:
-
 				GGacWindowListener(INativeWindow *window);
-
 				virtual ~GGacWindowListener();
+				Ptr<GGacView> GetGGacView() const;
+				void ResizeRenderTarget();
+
+				///
 
 				HitTestResult HitTest(NativePoint location) override;
 

@@ -37,7 +37,7 @@ void GuiMain()
 	window->GetBoundsComposition()->SetPreferredMinSize(Size(480, 320));
 	window->MoveToScreenCenter();
 
-	/*auto label = new GuiLabel(theme::ThemeName::Label);
+	auto label = new GuiLabel(theme::ThemeName::Label);
 	label->SetText(L"Welcome to GacUI Library!");
 	{
 		FontProperties font;
@@ -46,7 +46,7 @@ void GuiMain()
 		font.antialias = true;
 		label->SetFont(font);
 	}
-	window->AddChild(label);*/
+	window->AddChild(label);
 	GetApplication()->Run(window);
 	delete window;
 }

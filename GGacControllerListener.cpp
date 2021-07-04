@@ -32,6 +32,12 @@ namespace vl {
 				window->UninstallListener(listener.Obj());
 			}
 
+			Ptr<GGacWindowListener> GGacControllerListener::GetGGacWindowListener(INativeWindow* window)
+			{
+				vint index = nativeWindowListeners.Keys().IndexOf(window);
+				return index == -1 ? nullptr : nativeWindowListeners.Values().Get(index);
+			}
+
 		}
 
 	}

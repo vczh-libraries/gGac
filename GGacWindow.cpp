@@ -40,11 +40,13 @@ namespace vl {
 
 			///
 
-			Point GGacWindow::Convert(NativePoint value) {
+			Point GGacWindow::Convert(NativePoint value)
+			{
 				return Point(value.x.value, value.y.value);
 			}
 
-			NativePoint GGacWindow::Convert(Point value) {
+			NativePoint GGacWindow::Convert(Point value)
+			{
 				return NativePoint(value.x, value.y);
 			}
 
@@ -52,15 +54,18 @@ namespace vl {
 				return Size(value.x.value, value.y.value);
 			}
 
-			NativeSize GGacWindow::Convert(Size value) {
+			NativeSize GGacWindow::Convert(Size value)
+			{
 				return NativeSize(value.x, value.y);
 			}
 
-			Margin GGacWindow::Convert(NativeMargin value) {
+			Margin GGacWindow::Convert(NativeMargin value)
+			{
 				return Margin(value.left.value, value.top.value, value.right.value, value.bottom.value);
 			}
 
-			NativeMargin GGacWindow::Convert(Margin value) {
+			NativeMargin GGacWindow::Convert(Margin value)
+			{
 				return NativeMargin(value.left, value.top, value.right, value.bottom);
 			}
 
@@ -71,93 +76,116 @@ namespace vl {
 				return NativeRect(x, y, width, height);
 			}
 
-			void GGacWindow::SetBounds(const NativeRect &bounds) {
-
+			void GGacWindow::SetBounds(const NativeRect &bounds)
+			{
+				window->set_default_geometry(bounds.x1.value, bounds.y1.value);
+				window->set_default_size(bounds.Width().value, bounds.Height().value);
 			}
 
-			NativeSize GGacWindow::GetClientSize() {
+			NativeSize GGacWindow::GetClientSize()
+			{
 				int x, y;
 				window->get_size(x, y);
 				return NativeSize(x, y);
 			}
 
-			void GGacWindow::SetClientSize(NativeSize size) {
+			void GGacWindow::SetClientSize(NativeSize size)
+			{
 				window->set_default_size(size.x.value, size.y.value);
 			}
 
-			NativeRect GGacWindow::GetClientBoundsInScreen() {
+			NativeRect GGacWindow::GetClientBoundsInScreen()
+			{
 				return vl::presentation::NativeRect();
 			}
 
-			WString GGacWindow::GetTitle() {
-				return vl::WString();
+			WString GGacWindow::GetTitle()
+			{
+				window->get_title();
 			}
 
-			void GGacWindow::SetTitle(WString title) {
+			void GGacWindow::SetTitle(WString title)
+			{
 				window->set_title(Glib::ustring::format(title.Buffer()));
 			}
 
-			INativeCursor *GGacWindow::GetWindowCursor() {
+			INativeCursor *GGacWindow::GetWindowCursor()
+			{
 				return nullptr;
 			}
 
-			void GGacWindow::SetWindowCursor(INativeCursor *cursor) {
+			void GGacWindow::SetWindowCursor(INativeCursor *cursor)
+			{
 
 			}
 
-			NativePoint GGacWindow::GetCaretPoint() {
+			NativePoint GGacWindow::GetCaretPoint()
+			{
 				return vl::presentation::NativePoint();
 			}
 
-			void GGacWindow::SetCaretPoint(NativePoint point) {
+			void GGacWindow::SetCaretPoint(NativePoint point)
+			{
 
 			}
 
-			INativeWindow *GGacWindow::GetParent() {
+			INativeWindow *GGacWindow::GetParent()
+			{
 				return nullptr;
 			}
 
-			void GGacWindow::SetParent(INativeWindow *parent) {
+			void GGacWindow::SetParent(INativeWindow *parent)
+			{
 
 			}
 
-			INativeWindow::WindowMode GGacWindow::GetWindowMode() {
-				return Tooltip;
+			INativeWindow::WindowMode GGacWindow::GetWindowMode()
+			{
+				return Normal;
 			}
 
-			void GGacWindow::SetWindowMode(INativeWindow::WindowMode mode) {
-
-			}
-
-			void GGacWindow::EnableCustomFrameMode() {
-
-			}
-
-			void GGacWindow::DisableCustomFrameMode() {
+			void GGacWindow::SetWindowMode(INativeWindow::WindowMode mode)
+			{
 
 			}
 
-			bool GGacWindow::IsCustomFrameModeEnabled() {
+			void GGacWindow::EnableCustomFrameMode()
+			{
+
+			}
+
+			void GGacWindow::DisableCustomFrameMode()
+			{
+
+			}
+
+			bool GGacWindow::IsCustomFrameModeEnabled()
+			{
 				return false;
 			}
 
-			NativeMargin GGacWindow::GetCustomFramePadding() {
+			NativeMargin GGacWindow::GetCustomFramePadding()
+			{
 				return vl::presentation::NativeMargin();
 			}
 
-			Ptr<GuiImageData> GGacWindow::GetIcon() {
+			Ptr<GuiImageData> GGacWindow::GetIcon()
+			{
 				return Ptr<GuiImageData>();
 			}
 
-			void GGacWindow::SetIcon(Ptr<GuiImageData> icon) {
+			void GGacWindow::SetIcon(Ptr<GuiImageData> icon)
+			{
 
 			}
 
-			INativeWindow::WindowSizeState GGacWindow::GetSizeState() {
+			INativeWindow::WindowSizeState GGacWindow::GetSizeState()
+			{
 				return Restored;
 			}
 
-			void GGacWindow::Show() {
+			void GGacWindow::Show()
+			{
 				window->show();
 			}
 
@@ -194,7 +222,7 @@ namespace vl {
 			}
 
 			bool GGacWindow::IsEnabled() {
-				return false;
+				return true;
 			}
 
 			void GGacWindow::SetFocus() {
@@ -305,15 +333,18 @@ namespace vl {
 
 			}
 
-			void GGacWindow::SupressAlt() {
+			void GGacWindow::SupressAlt()
+			{
 
 			}
 
-			bool GGacWindow::InstallListener(INativeWindowListener *listener) {
+			bool GGacWindow::InstallListener(INativeWindowListener *listener)
+			{
 				return false;
 			}
 
-			bool GGacWindow::UninstallListener(INativeWindowListener *listener) {
+			bool GGacWindow::UninstallListener(INativeWindowListener *listener)
+			{
 				return false;
 			}
 
