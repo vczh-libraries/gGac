@@ -56,11 +56,16 @@ namespace vl {
 
 					void StartRendering() override
 					{
+						Cairo::RefPtr<Cairo::Context> context = GetGGacContext();
+						if (!context)
+							return;
+
 						SetCurrentRenderTarget(this);
 					}
 
 					RenderTargetFailure StopRendering() override
 					{
+						view->queue_draw();
 						return None;
 					}
 
@@ -209,10 +214,10 @@ namespace vl {
 						//SetGGacResourceManager(&resourceManager);
 						GetCurrentController()->CallbackService()->InstallListener(&resourceManager);
 						{
-							GuiSolidBorderElementRenderer::Register();
-							Gui3DBorderElementRenderer::Register();
-							GuiSolidBackgroundElementRenderer::Register();
 							GuiSolidLabelElementRenderer::Register();
+							GuiSolidBorderElementRenderer::Register();
+							GuiSolidBackgroundElementRenderer::Register();
+							Gui3DBorderElementRenderer::Register();
 							Gui3DSplitterElementRenderer::Register();
 							GuiGradientBackgroundElementRenderer::Register();
 							GuiImageFrameElementRenderer::Register();

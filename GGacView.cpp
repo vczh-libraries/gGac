@@ -29,7 +29,7 @@ namespace vl {
 
 			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
 			{
-				cr->set_source(this->get_window()->get_offscreen_surface(), this->get_width(), this->get_height());
+				cr->set_source(surface, this->get_width(), this->get_height());
 				cr->paint();
 			}
 
