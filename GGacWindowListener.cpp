@@ -74,6 +74,11 @@ namespace vl {
 				return view;
 			}
 
+			void GGacWindowListener::RecreateRenderTarget()
+			{
+				RebuildLayer(window->GetClientSize());
+			}
+
 			INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location) {
 				return INativeWindowListener::HitTest(location);
 			}

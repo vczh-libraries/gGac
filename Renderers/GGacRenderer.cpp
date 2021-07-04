@@ -56,19 +56,33 @@ namespace vl {
 
 					void StartRendering() override
 					{
+						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
+						listener->StartRendering();
 						Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
 						if (!cr)
 							return;
 
 						SetCurrentRenderTarget(this);
 						cr->set_source_rgba(0, 0, 0, 0);
-						cr->fill_preserve();
+						cr->fill();
+						cr->save();
+						view->queue_draw();
 					}
 
 					RenderTargetFailure StopRendering() override
 					{
-						view->queue_draw();
-						return None;
+						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
+						listener->StopRendering();
+						bool moved = listener->RetrieveAndResetMovedWhileRendering();
+
+						Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
+						if (!cr) {
+							return RenderTargetFailure::LostDevice;
+						}
+
+						cr->restore();
+						SetCurrentRenderTarget(0);
+						return !moved ? RenderTargetFailure::None : RenderTargetFailure::ResizeWhileRendering;;
 					}
 
 					void PushClipper(Rect clipper) override

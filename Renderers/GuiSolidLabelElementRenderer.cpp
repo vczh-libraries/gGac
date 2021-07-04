@@ -30,7 +30,6 @@ namespace vl {
 					int text_width;
 					int text_height;
 					layout->get_pixel_size(text_width, text_height);
-					cr->move_to((bounds.Width()-text_width)/2, (bounds.Height()-text_height)/2);
 					layout->show_in_cairo_context(cr);
 				}
 

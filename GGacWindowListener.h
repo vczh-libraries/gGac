@@ -24,15 +24,16 @@ namespace vl {
 				bool          	movedWhileRendering = false;
 
 				void RebuildLayer(NativeSize size);
-				void StartRendering();
-				void StopRendering();
-				bool RetrieveAndResetMovedWhileRendering();
 
 			public:
 				GGacWindowListener(INativeWindow *window);
 				virtual ~GGacWindowListener();
 				Ptr<GGacView> GetGGacView() const;
+				void StartRendering();
+				void StopRendering();
 				void ResizeRenderTarget();
+				void RecreateRenderTarget();
+				bool RetrieveAndResetMovedWhileRendering();
 
 				///
 

@@ -25,11 +25,11 @@ namespace vl {
 			bool GGacView::onConfigure(GdkEventConfigure* event)
 			{
 				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), this->get_width(), this->get_height());
+				context = Cairo::Context::create(surface);
 			}
 
 			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
 			{
-				printf("on draw\n");
 				cr->set_source(surface, 0, 0);
 				cr->paint();
 			}
@@ -41,7 +41,7 @@ namespace vl {
 
 			Cairo::RefPtr<::Cairo::Context> GGacView::GetGGacContext()
 			{
-				return Cairo::Context::create(surface);
+				return context;
 			}
 
 		}

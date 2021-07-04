@@ -16,7 +16,7 @@ namespace vl {
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();
-					cr->set_source_rgba(c.r, c.g, c.b, c.a);
+					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
 
 					switch(element->GetShape().shapeType)
 					{
