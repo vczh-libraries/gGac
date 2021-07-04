@@ -50,6 +50,8 @@ namespace vl {
 					:window(_window)
 					{
 						view = MakePtr<GGacView>(_window);
+						dynamic_cast<GGacWindow*>(window)->GetNativeWindow()->add(*view.Obj());
+						view->show();
 					}
 
 					void StartRendering() override
@@ -84,7 +86,7 @@ namespace vl {
 
 					Cairo::RefPtr<Cairo::Context> GetGGacContext() override
 					{
-						return view->GetContext();
+						return view->GetGGacContext();
 					}
 				};
 

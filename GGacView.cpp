@@ -3,6 +3,7 @@
 //
 
 #include "GGacView.h"
+#include "GGacWindow.h"
 
 namespace vl {
 
@@ -14,20 +15,27 @@ namespace vl {
 			:window(_window)
 			{
 				signal_draw().connect(sigc::mem_fun(*this, &GGacView::onDraw));
+				signal_configure_event().connect(sigc::mem_fun(*this, &GGacView::onConfigure));
 			}
 
 			GGacView::~GGacView()
 			{
+			}
 
+			bool GGacView::onConfigure(GdkEventConfigure* event)
+			{
+				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), this->get_width(), this->get_height());
 			}
 
 			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
 			{
+				cr->set_source(this->get_window()->get_offscreen_surface(), this->get_width(), this->get_height());
+				cr->paint();
 			}
 
-			::Cairo::RefPtr<::Cairo::Context> GGacView::GetContext()
+			::Cairo::RefPtr<::Cairo::Context> GGacView::GetGGacContext()
 			{
-				//todo return drawing area cario context;
+				return Cairo::Context::create(surface);
 			}
 
 		}

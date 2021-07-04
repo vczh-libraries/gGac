@@ -16,16 +16,18 @@ namespace vl {
 
 			class GGacView : public Gtk::DrawingArea
 			{
-			protected:
-				INativeWindow *window;
-
-				bool onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr);
-
 			public:
 				GGacView(INativeWindow *window);
 				virtual ~GGacView();
 
-				::Cairo::RefPtr<::Cairo::Context> GetContext();
+				::Cairo::RefPtr<::Cairo::Context> GetGGacContext();
+
+			protected:
+				INativeWindow *window;
+				Cairo::RefPtr<Cairo::Surface> surface;
+
+				bool onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr);
+				bool onConfigure(GdkEventConfigure* event);
 			};
 
 		}
