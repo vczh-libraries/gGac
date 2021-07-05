@@ -13,23 +13,24 @@ namespace vl {
 
 			namespace gtk {
 
+				const Pango::FontDescription& GuiSolidLabelElementRenderer::createFont()
+				{
+					FontProperties font = element->GetFont();
+					Pango::FontDescription* gFont = new Pango::FontDescription();
+					gFont->set_family("Monospace");
+					gFont->set_size(font.size * PANGO_SCALE);
+					//font.set_stretch(Pango::STRETCH_NORMAL);
+					return *gFont;
+				}
+
 				IMPLEMENT_ELEMENT_RENDERER(GuiSolidLabelElementRenderer)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 
-					Pango::FontDescription font;
-					font.set_family("Monospace");
-					//font.set_stretch(Pango::STRETCH_NORMAL);
-					font.set_size(30 * PANGO_SCALE);
-
+					Pango::FontDescription font = createFont();
 					auto layout = Pango::Layout::create(cr);
 					layout->set_text(Glib::ustring::format(element->GetText().Buffer()));
 					layout->set_font_description(font);
-					layout->set_width(static_cast<int>(bounds.Width() * Pango::SCALE));
-
-					int text_width;
-					int text_height;
-					layout->get_pixel_size(text_width, text_height);
 					layout->show_in_cairo_context(cr);
 				}
 

@@ -30,7 +30,7 @@ namespace vl {
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
-					listeners[i]->Moved();
+					listeners[i]->Paint();
 				}
 			}
 

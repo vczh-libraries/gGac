@@ -17,7 +17,13 @@ namespace vl {
 
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
+				protected:
+					const Pango::FontDescription& createFont();
+
+
+				public:
 				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)
+
 				};
 
 			}
