@@ -15,6 +15,7 @@ namespace vl {
 					:window(0)
 			{
 				window = new Gtk::Window();
+				window->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 
 			GGacWindow::~GGacWindow()
@@ -22,6 +23,18 @@ namespace vl {
 				window->close();
 				delete window;
 			}
+
+			///
+
+			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
+			{
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Moved();
+				}
+			}
+
+			///
 
 			Gtk::Window* GGacWindow::GetNativeWindow() const
 			{
@@ -340,12 +353,12 @@ namespace vl {
 
 			bool GGacWindow::InstallListener(INativeWindowListener *listener)
 			{
-				return false;
+				listeners.Add(listener);
 			}
 
 			bool GGacWindow::UninstallListener(INativeWindowListener *listener)
 			{
-				return false;
+				listeners.Remove(listener);
 			}
 
 			void GGacWindow::RedrawContent() {

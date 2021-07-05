@@ -32,7 +32,7 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 void GuiMain()
 {
 	auto window = new GuiWindow(theme::ThemeName::Window);
-	//window->SetText(L"Hello, world!");
+	window->SetText(L"Hello, world!");
 	window->SetClientSize(Size(480, 320));
 	window->GetBoundsComposition()->SetPreferredMinSize(Size(480, 320));
 	window->MoveToScreenCenter();

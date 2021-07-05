@@ -27,6 +27,7 @@ namespace vl {
 				INativeWindow *window;
 				Cairo::RefPtr<Cairo::Surface> surface;
 				Cairo::RefPtr<Cairo::Context> context;
+				bool needRepaint;
 
 				bool onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr);
 				bool onConfigure(GdkEventConfigure* event);

@@ -82,14 +82,14 @@ namespace vl {
 					return window;
 				}
 
-				void DestroyNativeWindow(INativeWindow* window)
+				void DestroyNativeWindow(INativeWindow* _window)
 				{
-					GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
-					if (gWin != 0 && windows.Contains(gWin))
+					GGacWindow* window = dynamic_cast<GGacWindow*>(_window);
+					if (window != 0 && windows.Contains(window))
 					{
 						callbackService.InvokeNativeWindowDestroyed(window);
-						windows.Remove(gWin);
-						delete gWin;
+						windows.Remove(window);
+						delete window;
 					}
 				}
 

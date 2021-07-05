@@ -14,11 +14,17 @@ namespace vl {
 
 		namespace gtk {
 
+			using namespace collections;
+
 			class GGacWindow : public Object, public INativeWindow
 			{
 			protected:
-				Gtk::Window* window;
-				Interface* graphicsHandler;
+				Gtk::Window* 					window;
+				Interface* 						graphicsHandler;
+				List<INativeWindowListener*>	listeners;
+
+				void onSizeChanged(const Gdk::Rectangle& rect);
+
 			public:
 				GGacWindow();
 				virtual ~GGacWindow();

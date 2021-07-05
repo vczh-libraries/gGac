@@ -82,7 +82,7 @@ namespace vl {
 
 						cr->restore();
 						SetCurrentRenderTarget(0);
-						return !moved ? RenderTargetFailure::None : RenderTargetFailure::ResizeWhileRendering;;
+						return !moved ? RenderTargetFailure::None : RenderTargetFailure::ResizeWhileRendering;
 					}
 
 					void PushClipper(Rect clipper) override
