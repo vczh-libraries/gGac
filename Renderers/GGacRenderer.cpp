@@ -43,12 +43,13 @@ namespace vl {
 				{
 				protected:
 					Ptr<GGacView>           view;
-					//List<Rect>              clippers;
-					//vint                    clipperCoverWholeTargetCounter;
+					List<Rect>              clippers;
+					vint                    clipperCoverWholeTargetCounter;
 					INativeWindow*          window;
 				public:
 					GGacRenderTarget(INativeWindow* _window)
-					:window(_window)
+					:window(_window),
+					clipperCoverWholeTargetCounter(0)
 					{
 						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
 						view = listener->GetGGacView();
@@ -63,7 +64,7 @@ namespace vl {
 							return;
 
 						SetCurrentRenderTarget(this);
-						cr->set_source_rgba(0, 0, 0, 0);
+						cr->set_source_rgba(1, 1, 1, 1);
 						cr->fill();
 						cr->save();
 						view->queue_draw();
@@ -87,22 +88,61 @@ namespace vl {
 
 					void PushClipper(Rect clipper) override
 					{
-
+						if (clipperCoverWholeTargetCounter > 0)
+						{
+							clipperCoverWholeTargetCounter++;
+						}
+						else
+						{
+							Rect previousClipper = GetClipper();
+							Rect currentClipper;
+							currentClipper.x1 = (previousClipper.x1 > clipper.x1 ? previousClipper.x1 : clipper.x1);
+							currentClipper.y1 = (previousClipper.y1 > clipper.y1 ? previousClipper.y1 : clipper.y1);
+							currentClipper.x2 = (previousClipper.x2 < clipper.x2 ? previousClipper.x2 : clipper.x2);
+							currentClipper.y2 = (previousClipper.y2 < clipper.y2 ? previousClipper.y2 : clipper.y2);
+							if (currentClipper.x1 < currentClipper.x2 && currentClipper.y1 < currentClipper.y2)
+							{
+								clippers.Add(currentClipper);
+								Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
+								cr->save();
+								cr->rectangle(currentClipper.Left(), currentClipper.Top(), currentClipper.Width(), currentClipper.Height());
+								cr->clip();
+							}
+							else
+							{
+								clipperCoverWholeTargetCounter++;
+							}
+						}
 					}
 
 					void PopClipper() override
 					{
-
+						if (clipperCoverWholeTargetCounter > 0)
+						{
+							clipperCoverWholeTargetCounter--;
+						}
+						else if (clippers.Count() >0)
+						{
+							clippers.RemoveAt(clippers.Count()-1);
+							GetGGacContext()->restore();
+						}
 					}
 
 					Rect GetClipper() override
 					{
-						return vl::presentation::Rect();
+						if (clippers.Count() == 0)
+						{
+							return Rect(Point(0, 0), window->Convert(window->GetClientSize()));
+						}
+						else
+						{
+							return clippers[clippers.Count()-1];
+						}
 					}
 
 					bool IsClipperCoverWholeTarget() override
 					{
-						return false;
+						return clipperCoverWholeTargetCounter > 0;
 					}
 
 					Cairo::RefPtr<Cairo::Context> GetGGacContext() override

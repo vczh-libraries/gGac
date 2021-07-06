@@ -31,6 +31,7 @@ namespace vl {
 					auto layout = Pango::Layout::create(cr);
 					layout->set_text(Glib::ustring::format(element->GetText().Buffer()));
 					layout->set_font_description(font);
+					layout->set_width(static_cast<long>(bounds.Width() * Pango::SCALE));
 					layout->show_in_cairo_context(cr);
 				}
 

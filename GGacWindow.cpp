@@ -30,7 +30,7 @@ namespace vl {
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
-					listeners[i]->Paint();
+					listeners[i]->Moved();
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace vl {
 				int x, y, width, height;
 				window->get_position(x, y);
 				window->get_size(width, height);
-				return NativeRect(x, y, width, height);
+				return NativeRect(x, y, x + width, y + height);
 			}
 
 			void GGacWindow::SetBounds(const NativeRect &bounds)
