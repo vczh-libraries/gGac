@@ -91,8 +91,13 @@ namespace vl {
 
 			void GGacWindow::SetBounds(const NativeRect &bounds)
 			{
-				window->set_default_geometry(bounds.x1.value, bounds.y1.value);
-				window->set_default_size(bounds.Width().value, bounds.Height().value);
+				NativeRect newBounds = bounds;
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Moving(newBounds, true);
+				}
+				window->set_allocation(Gtk::Allocation(newBounds.Left().value, newBounds.Top().value, newBounds.Width().value, newBounds.Height().value));
+				Show();
 			}
 
 			NativeSize GGacWindow::GetClientSize()

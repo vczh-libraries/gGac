@@ -5,6 +5,7 @@
 #ifndef GGAC_GUISOLIDLABELELEMENTRENDERER_H
 #define GGAC_GUISOLIDLABELELEMENTRENDERER_H
 
+#include <gtkmm.h>
 #include "GGacRenderer.h"
 
 namespace vl {
@@ -18,8 +19,10 @@ namespace vl {
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
 				protected:
-					const Pango::FontDescription& createFont();
+					Glib::RefPtr<Pango::Layout> layout;
 
+					void CreateFont();
+					void UpdateMinSize();
 
 				public:
 				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)

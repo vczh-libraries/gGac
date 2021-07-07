@@ -53,6 +53,10 @@ namespace vl {
 					{
 						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
 						view = listener->GetGGacView();
+
+						Gtk::Window *gWin = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
+						gWin->add(*view.Obj());
+						view->show();
 					}
 
 					void StartRendering() override
@@ -96,10 +100,10 @@ namespace vl {
 						{
 							Rect previousClipper = GetClipper();
 							Rect currentClipper;
-							currentClipper.x1 = (previousClipper.x1 > clipper.x1 ? previousClipper.x1 : clipper.x1);
-							currentClipper.y1 = (previousClipper.y1 > clipper.y1 ? previousClipper.y1 : clipper.y1);
-							currentClipper.x2 = (previousClipper.x2 < clipper.x2 ? previousClipper.x2 : clipper.x2);
-							currentClipper.y2 = (previousClipper.y2 < clipper.y2 ? previousClipper.y2 : clipper.y2);
+							currentClipper.x1 = fmax(previousClipper.x1, clipper.x1);
+							currentClipper.y1 = fmax(previousClipper.y1, clipper.y1);
+							currentClipper.x2 = fmin(previousClipper.x2, clipper.x2);
+							currentClipper.y2 = fmin(previousClipper.y2, clipper.y2);
 							if (currentClipper.x1 < currentClipper.x2 && currentClipper.y1 < currentClipper.y2)
 							{
 								clippers.Add(currentClipper);
@@ -123,8 +127,9 @@ namespace vl {
 						}
 						else if (clippers.Count() >0)
 						{
+							Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
+							cr->restore();
 							clippers.RemoveAt(clippers.Count()-1);
-							GetGGacContext()->restore();
 						}
 					}
 

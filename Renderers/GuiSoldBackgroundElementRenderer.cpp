@@ -17,14 +17,13 @@ namespace vl {
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();
 					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-					cr->fill();
 
 					switch(element->GetShape().shapeType)
 					{
 						case ElementShapeType::RoundRect:
 						case ElementShapeType::Rectangle:
 							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
-							cr->stroke();
+							cr->fill();
 							break;
 
 						case ElementShapeType::Ellipse:

@@ -43,10 +43,15 @@ void GuiMain()
 	font.size = 32;
 	font.antialias = true;
 
-	auto button = new GuiButton(theme::ThemeName::Button);
-	button->SetFont(font);
-	button->SetText(L"test");
-	window->AddChild(button);
+	auto button1 = new GuiButton(theme::ThemeName::Button);
+	button1->SetFont(font);
+	button1->SetText(L"test1");
+	window->AddChild(button1);
+
+	auto button2 = new GuiButton(theme::ThemeName::Button);
+	button2->SetFont(font);
+	button2->SetText(L"test2");
+	window->AddChild(button2);
 
 	auto label = new GuiLabel(theme::ThemeName::Label);
 	label->SetText(L"Welcome to GacUI Library!");

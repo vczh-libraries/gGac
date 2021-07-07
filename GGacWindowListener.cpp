@@ -17,11 +17,6 @@ namespace vl {
 					:window(_window)
 			{
 				view = MakePtr<GGacView>(_window);
-				Gtk::Window *gWin = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
-
-				//gWin->signal_configure_event().connect(sigc::mem_fun(*this, &GGacWindowListener::onConfigure));
-				gWin->add(*view.Obj());
-				view->show();
 			}
 
 			GGacWindowListener::~GGacWindowListener()
