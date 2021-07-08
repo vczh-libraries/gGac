@@ -1,0 +1,17 @@
+我的实现是从一个最小化的Helloworld开始, 目标是渲染出HelloWorld_Cpp中的代码
+
+实现一个皮儿，最重要的是要实现以下接口
+
+INativeController
+负责创建INativeWindow，并在Run方法中进入GUI事件循环
+
+INativeControllerListener
+
+INativeWindow
+
+INativeWindowListener
+
+IGuiGraphicsRenderTarget
+渲染对象，要正确实现StartRendering、StopRendering、以及Clipper相关函数
+Clipper的Push和Pop用以保存并裁切渲染上下文，以便每个Renderer在渲染对应的对象时可以获得一个“干净”的渲染Context同时保证渲染到准确的位置。
+干净的意思是，比如渲染两个button，每个button是要独立渲染的，不能把当前button的背景色填充成上一个button的背景色。

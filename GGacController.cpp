@@ -102,7 +102,7 @@ namespace vl {
 				{
 					mainWindow = window;
 					mainWindow->Show();
-					app->run(*dynamic_cast<GGacWindow*>(window)->GetNativeWindow());
+					app->run(*dynamic_cast<GGacWindow*>(mainWindow)->GetNativeWindow());
 				}
 
 				INativeWindow* GetWindow(NativePoint location)
