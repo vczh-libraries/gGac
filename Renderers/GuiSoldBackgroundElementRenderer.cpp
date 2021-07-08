@@ -27,8 +27,8 @@ namespace vl {
 							break;
 
 						case ElementShapeType::Ellipse:
-							/*cr->arc();
-							cr->stroke();*/
+							cr->arc(bounds.x1 + bounds.Width() / 2, bounds.y1 + bounds.Width() / 2, bounds.Width() / 2, -3.1415926, 3.1415926);
+							cr->fill();
 							break;
 					}
 				}

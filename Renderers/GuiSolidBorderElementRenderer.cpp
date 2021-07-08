@@ -22,13 +22,13 @@ namespace vl {
 					{
 						case ElementShapeType::RoundRect:
 						case ElementShapeType::Rectangle:
-							cr->rectangle(bounds.x1 + 0.5f, bounds.y1 + 0.5f, bounds.Width() - 1.f, bounds.Height() - 1.f);
+							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
 							cr->stroke();
 							break;
 
 						case ElementShapeType::Ellipse:
-							/*cr->arc();
-							cr->stroke();*/
+							cr->arc(bounds.x1 + bounds.Width() / 2, bounds.y1 + bounds.Width() / 2, bounds.Width() / 2, -3.1415926, 3.1415926);
+							cr->stroke();
 							break;
 					}
 				}
