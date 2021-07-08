@@ -56,7 +56,6 @@ namespace vl {
 					}
 					oldText = element->GetText();*/
 					minSize = Size(INT_MAX, INT_MAX);
-					//std::wcout << L"changed " << element->GetText().Buffer() << std::endl;
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
@@ -71,7 +70,6 @@ namespace vl {
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
 					minSize = Size(INT_MAX, INT_MAX);
-					//std::wcout << L"internal " << element->GetText().Buffer() << std::endl;
 				}
 
 				void GuiSolidLabelElementRenderer::Render(Rect bounds)
