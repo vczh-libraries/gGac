@@ -25,7 +25,7 @@ namespace vl {
 					FontProperties font = element->GetFont();
 					Pango::FontDescription gFont;
 					gFont.set_family("Monospace");
-					gFont.set_size(font.size * PANGO_SCALE);
+					gFont.set_size(fmax(font.size, 12) * PANGO_SCALE);
 					//gFont.set_stretch(Pango::STRETCH_NORMAL);
 
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();

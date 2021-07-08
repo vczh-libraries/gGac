@@ -1,5 +1,7 @@
-#include "Renderers/GGacRenderer.h"
 #include <Skins/DarkSkin/DarkSkin.h>
+#include "Renderers/GGacRenderer.h"
+#include "UI/Source/Demo.h"
+#include "UI/Source/HelloWorld.h"
 
 using namespace vl;
 using namespace vl::presentation;
@@ -8,6 +10,8 @@ using namespace vl::presentation::compositions;
 using namespace vl::presentation::controls;
 using namespace vl::presentation::theme;
 using namespace vl::presentation::templates;
+using namespace vl::collections;
+using namespace vl::stream;
 
 class DefaultSkinPlugin : public Object, public IGuiPlugin
 {
@@ -31,30 +35,13 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
 void GuiMain()
 {
-	auto window = new GuiWindow(theme::ThemeName::Window);
-	window->SetText(L"Hello, world!");
-	//window->SetTitleBar(false);
-	window->SetClientSize(Size(480, 320));
-	window->GetBoundsComposition()->SetPreferredMinSize(Size(480, 320));
-	window->MoveToScreenCenter();
-
-	auto label = new GuiLabel(theme::ThemeName::Label);
-	label->SetText(L"Welcome to GacUI Library!");
 	{
-		FontProperties font;
-		font.fontFamily = L"Segoe UI";
-		font.size = 20;
-		font.antialias = true;
-		label->SetFont(font);
+		FileStream fileStream(L"/tmp/Alignment.bin", FileStream::ReadOnly);
+		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
-	window->AddChild(label);
-
-	/*auto button = new GuiButton(theme::ThemeName::Button);
-	button->SetText(L"test");
-	button->SetFont(font);
-	window->AddChild(button);*/
-
-	GetApplication()->Run(window);
+	demo::MainWindow window;
+	window.MoveToScreenCenter();
+	GetApplication()->Run(&window);
 }
 
 int main(int argc, char **argv)

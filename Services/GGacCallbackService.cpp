@@ -10,8 +10,7 @@ namespace vl {
 
 		namespace gtk {
 
-			using namespace collections;
-			List<INativeControllerListener *> listeners;
+			collections::List<INativeControllerListener *> listeners;
 
 			bool GGacCallbackService::InstallListener(INativeControllerListener *listener)
 			{
