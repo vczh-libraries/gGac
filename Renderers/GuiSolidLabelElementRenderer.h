@@ -20,6 +20,10 @@ namespace vl {
 				{
 				protected:
 					Glib::RefPtr<Pango::Layout> layout;
+					Color 						oldColor;
+					FontProperties				oldFont;
+					WString						oldText;
+					vint						oldMaxWidth;
 
 					void CreateFont();
 					void UpdateMinSize();

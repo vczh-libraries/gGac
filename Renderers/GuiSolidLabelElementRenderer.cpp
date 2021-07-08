@@ -4,6 +4,7 @@
 
 #include "GuiSolidLabelElementRenderer.h"
 #include <gtkmm.h>
+#include <iostream>
 
 namespace vl {
 
@@ -14,8 +15,9 @@ namespace vl {
 			namespace gtk {
 
 				GuiSolidLabelElementRenderer::GuiSolidLabelElementRenderer()
+				:oldText(L""),
+				oldMaxWidth(-1)
 				{
-
 				}
 
 				void GuiSolidLabelElementRenderer::CreateFont()
@@ -42,12 +44,23 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
 				{
-
+					/*Color color = element->GetColor();
+					if (oldColor != color)
+					{
+						//CreateColor();
+					}
+					FontProperties font = element->GetFont();
+					if (oldFont != font)
+					{
+						CreateFont();
+					}
+					oldText = element->GetText();*/
+					minSize = Size(INT_MAX, INT_MAX);
+					//std::wcout << L"changed " << element->GetText().Buffer() << std::endl;
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
 				{
-
 				}
 
 				void GuiSolidLabelElementRenderer::FinalizeInternal()
@@ -57,14 +70,20 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
+					minSize = Size(INT_MAX, INT_MAX);
+					//std::wcout << L"internal " << element->GetText().Buffer() << std::endl;
 				}
 
 				void GuiSolidLabelElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					CreateFont();
-					UpdateMinSize();
 					//layout->set_width(static_cast<long>(bounds.Width() * Pango::SCALE));
+					UpdateMinSize();
+
+					Color c = element->GetColor();
+					cr->set_source_rgba(c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f);
+					cr->fill();
 
 					vint x = 0;
 					vint y = 0;

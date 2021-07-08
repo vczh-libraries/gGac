@@ -20,7 +20,6 @@ namespace vl {
 				{
 				}
 
-
 				void GuiGradientBackgroundElementRenderer::InitializeInternal()
 				{
 

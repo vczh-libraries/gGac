@@ -45,6 +45,37 @@ namespace vl {
 
 			namespace gtk {
 
+				class GuiGGacElement;
+
+				struct GuiGGacElementEventArgs : compositions::GuiEventArgs
+				{
+				public:
+					GuiGGacElement*             	element;
+					Rect                          	bounds;
+					Cairo::RefPtr<Cairo::Context> 	context;
+
+					GuiGGacElementEventArgs(GuiGGacElement* _element, Rect _bounds, Cairo::RefPtr<Cairo::Context> _context):
+							element(_element),
+							bounds(_bounds),
+							context(_context)
+					{
+					}
+				};
+
+				class GuiGGacElement : public GuiElementBase<GuiGGacElement>
+				{
+					DEFINE_GUI_GRAPHICS_ELEMENT(GuiGGacElement, L"GGacElement")
+
+				protected:
+					GuiGGacElement();
+
+				public:
+					~GuiGGacElement();
+					compositions::GuiGraphicsEvent<GuiGGacElementEventArgs>         BeforeRenderTargetChanged;
+					compositions::GuiGraphicsEvent<GuiGGacElementEventArgs>         AfterRenderTargetChanged;
+					compositions::GuiGraphicsEvent<GuiGGacElementEventArgs>         Rendering;
+				};
+
 				class IGGacRenderTarget : public Object, public IGuiGraphicsRenderTarget
 				{
 				public:

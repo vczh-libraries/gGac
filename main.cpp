@@ -38,25 +38,21 @@ void GuiMain()
 	window->GetBoundsComposition()->SetPreferredMinSize(Size(480, 320));
 	window->MoveToScreenCenter();
 
-	FontProperties font;
-	font.fontFamily = L"Segoe UI";
-	font.size = 32;
-	font.antialias = true;
-
-	auto button1 = new GuiButton(theme::ThemeName::Button);
-	button1->SetFont(font);
-	button1->SetText(L"test1");
-	window->AddChild(button1);
-
-	auto button2 = new GuiButton(theme::ThemeName::Button);
-	button2->SetFont(font);
-	button2->SetText(L"test2");
-	window->AddChild(button2);
-
 	auto label = new GuiLabel(theme::ThemeName::Label);
 	label->SetText(L"Welcome to GacUI Library!");
-	label->SetFont(font);
+	{
+		FontProperties font;
+		font.fontFamily = L"Segoe UI";
+		font.size = 20;
+		font.antialias = true;
+		label->SetFont(font);
+	}
 	window->AddChild(label);
+
+	/*auto button = new GuiButton(theme::ThemeName::Button);
+	button->SetText(L"test");
+	button->SetFont(font);
+	window->AddChild(button);*/
 
 	GetApplication()->Run(window);
 }

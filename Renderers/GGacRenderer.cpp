@@ -15,6 +15,7 @@
 #include "GuiColorizedTextElementRenderer.h"
 #include "GuiInnerShadowElementRenderer.h"
 #include "GuiFocusRectangleElementRenderer.h"
+#include "GuiGGacElementRenderer.h"
 
 #include "../GGacController.h"
 #include "../GGacControllerListener.h"
@@ -38,6 +39,18 @@ namespace vl {
 					IGGacObjectProvider* g_gGacObjectProvider;
 					GGacControllerListener* g_gGacControllerListener;
 				}
+
+				///
+
+				GuiGGacElement::GuiGGacElement()
+				{
+				}
+
+				GuiGGacElement::~GuiGGacElement()
+				{
+				}
+
+				///
 
 				class GGacRenderTarget: public IGGacRenderTarget
 				{
@@ -68,7 +81,9 @@ namespace vl {
 							return;
 
 						SetCurrentRenderTarget(this);
-						cr->set_source_rgba(1, 1, 1, 1);
+						cr->set_source_rgba(0, 0, 0, 0);
+						Gtk::Allocation allocation = view->get_allocation();
+						cr->rectangle(allocation.get_x(), allocation.get_y(), allocation.get_width(), allocation.get_height());
 						cr->fill();
 						cr->save();
 						view->queue_draw();
@@ -100,13 +115,15 @@ namespace vl {
 						{
 							Rect previousClipper = GetClipper();
 							Rect currentClipper;
-							currentClipper.x1 = fmax(previousClipper.x1, clipper.x1);
-							currentClipper.y1 = fmax(previousClipper.y1, clipper.y1);
-							currentClipper.x2 = fmin(previousClipper.x2, clipper.x2);
-							currentClipper.y2 = fmin(previousClipper.y2, clipper.y2);
+							currentClipper.x1=(previousClipper.x1>clipper.x1?previousClipper.x1:clipper.x1);
+							currentClipper.y1=(previousClipper.y1>clipper.y1?previousClipper.y1:clipper.y1);
+							currentClipper.x2=(previousClipper.x2<clipper.x2?previousClipper.x2:clipper.x2);
+							currentClipper.y2=(previousClipper.y2<clipper.y2?previousClipper.y2:clipper.y2);
+
 							if (currentClipper.x1 < currentClipper.x2 && currentClipper.y1 < currentClipper.y2)
 							{
 								clippers.Add(currentClipper);
+								printf("%ld %ld %ld %ld\n", currentClipper.Left(), currentClipper.Top(), currentClipper.Width(), currentClipper.Height());
 								Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
 								cr->save();
 								cr->rectangle(currentClipper.Left(), currentClipper.Top(), currentClipper.Width(), currentClipper.Height());
@@ -121,15 +138,18 @@ namespace vl {
 
 					void PopClipper() override
 					{
-						if (clipperCoverWholeTargetCounter > 0)
+						if (clippers.Count() > 0)
 						{
-							clipperCoverWholeTargetCounter--;
-						}
-						else if (clippers.Count() >0)
-						{
-							Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
-							cr->restore();
-							clippers.RemoveAt(clippers.Count()-1);
+							if (clipperCoverWholeTargetCounter > 0)
+							{
+								clipperCoverWholeTargetCounter--;
+							}
+							else
+							{
+								clippers.RemoveAt(clippers.Count() - 1);
+								Cairo::RefPtr<Cairo::Context> cr = GetGGacContext();
+								cr->restore();
+							}
 						}
 					}
 
@@ -141,7 +161,7 @@ namespace vl {
 						}
 						else
 						{
-							return clippers[clippers.Count()-1];
+							return clippers[clippers.Count() - 1];
 						}
 					}
 
@@ -292,7 +312,7 @@ namespace vl {
 							GuiImageFrameElementRenderer::Register();
 							GuiPolygonElementRenderer::Register();
 							GuiColorizedTextElementRenderer::Register();
-							//GuiGGacElementRenderer::Register();
+							GuiGGacElementRenderer::Register();
 							GuiInnerShadowElementRenderer::Register();
 							GuiFocusRectangleElementRenderer::Register();
 							GuiDocumentElement::GuiDocumentElementRenderer::Register();
