@@ -55,7 +55,7 @@ namespace vl {
 						CreateFont();
 					}
 					oldText = element->GetText();*/
-					minSize = Size(INT_MAX, INT_MAX);
+					minSize = Size(1, 1);
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
@@ -69,7 +69,7 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
-					minSize = Size(INT_MAX, INT_MAX);
+					minSize = Size(1, 1);
 				}
 
 				void GuiSolidLabelElementRenderer::Render(Rect bounds)
@@ -80,7 +80,7 @@ namespace vl {
 					UpdateMinSize();
 
 					Color c = element->GetColor();
-					cr->set_source_rgba(c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f);
+					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
 					cr->fill();
 
 					vint x = 0;

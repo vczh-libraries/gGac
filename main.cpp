@@ -36,7 +36,7 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/Alignment.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"/tmp/Table.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	demo::MainWindow window;
