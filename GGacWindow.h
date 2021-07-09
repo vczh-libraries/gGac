@@ -23,7 +23,15 @@ namespace vl {
 				Interface* 						graphicsHandler;
 				List<INativeWindowListener*>	listeners;
 
+				vint                            mouseLastX;
+				vint                            mouseLastY;
+				vint                            mouseDownX;
+				vint                            mouseDownY;
+				bool 							mouseHoving;
+				bool                            customFrameMode;
+
 				void onSizeChanged(const Gdk::Rectangle& rect);
+				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
 
 			public:
 				GGacWindow();
@@ -31,6 +39,7 @@ namespace vl {
 				Gtk::Window* GetNativeWindow() const;
 				void SetGraphicsHandler(Interface* handelr);
 				Interface* GetGraphicsHandler() const;
+				bool HandleEventInternal(GdkEvent* event);
 
 				///
 

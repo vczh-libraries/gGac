@@ -12,7 +12,12 @@ namespace vl {
 		namespace gtk {
 
 			GGacWindow::GGacWindow()
-					:window(0)
+			:window(0),
+			mouseLastX(0),
+			mouseLastY(0),
+			mouseDownX(0),
+			mouseDownY(0),
+			mouseHoving(false)
 			{
 				window = new Gtk::Window();
 				window->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
@@ -51,6 +56,118 @@ namespace vl {
 				return graphicsHandler;
 			}
 
+			NativeWindowMouseInfo GGacWindow::createMouseInfo(GdkEvent* event)
+			{
+				NativeWindowMouseInfo info{};
+
+				info.left = event->button.button == GDK_BUTTON_PRIMARY;
+				info.right = event->button.button == GDK_BUTTON_SECONDARY;
+				info.middle = event->button.button == GDK_BUTTON_MIDDLE;
+
+				/*info.ctrl = event.modifierFlags & NSEventModifierFlagControl;
+				info.shift = event.modifierFlags & NSEventModifierFlagShift;*/
+
+				int width, height;
+				window->get_size(width, height);
+				info.x = event->motion.x;
+				info.y = event->motion.y;
+				info.nonClient = (info.x < 0 || info.y < 0 || info.x > width || info.y > height);
+				return info;
+			}
+
+			bool GGacWindow::HandleEventInternal(GdkEvent* event)
+			{
+				switch (event->type)
+				{
+					case GDK_BUTTON_PRESS:
+					{
+						NativeWindowMouseInfo info = createMouseInfo(event);
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							if (info.left)
+							{
+								listeners[i]->LeftButtonDown(info);
+								mouseDownX = info.x.value;
+								mouseDownY = info.y.value;
+								if (customFrameMode)
+									listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+							}
+
+							if (info.right)
+								listeners[i]->RightButtonDown(info);
+
+							if (info.middle)
+								listeners[i]->MiddleButtonDown(info);
+						}
+
+						break;
+					}
+
+					case GDK_BUTTON_RELEASE:
+					{
+						NativeWindowMouseInfo info = createMouseInfo(event);
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							if (info.left)
+								listeners[i]->LeftButtonUp(info);
+
+							if (info.right)
+								listeners[i]->RightButtonUp(info);
+
+							if (info.middle)
+								listeners[i]->MiddleButtonUp(info);
+						}
+						break;
+					}
+
+					case GDK_DOUBLE_BUTTON_PRESS:
+					{
+						NativeWindowMouseInfo info = createMouseInfo(event);
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							if (info.left)
+								listeners[i]->LeftButtonDoubleClick(info);
+
+							if (info.right)
+								listeners[i]->RightButtonDoubleClick(info);
+
+							if (info.middle)
+								listeners[i]->MiddleButtonDoubleClick(info);
+						}
+						break;
+					}
+
+					case GDK_MOTION_NOTIFY:
+					{
+						break;
+					}
+
+					case GDK_ENTER_NOTIFY:
+					{
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							listeners[i]->MouseEntered();
+						}
+						mouseHoving = true;
+						break;
+					}
+
+					case GDK_LEAVE_NOTIFY:
+					{
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							listeners[i]->MouseLeaved();
+						}
+						mouseHoving = false;
+						break;
+					}
+
+					default:
+						return false;
+				}
+				return true;
+			}
+
 			///
 
 			Point GGacWindow::Convert(NativePoint value)
@@ -63,7 +180,8 @@ namespace vl {
 				return NativePoint(value.x, value.y);
 			}
 
-			Size GGacWindow::Convert(NativeSize value) {
+			Size GGacWindow::Convert(NativeSize value)
+			{
 				return Size(value.x.value, value.y.value);
 			}
 
@@ -82,7 +200,8 @@ namespace vl {
 				return NativeMargin(value.left, value.top, value.right, value.bottom);
 			}
 
-			NativeRect GGacWindow::GetBounds() {
+			NativeRect GGacWindow::GetBounds()
+			{
 				int x, y, width, height;
 				window->get_position(x, y);
 				window->get_size(width, height);
@@ -169,12 +288,12 @@ namespace vl {
 
 			void GGacWindow::EnableCustomFrameMode()
 			{
-
+				customFrameMode = true;
 			}
 
 			void GGacWindow::DisableCustomFrameMode()
 			{
-
+				customFrameMode = false;
 			}
 
 			bool GGacWindow::IsCustomFrameModeEnabled()
