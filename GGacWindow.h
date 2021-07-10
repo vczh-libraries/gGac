@@ -19,7 +19,8 @@ namespace vl {
 			class GGacWindow : public Object, public INativeWindow
 			{
 			protected:
-				Gtk::Window* 					window;
+				Gtk::Window* 					nativeWindow;
+				GGacWindow* 					parentWindow;
 				Interface* 						graphicsHandler;
 				List<INativeWindowListener*>	listeners;
 
@@ -29,6 +30,12 @@ namespace vl {
 				vint                            mouseDownY;
 				bool 							mouseHoving;
 				bool                            customFrameMode;
+				bool                            supressingAlt;
+				bool                            enabled;
+				bool                            capturing;
+				bool                            resizing;
+				bool                            moving;
+				bool                            opened;
 
 				void onSizeChanged(const Gdk::Rectangle& rect);
 				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);

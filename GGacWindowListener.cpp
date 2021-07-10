@@ -55,6 +55,16 @@ namespace vl {
 				return result;
 			}
 
+			Ptr<GGacView> GGacWindowListener::GetGGacView() const
+			{
+				return view;
+			}
+
+			void GGacWindowListener::RecreateRenderTarget()
+			{
+				RebuildLayer(window->GetClientSize());
+			}
+
 			void GGacWindowListener::Moved()
 			{
 				if (rendering)
@@ -67,17 +77,12 @@ namespace vl {
 				}
 			}
 
-			Ptr<GGacView> GGacWindowListener::GetGGacView() const
+			void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
 			{
-				return view;
+
 			}
 
-			void GGacWindowListener::RecreateRenderTarget()
-			{
-				RebuildLayer(window->GetClientSize());
-			}
-
-			INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location) {
+			/*INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location) {
 				return INativeWindowListener::HitTest(location);
 			}
 
@@ -211,7 +216,7 @@ namespace vl {
 
 			void GGacWindowListener::Char(const NativeWindowCharInfo &info) {
 				INativeWindowListener::Char(info);
-			}
+			}*/
 
 		}
 

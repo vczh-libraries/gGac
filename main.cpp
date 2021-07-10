@@ -36,10 +36,10 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/Flow.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"/tmp/CalculatorAndStateMachine.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
-	demo::MainWindow window;
+	demo::MainWindow window(new demo::Calculator);
 	window.MoveToScreenCenter();
 	GetApplication()->Run(&window);
 }

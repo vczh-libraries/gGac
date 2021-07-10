@@ -12,21 +12,28 @@ namespace vl {
 		namespace gtk {
 
 			GGacWindow::GGacWindow()
-			:window(0),
+			:nativeWindow(0),
+			parentWindow(0),
 			mouseLastX(0),
 			mouseLastY(0),
 			mouseDownX(0),
 			mouseDownY(0),
+			supressingAlt(false),
+			enabled(false),
+			capturing(false),
+			resizing(false),
+			moving(false),
+			opened(false),
 			mouseHoving(false)
 			{
-				window = new Gtk::Window();
-				window->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
+				nativeWindow = new Gtk::Window();
+				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 
 			GGacWindow::~GGacWindow()
 			{
-				window->close();
-				delete window;
+				nativeWindow->close();
+				delete nativeWindow;
 			}
 
 			///
@@ -43,7 +50,7 @@ namespace vl {
 
 			Gtk::Window* GGacWindow::GetNativeWindow() const
 			{
-				return window;
+				return nativeWindow;
 			}
 
 			void GGacWindow::SetGraphicsHandler(Interface* handler)
@@ -60,18 +67,21 @@ namespace vl {
 			{
 				NativeWindowMouseInfo info{};
 
-				info.left = event->button.button == GDK_BUTTON_PRIMARY;
-				info.right = event->button.button == GDK_BUTTON_SECONDARY;
-				info.middle = event->button.button == GDK_BUTTON_MIDDLE;
+				info.left = event->button.button == GDK_BUTTON_PRIMARY && event->type == GDK_BUTTON_PRESS;
+				info.right = event->button.button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS;
+				info.middle = event->button.button == GDK_BUTTON_MIDDLE && event->type == GDK_BUTTON_PRESS;
 
+				info.ctrl = false;
+				info.shift = false;
 				/*info.ctrl = event.modifierFlags & NSEventModifierFlagControl;
 				info.shift = event.modifierFlags & NSEventModifierFlagShift;*/
 
 				int width, height;
-				window->get_size(width, height);
+				nativeWindow->get_size(width, height);
 				info.x = event->motion.x;
 				info.y = event->motion.y;
 				info.nonClient = (info.x < 0 || info.y < 0 || info.x > width || info.y > height);
+
 				return info;
 			}
 
@@ -84,22 +94,21 @@ namespace vl {
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
-							if (info.left)
+							switch (event->button.button)
 							{
-								listeners[i]->LeftButtonDown(info);
-								mouseDownX = info.x.value;
-								mouseDownY = info.y.value;
-								if (customFrameMode)
-									listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+								case GDK_BUTTON_PRIMARY:
+									listeners[i]->LeftButtonDown(info);
+									mouseDownX = info.x.value;
+									mouseDownY = info.y.value;
+									if (customFrameMode)
+										listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+									break;
+								case GDK_BUTTON_SECONDARY:
+									listeners[i]->RightButtonDown(info);
+								case GDK_BUTTON_MIDDLE:
+									listeners[i]->MiddleButtonDown(info);
 							}
-
-							if (info.right)
-								listeners[i]->RightButtonDown(info);
-
-							if (info.middle)
-								listeners[i]->MiddleButtonDown(info);
 						}
-
 						break;
 					}
 
@@ -108,14 +117,49 @@ namespace vl {
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
-							if (info.left)
-								listeners[i]->LeftButtonUp(info);
+							switch (event->button.button)
+							{
+								case GDK_BUTTON_PRIMARY:
+									listeners[i]->LeftButtonUp(info);
+									if (customFrameMode)
+									{
+										auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
+										switch(control)
+										{
+											case INativeWindowListener::ButtonMinimum:
+												ShowMinimized();
+												return true;
+											case INativeWindowListener::ButtonMaximum:
+												if (GetSizeState() == INativeWindow::Maximized)
+												{
+													ShowRestored();
+												}
+												else
+												{
+													ShowMaximized();
+												}
+												return true;
+											case INativeWindowListener::ButtonClose:
+												Hide(true);
+												return true;
+											case INativeWindowListener::NoDecision:
+												break;
+											case INativeWindowListener::Client:
+												printf("hit some button\n");
+												return true;
+											default:
+												break;
+										}
+									}
+									break;
+								case GDK_BUTTON_SECONDARY:
+									listeners[i]->RightButtonUp(info);
+									break;
 
-							if (info.right)
-								listeners[i]->RightButtonUp(info);
-
-							if (info.middle)
-								listeners[i]->MiddleButtonUp(info);
+								case GDK_BUTTON_MIDDLE:
+									listeners[i]->MiddleButtonUp(info);
+									break;
+							}
 						}
 						break;
 					}
@@ -125,20 +169,53 @@ namespace vl {
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
-							if (info.left)
-								listeners[i]->LeftButtonDoubleClick(info);
-
-							if (info.right)
-								listeners[i]->RightButtonDoubleClick(info);
-
-							if (info.middle)
-								listeners[i]->MiddleButtonDoubleClick(info);
+							switch (event->button.button)
+							{
+								case GDK_BUTTON_PRIMARY:
+									listeners[i]->LeftButtonDoubleClick(info);
+									break;
+								case GDK_BUTTON_SECONDARY:
+									listeners[i]->RightButtonDoubleClick(info);
+									break;
+								case GDK_BUTTON_MIDDLE:
+									listeners[i]->MiddleButtonDoubleClick(info);
+									break;
+							}
 						}
 						break;
 					}
 
 					case GDK_MOTION_NOTIFY:
 					{
+						NativeWindowMouseInfo info = createMouseInfo(event);
+						info.nonClient = !mouseHoving;
+
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							listeners[i]->MouseMoving(info);
+						}
+						mouseLastX = info.x.value;
+						mouseLastY = info.y.value;
+
+						if (customFrameMode)
+						{
+							/*if (event.type == NSEventTypeMouseMoved)
+							{
+								if(!resizing)
+									HitTestMouseMove(mouseLastX, mouseLastY);
+							}
+
+							if(event.type == NSEventTypeLeftMouseDragged ||
+							   event.type == NSEventTypeMouseMoved)
+							{
+								if(resizing)
+									ResizingDragged();
+
+								if(moving)
+									MovingDragged();
+							}*/
+						}
+
 						break;
 					}
 
@@ -203,8 +280,8 @@ namespace vl {
 			NativeRect GGacWindow::GetBounds()
 			{
 				int x, y, width, height;
-				window->get_position(x, y);
-				window->get_size(width, height);
+				nativeWindow->get_position(x, y);
+				nativeWindow->get_size(width, height);
 				return NativeRect(x, y, x + width, y + height);
 			}
 
@@ -215,20 +292,20 @@ namespace vl {
 				{
 					listeners[i]->Moving(newBounds, true);
 				}
-				window->set_allocation(Gtk::Allocation(newBounds.Left().value, newBounds.Top().value, newBounds.Width().value, newBounds.Height().value));
+				nativeWindow->set_allocation(Gtk::Allocation(newBounds.Left().value, newBounds.Top().value, newBounds.Width().value, newBounds.Height().value));
 				Show();
 			}
 
 			NativeSize GGacWindow::GetClientSize()
 			{
 				int x, y;
-				window->get_size(x, y);
+				nativeWindow->get_size(x, y);
 				return NativeSize(x, y);
 			}
 
 			void GGacWindow::SetClientSize(NativeSize size)
 			{
-				window->set_default_size(size.x.value, size.y.value);
+				nativeWindow->set_default_size(size.x.value, size.y.value);
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
@@ -238,12 +315,12 @@ namespace vl {
 
 			WString GGacWindow::GetTitle()
 			{
-				window->get_title();
+				nativeWindow->get_title();
 			}
 
 			void GGacWindow::SetTitle(WString title)
 			{
-				window->set_title(Glib::ustring::format(title.Buffer()));
+				nativeWindow->set_title(Glib::ustring::format(title.Buffer()));
 			}
 
 			INativeCursor *GGacWindow::GetWindowCursor()
@@ -263,17 +340,33 @@ namespace vl {
 
 			void GGacWindow::SetCaretPoint(NativePoint point)
 			{
-
 			}
 
 			INativeWindow *GGacWindow::GetParent()
 			{
-				return nullptr;
+				return parentWindow;
 			}
 
 			void GGacWindow::SetParent(INativeWindow *parent)
 			{
+				GGacWindow* gWin = dynamic_cast<GGacWindow*>(parent);
+				if (!gWin)
+				{
+					if (parentWindow) {
+						//[gWIn->GetNativeWindow() removeChildWindow:nativeWindow];
+					}
+				}
+				else
+				{
+					if (!parentWindow)
+					{
+						/*[gWin->GetNativeWindow() addChildWindow:nsWindow ordered:NSWindowAbove];
 
+						// why prior to 10.10 this will be disabled...
+						[nsWindow setAcceptsMouseMovedEvents:YES];*/
+					}
+				}
+				parentWindow = gWin;
 			}
 
 			INativeWindow::WindowMode GGacWindow::GetWindowMode()
@@ -283,7 +376,6 @@ namespace vl {
 
 			void GGacWindow::SetWindowMode(INativeWindow::WindowMode mode)
 			{
-
 			}
 
 			void GGacWindow::EnableCustomFrameMode()
@@ -298,7 +390,7 @@ namespace vl {
 
 			bool GGacWindow::IsCustomFrameModeEnabled()
 			{
-				return false;
+				return customFrameMode;
 			}
 
 			NativeMargin GGacWindow::GetCustomFramePadding()
@@ -323,59 +415,73 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-				window->show();
+				nativeWindow->show_all();
 			}
 
-			void GGacWindow::ShowDeactivated() {
-
-			}
-
-			void GGacWindow::ShowRestored() {
+			void GGacWindow::ShowDeactivated()
+			{
 
 			}
 
-			void GGacWindow::ShowMaximized() {
+			void GGacWindow::ShowRestored()
+			{
 
 			}
 
-			void GGacWindow::ShowMinimized() {
+			void GGacWindow::ShowMaximized()
+			{
 
 			}
 
-			void GGacWindow::Hide(bool closeWindow) {
+			void GGacWindow::ShowMinimized()
+			{
 
 			}
 
-			bool GGacWindow::IsVisible() {
+			void GGacWindow::Hide(bool closeWindow)
+			{
+			}
+
+			bool GGacWindow::IsVisible()
+			{
 				return true;
 			}
 
-			void GGacWindow::Enable() {
-
+			void GGacWindow::Enable()
+			{
+				nativeWindow->set_focus_visible(true);
+				enabled = true;
 			}
 
-			void GGacWindow::Disable() {
-
+			void GGacWindow::Disable()
+			{
+				nativeWindow->set_focus_visible(false);
+				enabled = false;
 			}
 
-			bool GGacWindow::IsEnabled() {
+			bool GGacWindow::IsEnabled()
+			{
+				return enabled;
+			}
+
+			void GGacWindow::SetFocus()
+			{
+				nativeWindow->set_focus_visible(true);
+			}
+
+			bool GGacWindow::IsFocused()
+			{
 				return true;
 			}
 
-			void GGacWindow::SetFocus() {
-
+			void GGacWindow::SetActivate()
+			{
+				nativeWindow->show_all();
 			}
 
-			bool GGacWindow::IsFocused() {
-				return false;
-			}
-
-			void GGacWindow::SetActivate() {
-
-			}
-
-			bool GGacWindow::IsActivated() {
-				return false;
+			bool GGacWindow::IsActivated()
+			{
+				nativeWindow->is_active();
 			}
 
 			void GGacWindow::ShowInTaskBar() {
@@ -386,35 +492,45 @@ namespace vl {
 
 			}
 
-			bool GGacWindow::IsAppearedInTaskBar() {
-				return false;
+			bool GGacWindow::IsAppearedInTaskBar()
+			{
+				return true;
 			}
 
-			void GGacWindow::EnableActivate() {
+			void GGacWindow::EnableActivate()
+			{
 
 			}
 
-			void GGacWindow::DisableActivate() {
+			void GGacWindow::DisableActivate()
+			{
 
 			}
 
-			bool GGacWindow::IsEnabledActivate() {
-				return false;
+			bool GGacWindow::IsEnabledActivate()
+			{
+				return true;
 			}
 
-			bool GGacWindow::RequireCapture() {
-				return false;
+			bool GGacWindow::RequireCapture()
+			{
+				capturing = true;
+				return true;
 			}
 
-			bool GGacWindow::ReleaseCapture() {
-				return false;
+			bool GGacWindow::ReleaseCapture()
+			{
+				capturing = false;
+				return true;
 			}
 
-			bool GGacWindow::IsCapturing() {
-				return false;
+			bool GGacWindow::IsCapturing()
+			{
+				return capturing;
 			}
 
-			bool GGacWindow::GetMaximizedBox() {
+			bool GGacWindow::GetMaximizedBox()
+			{
 				return false;
 			}
 
@@ -422,57 +538,67 @@ namespace vl {
 
 			}
 
-			bool GGacWindow::GetMinimizedBox() {
+			bool GGacWindow::GetMinimizedBox()
+			{
 				return false;
 			}
 
-			void GGacWindow::SetMinimizedBox(bool visible) {
+			void GGacWindow::SetMinimizedBox(bool visible)
+			{
 
 			}
 
-			bool GGacWindow::GetBorder() {
+			bool GGacWindow::GetBorder()
+			{
 				return false;
 			}
 
-			void GGacWindow::SetBorder(bool visible) {
+			void GGacWindow::SetBorder(bool visible)
+			{
 
 			}
 
-			bool GGacWindow::GetSizeBox() {
+			bool GGacWindow::GetSizeBox()
+			{
 				return false;
 			}
 
-			void GGacWindow::SetSizeBox(bool visible) {
+			void GGacWindow::SetSizeBox(bool visible)
+			{
 
 			}
 
-			bool GGacWindow::GetIconVisible() {
+			bool GGacWindow::GetIconVisible()
+			{
 				return false;
 			}
 
-			void GGacWindow::SetIconVisible(bool visible) {
-
+			void GGacWindow::SetIconVisible(bool visible)
+			{
 			}
 
-			bool GGacWindow::GetTitleBar() {
+			bool GGacWindow::GetTitleBar()
+			{
 				return false;
 			}
 
-			void GGacWindow::SetTitleBar(bool visible) {
+			void GGacWindow::SetTitleBar(bool visible)
+			{
 
 			}
 
-			bool GGacWindow::GetTopMost() {
-				return false;
+			bool GGacWindow::GetTopMost()
+			{
+				return true;
 			}
 
-			void GGacWindow::SetTopMost(bool topmost) {
+			void GGacWindow::SetTopMost(bool topmost)
+			{
 
 			}
 
 			void GGacWindow::SupressAlt()
 			{
-
 			}
 
 			bool GGacWindow::InstallListener(INativeWindowListener *listener)
@@ -485,8 +611,8 @@ namespace vl {
 				listeners.Remove(listener);
 			}
 
-			void GGacWindow::RedrawContent() {
-
+			void GGacWindow::RedrawContent()
+			{
 			}
 		}
 

@@ -36,12 +36,13 @@ namespace vl {
 				bool RetrieveAndResetMovedWhileRendering();
 
 				///
+				void Moved() override;
+				void LeftButtonUp(const NativeWindowMouseInfo &info) override;
 
-				HitTestResult HitTest(NativePoint location) override;
+				/*HitTestResult HitTest(NativePoint location) override;
 
 				void Moving(NativeRect &bounds, bool fixSizeOnly) override;
 
-				void Moved() override;
 
 				void DpiChanged() override;
 
@@ -105,7 +106,7 @@ namespace vl {
 
 				void SysKeyUp(const NativeWindowKeyInfo &info) override;
 
-				void Char(const NativeWindowCharInfo &info) override;
+				void Char(const NativeWindowCharInfo &info) override;*/
 
 			};
 
