@@ -145,7 +145,6 @@ namespace vl {
 											case INativeWindowListener::NoDecision:
 												break;
 											case INativeWindowListener::Client:
-												printf("hit some button\n");
 												return true;
 											default:
 												break;
