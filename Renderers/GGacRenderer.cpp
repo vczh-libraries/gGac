@@ -220,9 +220,9 @@ namespace vl {
 				public:
 
 					GGacResourceManager()
-					:layoutProvider(new GGacLayoutProvider())
 					{
 						g_gGacObjectProvider = new GGacObjectProvider;
+						layoutProvider = new GGacLayoutProvider;
 					}
 
 					IGuiGraphicsRenderTarget *GetRenderTarget(INativeWindow *window) override
