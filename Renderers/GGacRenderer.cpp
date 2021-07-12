@@ -110,10 +110,10 @@ namespace vl {
 						{
 							Rect previousClipper = GetClipper();
 							Rect currentClipper;
-							currentClipper.x1 = fmax(previousClipper.x1, clipper.x1);
-							currentClipper.y1 = fmax(previousClipper.y1, clipper.y1);
-							currentClipper.x2 = fmin(previousClipper.x2, clipper.x2);
-							currentClipper.y2 = fmin(previousClipper.y2, clipper.y2);
+							currentClipper.x1 = MAX(previousClipper.x1, clipper.x1);
+							currentClipper.y1 = MAX(previousClipper.y1, clipper.y1);
+							currentClipper.x2 = MIN(previousClipper.x2, clipper.x2);
+							currentClipper.y2 = MIN(previousClipper.y2, clipper.y2);
 
 							if (currentClipper.x1 < currentClipper.x2 && currentClipper.y1 < currentClipper.y2)
 							{
