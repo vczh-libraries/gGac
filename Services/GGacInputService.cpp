@@ -5,6 +5,7 @@
 #include "GGacInputService.h"
 #include <gtkmm.h>
 
+
 namespace vl {
 
 	namespace presentation {
@@ -18,21 +19,25 @@ namespace vl {
 
 			bool GGacInputService::StartGDKTimer()
 			{
-				timer();
+				if (IsTimerEnabled())
+					timer();
 				return true;
 			}
 
 			void GGacInputService::StartTimer()
 			{
 				Glib::signal_timeout().connect(sigc::mem_fun(*this, &GGacInputService::StartGDKTimer), 16);
+				isTimerEnabled = true;
 			}
 
-			void GGacInputService::StopTimer() {
-
+			void GGacInputService::StopTimer()
+			{
+				isTimerEnabled = false;
 			}
 
-			bool GGacInputService::IsTimerEnabled() {
-				return false;
+			bool GGacInputService::IsTimerEnabled()
+			{
+				return isTimerEnabled;
 			}
 
 			bool GGacInputService::IsKeyPressing(vl::presentation::VKEY code) {

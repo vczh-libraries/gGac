@@ -3,6 +3,7 @@
 //
 
 #include "GGacControllerListener.h"
+#include "Renderers/GGacRenderer.h"
 
 namespace vl {
 
@@ -12,6 +13,9 @@ namespace vl {
 
 			void GGacControllerListener::GlobalTimer()
 			{
+				auto window = GetCurrentController()->WindowService()->GetMainWindow();
+				auto view = GetGGacWindowListener(window)->GetGGacView();
+				view->queue_draw();
 			}
 
 			void GGacControllerListener::ClipboardUpdated()

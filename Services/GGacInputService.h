@@ -16,8 +16,11 @@ namespace vl {
 			class GGacInputService : public Object, public INativeInputService
 			{
 			typedef void (*TimerFunc)();
+
 			protected:
 				TimerFunc timer;
+				bool      isTimerEnabled;
+
 			public:
 				GGacInputService(TimerFunc timer);
 				bool StartGDKTimer();

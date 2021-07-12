@@ -66,10 +66,6 @@ namespace vl {
 					{
 						auto listener = g_gGacControllerListener->GetGGacWindowListener(window);
 						view = listener->GetGGacView();
-
-						Gtk::Window *gWin = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
-						gWin->add(*view.Obj());
-						view->show();
 					}
 
 					void StartRendering() override
@@ -86,7 +82,6 @@ namespace vl {
 						cr->rectangle(allocation.get_x(), allocation.get_y(), allocation.get_width(), allocation.get_height());
 						cr->fill();
 						cr->save();
-						view->queue_draw();
 					}
 
 					RenderTargetFailure StopRendering() override

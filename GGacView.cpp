@@ -31,7 +31,9 @@ namespace vl {
 
 			bool GGacView::onConfigure(GdkEventConfigure* event)
 			{
-				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), this->get_width(), this->get_height());
+				int width = MAX(1, this->get_width());
+				int height = MAX(1, this->get_height());
+				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), width, height);
 				context = Cairo::Context::create(surface);
 				needRepaint = true;
 			}

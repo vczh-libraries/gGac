@@ -55,7 +55,6 @@ namespace vl {
 						CreateFont();
 					}
 					oldText = element->GetText();*/
-					minSize = Size(1, 1);
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
@@ -69,7 +68,6 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
-					minSize = Size(1, 1);
 				}
 
 				void GuiSolidLabelElementRenderer::Render(Rect bounds)

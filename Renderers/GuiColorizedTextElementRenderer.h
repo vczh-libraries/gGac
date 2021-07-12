@@ -15,9 +15,33 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiColorizedTextElementRenderer : public Object, public IGuiGraphicsRenderer
+
+				struct ColorItemResource
 				{
+					Color   text;
+					Color   background;
+				};
+
+				struct ColorEntryResource
+				{
+					ColorItemResource			normal;
+					ColorItemResource			selectedFocused;
+					ColorItemResource			selectedUnfocused;
+					//TODO: make this faster
+					bool						operator==(const ColorEntryResource& value){return false;}
+					bool						operator!=(const ColorEntryResource& value){return true;}
+				};
+
+				typedef collections::Array<ColorEntryResource> ColorArray;
+
+				class GuiColorizedTextElementRenderer : public Object, public IGuiGraphicsRenderer, public GuiColorizedTextElement::ICallback
+				{
+				protected:
+					ColorArray colors;
+
 				DEFINE_ELEMENT_RENDERER(GuiColorizedTextElement, GuiColorizedTextElementRenderer, Color)
+				void ColorChanged() override;
+				void FontChanged() override;
 				};
 
 			}

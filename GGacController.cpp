@@ -12,10 +12,6 @@
 #include "Services/GGacInputService.h"
 #include "Services/GGacResourceService.h"
 #include "Services/GGacScreenService.h"
-
-
-#include "GGacControllerListener.h"
-
 #include <gtkmm.h>
 #include <GacUI.h>
 
