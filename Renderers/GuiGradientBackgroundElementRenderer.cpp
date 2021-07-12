@@ -37,34 +37,6 @@ namespace vl {
 
 				void GuiGradientBackgroundElementRenderer::Render(Rect bounds)
 				{
-					/*Cairo::Matrix m = gGradient->get_matrix();
-					switch(element->GetDirection())
-					{
-						case GuiGradientBackgroundElement::Horizontal:
-						{
-							m.rotate(M_PI / 2);
-							break;
-						}
-
-						case GuiGradientBackgroundElement::Vertical:
-						{
-							break;
-						}
-
-						case GuiGradientBackgroundElement::Slash:
-						{
-							m.rotate(M_PI / 4);
-							break;
-						}
-
-						case GuiGradientBackgroundElement::Backslash:
-						{
-							m.rotate(5 * M_PI / 4);
-							break;
-						}
-					}
-					gGradient->set_matrix(m);*/
-
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					switch(element->GetShape().shapeType)
 					{
@@ -72,6 +44,7 @@ namespace vl {
 							cr->save();
 							cr->set_source(gGradient);
 							cr->rectangle(bounds.x1, bounds.y1, bounds.x2 - bounds.x1, bounds.y2 - bounds.y1);
+							cr->fill();
 							cr->restore();
 							break;
 
@@ -81,6 +54,7 @@ namespace vl {
 							double cx = (bounds.x1 + bounds.x2) / 2, cy = (bounds.y1 + bounds.y2) / 2;
 							cr->set_source(gGradient);
 							cr->arc(0, 0, bounds.Width()/2, 0, M_PI * 2);
+							cr->fill();
 							cr->restore();
 							break;
 						}
