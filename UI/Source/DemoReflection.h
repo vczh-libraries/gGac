@@ -11,9 +11,6 @@ https://github.com/vczh-libraries
 #define VCZH_WORKFLOW_COMPILER_GENERATED_DEMOREFLECTION
 
 #include "Demo.h"
-#ifndef VCZH_DEBUG_NO_REFLECTION
-#include "GacUIReflection.h"
-#endif
 
 #if defined( _MSC_VER)
 #pragma warning(push)
@@ -37,8 +34,6 @@ namespace vl
 		namespace description
 		{
 #ifndef VCZH_DEBUG_NO_REFLECTION
-			DECL_TYPE_INFO(::demo::ColorAnimation)
-			DECL_TYPE_INFO(::demo::ColorDef)
 			DECL_TYPE_INFO(::demo::MainWindow)
 			DECL_TYPE_INFO(::demo::MainWindowConstructor)
 #endif

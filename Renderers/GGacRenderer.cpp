@@ -37,6 +37,7 @@ namespace vl {
 				{
 					IGGacRenderTarget* g_currentRenderTarget;
 					IGGacObjectProvider* g_gGacObjectProvider;
+					IGGacResourceManager* g_gGacResourceManager;
 					GGacControllerListener* g_gGacControllerListener;
 				}
 
@@ -207,7 +208,7 @@ namespace vl {
 
 				///
 
-				class GGacResourceManager : public GuiGraphicsResourceManager, public INativeControllerListener
+				class GGacResourceManager : public GuiGraphicsResourceManager, public INativeControllerListener, public IGGacResourceManager
 				{
 				protected:
 					SortedList<Ptr<GGacRenderTarget>> renderTargets;
@@ -259,6 +260,16 @@ namespace vl {
 						GetGGacObjectProvider()->SetBindedRenderTarget(window, 0);
 						renderTargets.Remove(renderTarget);
 					}
+
+					Ptr <elements::text::CharMeasurer> CreateCharMeasurer(const FontProperties &fontProperties) override
+					{
+						//TODO: CharMeasurer
+						return Ptr<elements::text::CharMeasurer>();
+					}
+
+					void DestroyCharMeasurer(const FontProperties &fontProperties) override
+					{
+					}
 				};
 
 				///
@@ -283,6 +294,16 @@ namespace vl {
 					g_gGacObjectProvider = provider;
 				}
 
+				IGGacResourceManager* GetGGacResourceManager()
+				{
+					return g_gGacResourceManager;
+				}
+
+				void SetGGacResourceManager(IGGacResourceManager* manager)
+				{
+					g_gGacResourceManager = manager;
+				}
+
 				///
 
 				int SetupGGacRenderer()
@@ -294,7 +315,7 @@ namespace vl {
 						GetCurrentController()->CallbackService()->InstallListener(g_gGacControllerListener);
 						GGacResourceManager resourceManager;
 						SetGuiGraphicsResourceManager(&resourceManager);
-						//SetGGacResourceManager(&resourceManager);
+						SetGGacResourceManager(&resourceManager);
 						GetCurrentController()->CallbackService()->InstallListener(&resourceManager);
 						{
 							GuiSolidLabelElementRenderer::Register();

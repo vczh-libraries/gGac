@@ -98,15 +98,17 @@ namespace vl {
 					virtual void                                DestroyCharMeasurer(const FontProperties& fontProperties) = 0;
 				};
 
-				extern void                             SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
-				extern IGGacRenderTarget*               GetCurrentRenderTarget();
+				extern void								SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
+				extern IGGacRenderTarget*				GetCurrentRenderTarget();
 				extern IGGacObjectProvider*				GetGGacObjectProvider();
 				extern void								SetGGacObjectProvider(IGGacObjectProvider* provider);
-				extern IGGacResourceManager*            GetGGacResourceManager();
-				inline Cairo::RefPtr<Cairo::Context>    GetCurrentGGacContextFromRenderTarget() {
+				extern IGGacResourceManager*			GetGGacResourceManager();
+				extern void								SetGGacResourceManager(IGGacResourceManager* manager);
+
+				inline Cairo::RefPtr<Cairo::Context>	GetCurrentGGacContextFromRenderTarget() {
 					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}
-				extern int                              SetupGGacRenderer();
+				extern int								SetupGGacRenderer();
 
 			}
 

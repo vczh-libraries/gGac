@@ -12,7 +12,31 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(GuiColorizedTextElementRenderer)
+				GuiColorizedTextElementRenderer::GuiColorizedTextElementRenderer()
+				{
+				}
+
+				void GuiColorizedTextElementRenderer::OnElementStateChanged()
+				{
+
+				}
+
+				void GuiColorizedTextElementRenderer::InitializeInternal()
+				{
+
+				}
+
+				void GuiColorizedTextElementRenderer::FinalizeInternal()
+				{
+
+				}
+
+				void GuiColorizedTextElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+				{
+					element->SetCallback(this);
+				}
+
+				void GuiColorizedTextElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 
@@ -73,7 +97,6 @@ namespace vl {
 								{
 									colorIndex = 0;
 								}
-								ColorChanged();
 								ColorItemResource& color = !inSelection ? colors[colorIndex].normal : (focused ? colors[colorIndex].selectedFocused : colors[colorIndex].selectedUnfocused);
 
 								vint x2 = crlf ? x + startRect.Height() / 2 : line.att[column].rightOffset;
@@ -90,11 +113,6 @@ namespace vl {
 
 								if (!crlf)
 								{
-									FontProperties font = element->GetFont();
-									Pango::FontDescription gFont;
-									gFont.set_family("Monospace");
-									gFont.set_size(fmax(font.size, 12) * PANGO_SCALE);
-
 									Color textColor = color.text;
 									Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 									Glib::RefPtr<Pango::Layout> layout;
@@ -115,12 +133,10 @@ namespace vl {
 									 caretPoint.y - viewPosition.y + bounds.y1 + 2);
 
 							Point p2(caretPoint.x - viewPosition.x + bounds.x1,
-									 caretPoint.y + height - viewPosition.y + bounds.y1 + 2);
+									 caretPoint.y - viewPosition.y + bounds.y1 + 2 + height);
 
 							Color c = element->GetCaretColor();
 							cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-							cr->stroke();
-
 							cr->set_line_width(2.f);
 							cr->move_to(p1.x, p1.y);
 							cr->line_to(p2.x, p2.y);
@@ -133,25 +149,17 @@ namespace vl {
 
 				void GuiColorizedTextElementRenderer::FontChanged()
 				{
-					/*ICoreGraphicsResourceManager* rm = GetCoreGraphicsResourceManager();
-					if (coreTextFont)
+					IGGacResourceManager* rm = GetGGacResourceManager();
+					/*if (gFont)
 					{
 						rm->DestroyCharMeasurer(oldFont);
-						rm->DestroyCoreTextFont(oldFont);
-					}
+						rm->DestroyGGacFont(oldFont);
+					}*/
 					oldFont = element->GetFont();
-
-					if (coreTextFont)
-						coreTextFont->Release();
-					coreTextFont = rm->CreateCoreTextFont(oldFont);
-					coreTextFont->Retain();
-
+					gFont.set_family("Monospace");
+					gFont.set_size(fmax(oldFont.size, 12) * PANGO_SCALE);
+					//gFont = rm->CreateGGacFont(oldFont);
 					element->GetLines().SetCharMeasurer(rm->CreateCharMeasurer(oldFont).Obj());
-
-					if(nsAttributes)
-						CFRelease(nsAttributes);
-					nsAttributes = [NSMutableDictionary dictionaryWithDictionary:coreTextFont->attributes];
-					CFRetain(nsAttributes);*/
 				}
 
 				void GuiColorizedTextElementRenderer::ColorChanged()
