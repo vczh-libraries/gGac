@@ -42,6 +42,7 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
 				{
+					minSize = Size(1, 1);
 					/*Color color = element->GetColor();
 					if (oldColor != color)
 					{
@@ -72,7 +73,6 @@ namespace vl {
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					CreateFont();
-					//layout->set_width(static_cast<long>(bounds.Width() * Pango::SCALE));
 					UpdateMinSize();
 
 					Color c = element->GetColor();

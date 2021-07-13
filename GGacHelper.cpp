@@ -32,6 +32,10 @@ namespace vl {
 						table[i + 32] = (VKEY)((int)VKEY::_A + s);
 					}
 				}
+				if (keycode > 128)
+				{
+					return VKEY::_UNKNOWN;
+				}
 				return table[keycode];
 			}
 
