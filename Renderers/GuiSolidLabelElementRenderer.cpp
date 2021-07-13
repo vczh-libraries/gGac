@@ -42,7 +42,9 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
 				{
-					minSize = Size(1, 1);
+					if (!minSize.x) {
+						minSize = Size(1, 1);
+					}
 					/*Color color = element->GetColor();
 					if (oldColor != color)
 					{
