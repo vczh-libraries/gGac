@@ -6,6 +6,7 @@
 #define GGAC_GGACINPUTSERVICE_H
 
 #include "GacUI.h"
+#include <gtkmm.h>
 
 namespace vl {
 
@@ -18,8 +19,13 @@ namespace vl {
 			typedef void (*TimerFunc)();
 
 			protected:
-				TimerFunc timer;
-				bool      isTimerEnabled;
+				TimerFunc 								timer;
+				bool      								isTimerEnabled;
+
+				collections::Dictionary<WString, VKEY>  keys;
+				collections::Array<WString>             keyNames;
+				wchar_t                                 asciiLowerMap[256];
+				wchar_t                                 asciiUpperMap[256];
 
 			public:
 				GGacInputService(TimerFunc timer);
@@ -32,6 +38,10 @@ namespace vl {
 				bool IsKeyToggled(VKEY code) override;
 				WString GetKeyName(VKEY code) override;
 				VKEY GetKey(const WString &name) override;
+
+				void InitKeyMapping();
+				bool ConvertToPrintable(NativeWindowCharInfo& info, GdkEvent* event);
+
 			};
 
 		}

@@ -3,7 +3,9 @@
 //
 
 #include "GGacWindow.h"
-
+#include "GGacHelper.h"
+#include "Services/GGacInputService.h"
+#include <iostream>
 
 namespace vl {
 
@@ -81,6 +83,19 @@ namespace vl {
 				info.x = event->motion.x;
 				info.y = event->motion.y;
 				info.nonClient = (info.x < 0 || info.y < 0 || info.x > width || info.y > height);
+
+				return info;
+			}
+
+			NativeWindowKeyInfo GGacWindow::createKeyInfo(GdkEvent* event)
+			{
+				NativeWindowKeyInfo info{};
+
+				info.ctrl = false;
+				info.shift = false;
+				info.alt = false;
+				info.capslock = false;
+				info.code = GdkEventKeyCodeToGacKeyCode(event->key.keyval);
 
 				return info;
 			}
@@ -235,6 +250,34 @@ namespace vl {
 							listeners[i]->MouseLeaved();
 						}
 						mouseHoving = false;
+						break;
+					}
+
+					case GDK_KEY_PRESS:
+					{
+						NativeWindowKeyInfo info = createKeyInfo(event);
+						for (vint i = 0; i < listeners.Count(); i++)
+						{
+							listeners[i]->KeyDown(info);
+						}
+						NativeWindowCharInfo charInfo{};
+						if (dynamic_cast<GGacInputService *>(GetCurrentController()->InputService())->ConvertToPrintable(charInfo, event))
+						{
+							for (vint i = 0; i < listeners.Count(); i++)
+							{
+								listeners[i]->Char(charInfo);
+							}
+						}
+						break;
+					}
+
+					case GDK_KEY_RELEASE:
+					{
+						NativeWindowKeyInfo info = createKeyInfo(event);
+						for(vint i=0; i<listeners.Count(); ++i)
+						{
+							listeners[i]->KeyUp(info);
+						}
 						break;
 					}
 

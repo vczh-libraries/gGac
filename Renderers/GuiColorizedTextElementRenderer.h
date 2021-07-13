@@ -37,8 +37,7 @@ namespace vl {
 				class GuiColorizedTextElementRenderer : public Object, public IGuiGraphicsRenderer, public GuiColorizedTextElement::ICallback
 				{
 				protected:
-					Pango::FontDescription gFont;
-					FontProperties oldFont;
+					Ptr<Pango::FontDescription> gFont;
 					ColorArray colors;
 
 				DEFINE_ELEMENT_RENDERER(GuiColorizedTextElement, GuiColorizedTextElementRenderer, Color)

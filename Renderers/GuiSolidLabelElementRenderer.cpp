@@ -23,14 +23,12 @@ namespace vl {
 				void GuiSolidLabelElementRenderer::CreateFont()
 				{
 					FontProperties font = element->GetFont();
-					Pango::FontDescription gFont;
-					gFont.set_family("Monospace");
-					gFont.set_size(fmax(font.size, 12) * PANGO_SCALE);
-					//gFont.set_stretch(Pango::STRETCH_NORMAL);
+					IGGacResourceManager* rm = GetGGacResourceManager();
+					auto gFont = rm->CreateGGacFont(font);
 
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					layout = Pango::Layout::create(cr);
-					layout->set_font_description(gFont);
+					layout->set_font_description(*gFont.Obj());
 					layout->set_text(Glib::ustring::format(element->GetText().Buffer()));
 				}
 

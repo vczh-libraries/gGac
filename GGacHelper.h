@@ -5,10 +5,20 @@
 #ifndef GGAC_GGACHELPER_H
 #define GGAC_GGACHELPER_H
 
+#include "GacUI.h"
 
-class GGacHelper {
+namespace vl {
 
-};
+	namespace presentation {
 
+		namespace gtk {
+
+			VKEY GdkEventKeyCodeToGacKeyCode(unsigned short keycode);
+
+		}
+
+	}
+
+}
 
 #endif //GGAC_GGACHELPER_H

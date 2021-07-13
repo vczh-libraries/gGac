@@ -39,6 +39,7 @@ namespace vl {
 
 				void onSizeChanged(const Gdk::Rectangle& rect);
 				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
+				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
 
 			public:
 				GGacWindow();

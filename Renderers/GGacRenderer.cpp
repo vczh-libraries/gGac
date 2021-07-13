@@ -43,6 +43,91 @@ namespace vl {
 
 				///
 
+				class CachedGGacFontAllocator
+				{
+				DEFINE_CACHED_RESOURCE_ALLOCATOR(FontProperties, Ptr<Pango::FontDescription>)
+
+				public:
+					~CachedGGacFontAllocator() {
+					}
+
+					static Ptr<Pango::FontDescription> CreateGGacFont(const FontProperties& font)
+					{
+						auto gFont = MakePtr<Pango::FontDescription>();
+						gFont->set_family("Monospace");
+						gFont->set_size(font.size * PANGO_SCALE);
+						return gFont;
+					}
+
+					Ptr<Pango::FontDescription> CreateInternal(const FontProperties& font)
+					{
+						return CreateGGacFont(font);
+					}
+				};
+
+				///
+
+				class CachedCharMeasurerAllocator
+				{
+				DEFINE_CACHED_RESOURCE_ALLOCATOR(FontProperties, Ptr<text::CharMeasurer>)
+
+				protected:
+					class GGacCharMeasurer: public text::CharMeasurer
+					{
+					protected:
+						Ptr<Pango::FontDescription> gFont;
+
+					public:
+						GGacCharMeasurer(Ptr<Pango::FontDescription> font):
+								text::CharMeasurer(font->get_size() / PANGO_SCALE),
+								gFont(font)
+						{
+						}
+
+						~GGacCharMeasurer()
+						{
+						}
+
+						Size MeasureInternal(wchar_t character, IGuiGraphicsRenderTarget* renderTarget)
+						{
+							WString str(character);
+							auto gStr = Glib::ustring::format(str.Buffer());
+
+							auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 12, 12);
+							auto cr = Cairo::Context::create(surface);
+							auto layout = Pango::Layout::create(cr);
+							layout->set_font_description(*gFont.Obj());
+							layout->set_text(gStr);
+
+							int width, height;
+							layout->get_size(width, height);
+							return Size(width / PANGO_SCALE, height / PANGO_SCALE);
+						}
+
+						vint MeasureWidthInternal(wchar_t character, IGuiGraphicsRenderTarget* renderTarget)
+						{
+							return MeasureInternal(character, renderTarget).x;
+						}
+
+						vint MeasureWidthInternal(text::UnicodeCodePoint codePoint, IGuiGraphicsRenderTarget *renderTarget)
+						{
+							return MeasureInternal(codePoint.character, renderTarget).x;
+						}
+
+						vint GetRowHeightInternal(IGuiGraphicsRenderTarget* renderTarget)
+						{
+							return MeasureInternal(L' ', renderTarget).y;
+						}
+					};
+
+					Ptr<text::CharMeasurer> CreateInternal(const FontProperties& font)
+					{
+						return new GGacCharMeasurer(CachedGGacFontAllocator::CreateGGacFont(font));
+					}
+				};
+
+				///
+
 				GuiGGacElement::GuiGGacElement()
 				{
 				}
@@ -211,8 +296,10 @@ namespace vl {
 				class GGacResourceManager : public GuiGraphicsResourceManager, public INativeControllerListener, public IGGacResourceManager
 				{
 				protected:
-					SortedList<Ptr<GGacRenderTarget>> renderTargets;
-					Ptr<GGacLayoutProvider>           layoutProvider;
+					SortedList<Ptr<GGacRenderTarget>> 	renderTargets;
+					Ptr<GGacLayoutProvider>           	layoutProvider;
+					CachedGGacFontAllocator				fontAllocator;
+					CachedCharMeasurerAllocator         charMeeasurerAllocattor;
 				public:
 
 					GGacResourceManager()
@@ -261,14 +348,16 @@ namespace vl {
 						renderTargets.Remove(renderTarget);
 					}
 
-					Ptr <elements::text::CharMeasurer> CreateCharMeasurer(const FontProperties &fontProperties) override
+					///
+
+					Ptr<elements::text::CharMeasurer> CreateCharMeasurer(const FontProperties &fontProperties) override
 					{
-						//TODO: CharMeasurer
-						return Ptr<elements::text::CharMeasurer>();
+						return charMeeasurerAllocattor.Create(fontProperties);
 					}
 
-					void DestroyCharMeasurer(const FontProperties &fontProperties) override
+					Ptr<Pango::FontDescription> CreateGGacFont(const FontProperties& fontProperties) override
 					{
+						return fontAllocator.Create(fontProperties);
 					}
 				};
 

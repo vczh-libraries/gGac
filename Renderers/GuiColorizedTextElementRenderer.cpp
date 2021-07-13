@@ -3,6 +3,7 @@
 //
 
 #include "GuiColorizedTextElementRenderer.h"
+#include <iostream>
 
 namespace vl {
 
@@ -23,7 +24,8 @@ namespace vl {
 
 				void GuiColorizedTextElementRenderer::InitializeInternal()
 				{
-
+					gFont = 0;
+					element->SetCallback(this);
 				}
 
 				void GuiColorizedTextElementRenderer::FinalizeInternal()
@@ -33,7 +35,6 @@ namespace vl {
 
 				void GuiColorizedTextElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
-					element->SetCallback(this);
 				}
 
 				void GuiColorizedTextElementRenderer::Render(Rect bounds)
@@ -44,8 +45,8 @@ namespace vl {
 					{
 						cr->save();
 
-						wchar_t passwordChar = element->GetPasswordChar();
-						//NSString* nsPassWordChar = WStringToNSString(&passwordChar, 1);
+						/*wchar_t passwordChar = element->GetPasswordChar();
+						//NSString* nsPassWordChar = WStringToNSString(&passwordChar, 1);*/
 
 						Point viewPosition = element->GetViewPosition();
 						Rect viewBounds(viewPosition, bounds.GetSize());
@@ -59,7 +60,7 @@ namespace vl {
 						bool focused = element->GetFocused();
 
 						//draw each line of text
-						for(vint row = startRow; row <= endRow; row++)
+						for (vint row = startRow; row <= endRow; row++)
 						{
 							Rect startRect = element->GetLines().GetRectFromTextPos(TextPos(row, 0));
 							Point startPoint = startRect.LeftTop();
@@ -70,10 +71,11 @@ namespace vl {
 							text::TextLine& line = element->GetLines().GetLine(row);
 							vint x = startColumn == 0 ? 0 : line.att[startColumn-1].rightOffset;
 
-							Glib::ustring gLine = Glib::ustring::format(line.text);
+							Glib::ustring gLine = Glib::ustring::format(line.text).substr(0, line.dataLength);
+							//draw each column of text
 							for (vint column = startColumn; column <= endColumn; column++)
 							{
-								bool inSelection=false;
+								bool inSelection = false;
 								if (selectionBegin.row == selectionEnd.row)
 								{
 									inSelection = (row == selectionBegin.row && selectionBegin.column <= column && column < selectionEnd.column);
@@ -103,22 +105,26 @@ namespace vl {
 								vint tx = x - viewPosition.x + bounds.x1;
 								vint ty = startPoint.y - viewPosition.y + bounds.y1;
 
-								if (color.background.a > 0)
+								/*if (color.background.a > 0)
 								{
 									//color.background
 									//cr->set_source_rgba();
 									cr->rectangle(tx, ty + 2, (x2 - x), startRect.Height() + 2);
 									cr->fill();
-								}
+								}*/
 
 								if (!crlf)
 								{
-									Color textColor = color.text;
+									Color c = color.text;
+									cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
+									cr->fill();
 									Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 									Glib::RefPtr<Pango::Layout> layout;
 									layout = Pango::Layout::create(cr);
-									layout->set_font_description(gFont);
-									layout->set_text(gLine);
+									layout->set_font_description(*gFont.Obj());
+									layout->set_text(gLine.substr(column, 1));
+									cr->move_to(tx, ty);
+									layout->show_in_cairo_context(cr);
 								}
 								x = x2;
 							}
@@ -150,15 +156,8 @@ namespace vl {
 				void GuiColorizedTextElementRenderer::FontChanged()
 				{
 					IGGacResourceManager* rm = GetGGacResourceManager();
-					/*if (gFont)
-					{
-						rm->DestroyCharMeasurer(oldFont);
-						rm->DestroyGGacFont(oldFont);
-					}*/
-					oldFont = element->GetFont();
-					gFont.set_family("Monospace");
-					gFont.set_size(fmax(oldFont.size, 12) * PANGO_SCALE);
-					//gFont = rm->CreateGGacFont(oldFont);
+					auto oldFont = element->GetFont();
+					gFont = rm->CreateGGacFont(oldFont);
 					element->GetLines().SetCharMeasurer(rm->CreateCharMeasurer(oldFont).Obj());
 				}
 

@@ -31,6 +31,8 @@ namespace vl {
 				collections::Array<Ptr<GGacCursor>>    	systemCursors;
 				FontProperties                          defaultFont;
 			public:
+				GGacResourceService();
+				virtual ~GGacResourceService();
 				INativeCursor *GetSystemCursor(INativeCursor::SystemCursorType type) override;
 				INativeCursor *GetDefaultSystemCursor() override;
 				FontProperties GetDefaultFont() override;

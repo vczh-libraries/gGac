@@ -95,7 +95,7 @@ namespace vl {
 				{
 				public:
 					virtual Ptr<elements::text::CharMeasurer>   CreateCharMeasurer(const FontProperties& fontProperties) = 0;
-					virtual void                                DestroyCharMeasurer(const FontProperties& fontProperties) = 0;
+					virtual Ptr<Pango::FontDescription>         CreateGGacFont(const FontProperties& fontProperties) = 0;
 				};
 
 				extern void								SetCurrentRenderTarget(IGGacRenderTarget* renderTarget);
