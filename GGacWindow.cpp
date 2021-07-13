@@ -29,6 +29,7 @@ namespace vl {
 			mouseHoving(false)
 			{
 				nativeWindow = new Gtk::Window();
+				nativeWindow->set_decorated(false);
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 
@@ -472,16 +473,31 @@ namespace vl {
 
 			void GGacWindow::ShowMaximized()
 			{
-
+				if (nativeWindow->is_maximized())
+				{
+					nativeWindow->unmaximize();
+				}
+				else
+				{
+					nativeWindow->maximize();
+				}
 			}
 
 			void GGacWindow::ShowMinimized()
 			{
-
+				nativeWindow->iconify();
 			}
 
 			void GGacWindow::Hide(bool closeWindow)
 			{
+				if (closeWindow)
+				{
+					nativeWindow->close();
+				}
+				else
+				{
+					nativeWindow->hide();
+				}
 			}
 
 			bool GGacWindow::IsVisible()
