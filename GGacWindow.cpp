@@ -26,7 +26,8 @@ namespace vl {
 			resizing(false),
 			moving(false),
 			opened(false),
-			mouseHoving(false)
+			mouseHoving(false),
+			mode(INativeWindow::WindowMode::Normal)
 			{
 				nativeWindow = new Gtk::Window();
 				nativeWindow->set_decorated(false);
@@ -348,7 +349,8 @@ namespace vl {
 
 			void GGacWindow::SetClientSize(NativeSize size)
 			{
-				nativeWindow->set_default_size(size.x.value, size.y.value);
+				if (size.x.value > 0 && size.y.value > 0)
+					nativeWindow->set_default_size(size.x.value, size.y.value);
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
@@ -414,11 +416,12 @@ namespace vl {
 
 			INativeWindow::WindowMode GGacWindow::GetWindowMode()
 			{
-				return Normal;
+				return mode;
 			}
 
-			void GGacWindow::SetWindowMode(INativeWindow::WindowMode mode)
+			void GGacWindow::SetWindowMode(INativeWindow::WindowMode _mode)
 			{
+				mode = _mode;
 			}
 
 			void GGacWindow::EnableCustomFrameMode()
@@ -459,6 +462,10 @@ namespace vl {
 			void GGacWindow::Show()
 			{
 				nativeWindow->show_all();
+				if (!opened)
+				{
+					opened = true;
+				}
 			}
 
 			void GGacWindow::ShowDeactivated()
@@ -498,11 +505,12 @@ namespace vl {
 				{
 					nativeWindow->hide();
 				}
+				opened = false;
 			}
 
 			bool GGacWindow::IsVisible()
 			{
-				return true;
+				return nativeWindow->is_visible();
 			}
 
 			void GGacWindow::Enable()

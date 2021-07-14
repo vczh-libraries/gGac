@@ -1,7 +1,7 @@
 #include <Skins/DarkSkin/DarkSkin.h>
 #include "Renderers/GGacRenderer.h"
 #include "UI/Source/Demo.h"
-#include "UI/Source/HelloWorld.h"
+#include <iostream>
 
 using namespace vl;
 using namespace vl::presentation;
@@ -35,10 +35,8 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
 void GuiMain()
 {
-	{
-		FileStream fileStream(L"/tmp/Table.bin", FileStream::ReadOnly);
-		GetResourceManager()->LoadResourceOrPending(fileStream);
-	}
+	FileStream fileStream(L"/tmp/DataGrid.bin", FileStream::ReadOnly);
+	GetResourceManager()->LoadResourceOrPending(fileStream);
 	demo::MainWindow window;
 	window.MoveToScreenCenter();
 	GetApplication()->Run(&window);

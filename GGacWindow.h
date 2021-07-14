@@ -23,6 +23,7 @@ namespace vl {
 				GGacWindow* 					parentWindow;
 				Interface* 						graphicsHandler;
 				List<INativeWindowListener*>	listeners;
+				WindowMode 						mode;
 
 				vint                            mouseLastX;
 				vint                            mouseLastY;
