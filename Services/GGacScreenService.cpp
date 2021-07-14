@@ -11,16 +11,16 @@ namespace vl {
 	namespace presentation {
 		namespace gtk {
 
-			GGacScreen::GGacScreen(GdkMonitor* _screen):
-					screen(_screen)
+			GGacScreen::GGacScreen(Glib::RefPtr<Gdk::Monitor> _monitor):
+					monitor(_monitor)
 			{
 			}
 
 			NativeRect GGacScreen::GetBounds()
 			{
-				GdkRectangle r = {0};
-				gdk_monitor_get_workarea(screen, &r);
-				return NativeRect(r.x, r.y, r.x + r.width, r.y + r.height);
+				Gdk::Rectangle r;
+				monitor->get_workarea(r);
+				return NativeRect(r.get_x(), r.get_y(), r.get_x() + r.get_width(), r.get_y() + r.get_height());
 			}
 
 			NativeRect GGacScreen::GetClientBounds()
@@ -35,7 +35,7 @@ namespace vl {
 
 			bool GGacScreen::IsPrimary()
 			{
-				return screen == gdk_display_get_primary_monitor(gdk_display_get_default());
+				return monitor->is_primary();
 			}
 
 			double GGacScreen::GetScalingX()
@@ -48,34 +48,38 @@ namespace vl {
 				return 2.0;
 			}
 
-			GGacScreenService::GGacScreenService()
-			{
-				RefreshScreenInformation();
-			}
-
 			void GGacScreenService::RefreshScreenInformation()
 			{
-				screens.Clear();
-				GdkDisplay *display = gdk_display_get_default();
-				int n = gdk_display_get_n_monitors(display);
-				for (int i = 0; i < n; i++) {
-					screens.Add(new GGacScreen(gdk_display_get_monitor(display, i)));
+				monitors.Clear();
+				auto display = Gdk::Display::get_default();
+				int n = display->get_n_monitors();
+				for (int i = 0; i < n; i++)
+				{
+					monitors.Add(new GGacScreen(display->get_monitor(i)));
 				}
 			}
 
 			vint GGacScreenService::GetScreenCount()
 			{
-				return screens.Count();
+				return monitors.Count();
 			}
 
 			INativeScreen* GGacScreenService::GetScreen(vint index)
 			{
-				return screens[index].Obj();
+				return monitors[index].Obj();
 			}
 
 			INativeScreen* GGacScreenService::GetScreen(INativeWindow* window)
 			{
 				GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
+				if (gWin)
+				{
+					int num = gWin->GetNativeWindow()->get_screen()->get_monitor_at_window(gWin->GetNativeWindow()->get_window());
+					if (num >= 0)
+					{
+						return monitors[num].Obj();
+					}
+				}
 				return 0;
 			}
 		}

@@ -45,13 +45,15 @@ namespace vl {
 
 			private:
 				Glib::RefPtr<Gtk::Application> app;
-				void onActive() {
+				void onActive()
+				{
+					screenService.RefreshScreenInformation();
 				}
 
 			public:
-				GGacController():
-						mainWindow(0),
-						inputService(&GlobalTimerFunc)
+				GGacController()
+				:mainWindow(0),
+				inputService(&GlobalTimerFunc)
 				{
 					app = Gtk::Application::create("org.gtkmm.examples.base");
 					app->signal_activate().connect(sigc::mem_fun(*this, &GGacController::onActive));

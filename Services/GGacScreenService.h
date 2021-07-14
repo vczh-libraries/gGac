@@ -6,7 +6,7 @@
 #define GGAC_GGACSCREENSERVICE_H
 
 #include "GacUI.h"
-#include <gdk/gdk.h>
+#include <gtkmm.h>
 
 namespace vl {
 
@@ -18,10 +18,10 @@ namespace vl {
 			{
 				friend class GGacScreenService;
 			protected:
-				GdkMonitor*    screen;
+				Glib::RefPtr<Gdk::Monitor>    monitor;
 
 			public:
-				GGacScreen(GdkMonitor* screen);
+				GGacScreen(Glib::RefPtr<Gdk::Monitor> monitor);
 
 				double 			GetScalingX() override;
 				double 			GetScalingY() override;
@@ -36,12 +36,10 @@ namespace vl {
 				typedef void (*HandleRetriver)(INativeWindow*);
 
 			protected:
-				collections::List<Ptr<GGacScreen>> 	screens;
+				collections::List<Ptr<GGacScreen>> 	monitors;
 				HandleRetriver 						handleRetriver;
 
 			public:
-				GGacScreenService();
-
 				void                    RefreshScreenInformation();
 				vint                    GetScreenCount() override;
 				INativeScreen*          GetScreen(vint index) override;
