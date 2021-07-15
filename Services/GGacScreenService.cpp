@@ -40,12 +40,12 @@ namespace vl {
 
 			double GGacScreen::GetScalingX()
 			{
-				return 2.0;
+				return 1.0;
 			}
 
 			double GGacScreen::GetScalingY()
 			{
-				return 2.0;
+				return 1.0;
 			}
 
 			void GGacScreenService::RefreshScreenInformation()
@@ -71,10 +71,10 @@ namespace vl {
 
 			INativeScreen* GGacScreenService::GetScreen(INativeWindow* window)
 			{
-				GGacWindow* gWin = dynamic_cast<GGacWindow*>(window);
-				if (gWin)
+				auto nativeWindow = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
+				if (nativeWindow)
 				{
-					int num = gWin->GetNativeWindow()->get_screen()->get_monitor_at_window(gWin->GetNativeWindow()->get_window());
+					int num = nativeWindow->get_screen()->get_monitor_at_window(nativeWindow->get_window());
 					if (num >= 0)
 					{
 						return monitors[num].Obj();

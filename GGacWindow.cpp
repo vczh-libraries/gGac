@@ -355,7 +355,11 @@ namespace vl {
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
 			{
-				return vl::presentation::NativeRect();
+				auto loc = nativeWindow->get_allocation();
+				/*Gdk::Rectangle contentFrame = [nsWindow convertRectToScreen:[nsWindow.contentView frame]];
+				if(!([nsWindow screen]))
+					contentFrame = [nsWindow frame];*/
+				return NativeRect(loc.get_x(), loc.get_y(), loc.get_x() + loc.get_width(), loc.get_y() + loc.get_height());
 			}
 
 			WString GGacWindow::GetTitle()
