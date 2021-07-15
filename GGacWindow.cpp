@@ -13,7 +13,7 @@ namespace vl {
 
 		namespace gtk {
 
-			GGacWindow::GGacWindow()
+			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
 			parentWindow(0),
 			mouseLastX(0),
@@ -27,9 +27,9 @@ namespace vl {
 			moving(false),
 			opened(false),
 			mouseHoving(false),
-			mode(INativeWindow::WindowMode::Normal)
+			mode(_mode)
 			{
-				nativeWindow = new Gtk::Window();
+				nativeWindow = new Gtk::Window(mode == INativeWindow::WindowMode::Normal ? Gtk::WindowType::WINDOW_TOPLEVEL : Gtk::WindowType::WINDOW_POPUP);
 				nativeWindow->set_decorated(false);
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
@@ -336,8 +336,8 @@ namespace vl {
 				{
 					listeners[i]->Moving(newBounds, true);
 				}
-				nativeWindow->set_allocation(Gtk::Allocation(newBounds.Left().value, newBounds.Top().value, newBounds.Width().value, newBounds.Height().value));
-				Show();
+				nativeWindow->move(newBounds.Left().value, newBounds.Top().value);
+				nativeWindow->set_default_size(newBounds.Width().value, newBounds.Height().value);
 			}
 
 			NativeSize GGacWindow::GetClientSize()
@@ -356,6 +356,8 @@ namespace vl {
 			NativeRect GGacWindow::GetClientBoundsInScreen()
 			{
 				auto loc = nativeWindow->get_allocation();
+				if (!nativeWindow->get_screen())
+					loc = nativeWindow->get_allocation();
 				/*Gdk::Rectangle contentFrame = [nsWindow convertRectToScreen:[nsWindow.contentView frame]];
 				if(!([nsWindow screen]))
 					contentFrame = [nsWindow frame];*/
@@ -402,6 +404,7 @@ namespace vl {
 				if (!gWin)
 				{
 					if (parentWindow) {
+						//gWin->GetNativeWindow()->set_parent_window()
 						//[gWIn->GetNativeWindow() removeChildWindow:nativeWindow];
 					}
 				}
@@ -409,13 +412,11 @@ namespace vl {
 				{
 					if (!parentWindow)
 					{
-						/*[gWin->GetNativeWindow() addChildWindow:nsWindow ordered:NSWindowAbove];
-
-						// why prior to 10.10 this will be disabled...
-						[nsWindow setAcceptsMouseMovedEvents:YES];*/
+						nativeWindow->set_transient_for(*gWin->GetNativeWindow());
 					}
 				}
 				parentWindow = gWin;
+				Show();
 			}
 
 			INativeWindow::WindowMode GGacWindow::GetWindowMode()
@@ -425,6 +426,12 @@ namespace vl {
 
 			void GGacWindow::SetWindowMode(INativeWindow::WindowMode _mode)
 			{
+				switch (_mode)
+				{
+					case INativeWindow::Menu:
+						nativeWindow->set_modal(true);
+						break;
+				}
 				mode = _mode;
 			}
 
@@ -465,7 +472,7 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-				nativeWindow->show_all();
+				nativeWindow->show();
 				if (!opened)
 				{
 					opened = true;

@@ -105,13 +105,13 @@ namespace vl {
 								vint tx = x - viewPosition.x + bounds.x1;
 								vint ty = startPoint.y - viewPosition.y + bounds.y1;
 
-								/*if (color.background.a > 0)
+								if (color.background.a > 0)
 								{
-									//color.background
-									//cr->set_source_rgba();
+									Color c = color.background;
+									cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
 									cr->rectangle(tx, ty + 2, (x2 - x), startRect.Height() + 2);
 									cr->fill();
-								}*/
+								}
 
 								if (!crlf)
 								{

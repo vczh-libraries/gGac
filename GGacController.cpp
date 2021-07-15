@@ -72,9 +72,9 @@ namespace vl {
 
 				//========================================[INativeWindowService]========================================
 
-				INativeWindow* CreateNativeWindow()
+				INativeWindow* CreateNativeWindow(INativeWindow::WindowMode mode)
 				{
-					GGacWindow* window = new GGacWindow();
+					GGacWindow* window = new GGacWindow(mode);
 					callbackService.InvokeNativeWindowCreated(window);
 					windows.Add(window);
 					return window;
@@ -106,6 +106,18 @@ namespace vl {
 				INativeWindow* GetWindow(NativePoint location)
 				{
 					GGacWindow* result = 0;
+					for (vint i = 0; i < windows.Count(); i++)
+					{
+						GGacWindow* window = windows[i];
+						NativeRect rect = window->GetClientBoundsInScreen();
+						if (rect.Contains(location))
+						{
+							if (!result)
+							{
+								result = window;
+							}
+						}
+					}
 					return result;
 				}
 

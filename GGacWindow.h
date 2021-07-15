@@ -43,7 +43,7 @@ namespace vl {
 				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
 
 			public:
-				GGacWindow();
+				GGacWindow(INativeWindow::WindowMode _mode);
 				virtual ~GGacWindow();
 				Gtk::Window* GetNativeWindow() const;
 				void SetGraphicsHandler(Interface* handelr);

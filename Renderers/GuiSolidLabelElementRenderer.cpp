@@ -26,14 +26,15 @@ namespace vl {
 					IGGacResourceManager* rm = GetGGacResourceManager();
 					auto gFont = rm->CreateGGacFont(font);
 
-					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
+					auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+					auto cr = Cairo::Context::create(surface);
 					layout = Pango::Layout::create(cr);
 					layout->set_font_description(*gFont.Obj());
-					layout->set_text(Glib::ustring::format(element->GetText().Buffer()));
 				}
 
 				void GuiSolidLabelElementRenderer::UpdateMinSize()
 				{
+					layout->set_text(Glib::ustring::format(oldText.Buffer()));
 					int text_width;
 					int text_height;
 					layout->get_pixel_size(text_width, text_height);
@@ -42,20 +43,13 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
 				{
-					if (!minSize.x) {
-						minSize = Size(1, 1);
-					}
-					/*Color color = element->GetColor();
-					if (oldColor != color)
-					{
-						//CreateColor();
-					}
 					FontProperties font = element->GetFont();
 					if (oldFont != font)
 					{
 						CreateFont();
 					}
-					oldText = element->GetText();*/
+					oldText = element->GetText();
+					UpdateMinSize();
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
@@ -69,13 +63,13 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
+					CreateFont();
+					UpdateMinSize();
 				}
 
 				void GuiSolidLabelElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
-					CreateFont();
-					UpdateMinSize();
 
 					Color c = element->GetColor();
 					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);

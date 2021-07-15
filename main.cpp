@@ -38,7 +38,7 @@ void GuiMain()
 	FileStream fileStream(L"/tmp/DataGrid.bin", FileStream::ReadOnly);
 	GetResourceManager()->LoadResourceOrPending(fileStream);
 	demo::MainWindow window;
-	window.MoveToScreenCenter();
+	//window.MoveToScreenCenter();
 	GetApplication()->Run(&window);
 }
 
