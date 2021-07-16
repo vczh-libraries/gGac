@@ -23,7 +23,7 @@ namespace vl {
 
 			public:
 				GGacImageFrame(INativeImage* _image, Glib::RefPtr<Gdk::Pixbuf> _pixbuf);
-				~GGacImageFrame();
+				virtual ~GGacImageFrame();
 
 				INativeImage*				GetImage() override;
 				Size						GetSize() override;
@@ -44,6 +44,8 @@ namespace vl {
 				collections::Array<Ptr<GGacImageFrame>>    	frames;
 			public:
 				GGacImage(INativeImageService* _service, Ptr<Gtk::Image> _image);
+				virtual ~GGacImage();
+
 				INativeImageService *GetImageService() override;
 				FormatType GetFormat() override;
 				vint GetFrameCount() override;

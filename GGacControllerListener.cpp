@@ -13,9 +13,13 @@ namespace vl {
 
 			void GGacControllerListener::GlobalTimer()
 			{
-				auto window = GetCurrentController()->WindowService()->GetMainWindow();
-				auto view = GetGGacWindowListener(window)->GetGGacView();
-				view->queue_draw();
+				/*auto window = GetCurrentController()->WindowService()->GetMainWindow();
+				auto view = GetGGacWindowListener(window)->GetGGacView();*/
+				for (vint i = 0; i < nativeWindowListeners.Count(); i++)
+				{
+					auto view = nativeWindowListeners.Values()[i]->GetGGacView();
+					view->queue_draw();
+				}
 			}
 
 			void GGacControllerListener::ClipboardUpdated()

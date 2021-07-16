@@ -29,7 +29,15 @@ namespace vl {
 			mouseHoving(false),
 			mode(_mode)
 			{
-				nativeWindow = new Gtk::Window(mode == INativeWindow::WindowMode::Normal ? Gtk::WindowType::WINDOW_TOPLEVEL : Gtk::WindowType::WINDOW_POPUP);
+				if (mode == INativeWindow::WindowMode::Normal )
+				{
+					nativeWindow = new Gtk::Window();
+				}
+				else
+				{
+					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
+					nativeWindow->set_modal(true);
+				}
 				nativeWindow->set_decorated(false);
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
@@ -118,12 +126,25 @@ namespace vl {
 									mouseDownX = info.x.value;
 									mouseDownY = info.y.value;
 									if (customFrameMode)
-										listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+									{
+										auto control = listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+										switch(control)
+										{
+											case INativeWindowListener::NoDecision:
+												break;
+											case INativeWindowListener::Client:
+												return true;
+											default:
+												break;
+										}
+									}
 									break;
 								case GDK_BUTTON_SECONDARY:
 									listeners[i]->RightButtonDown(info);
+									break;
 								case GDK_BUTTON_MIDDLE:
 									listeners[i]->MiddleButtonDown(info);
+									break;
 							}
 						}
 						break;
@@ -202,6 +223,7 @@ namespace vl {
 					}
 
 					case GDK_MOTION_NOTIFY:
+					case GDK_DRAG_MOTION:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						info.nonClient = !mouseHoving;
@@ -215,13 +237,18 @@ namespace vl {
 
 						if (customFrameMode)
 						{
-							/*if (event.type == NSEventTypeMouseMoved)
+							if (event->type == GDK_MOTION_NOTIFY)
 							{
-								if(!resizing)
-									HitTestMouseMove(mouseLastX, mouseLastY);
+								if (!resizing)
+								{
+									for (vint i = 0; i < listeners.Count(); i++)
+									{
+										INativeWindowListener::HitTestResult r = listeners[i]->HitTest(NativePoint(info.x, info.y));
+									}
+								}
 							}
 
-							if(event.type == NSEventTypeLeftMouseDragged ||
+							/*if(event.type == NSEventTypeLeftMouseDragged ||
 							   event.type == NSEventTypeMouseMoved)
 							{
 								if(resizing)
@@ -416,7 +443,6 @@ namespace vl {
 					}
 				}
 				parentWindow = gWin;
-				Show();
 			}
 
 			INativeWindow::WindowMode GGacWindow::GetWindowMode()
@@ -429,7 +455,6 @@ namespace vl {
 				switch (_mode)
 				{
 					case INativeWindow::Menu:
-						nativeWindow->set_modal(true);
 						break;
 				}
 				mode = _mode;
@@ -472,16 +497,28 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-				nativeWindow->show();
+				nativeWindow->set_visible(true);
 				if (!opened)
 				{
+					for (vint i = 0; i < listeners.Count(); i++)
+					{
+						listeners[i]->Opened();
+					}
 					opened = true;
 				}
 			}
 
 			void GGacWindow::ShowDeactivated()
 			{
-
+				nativeWindow->set_visible(true);
+				if (!opened)
+				{
+					for (vint i = 0; i < listeners.Count(); i++)
+					{
+						listeners[i]->Opened();
+					}
+					opened = true;
+				}
 			}
 
 			void GGacWindow::ShowRestored()
@@ -514,9 +551,13 @@ namespace vl {
 				}
 				else
 				{
-					nativeWindow->hide();
+					nativeWindow->set_visible(false);
 				}
 				opened = false;
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Closed();
+				}
 			}
 
 			bool GGacWindow::IsVisible()
@@ -543,12 +584,13 @@ namespace vl {
 
 			void GGacWindow::SetFocus()
 			{
-				nativeWindow->set_focus_visible(true);
+				nativeWindow->set_can_focus(true);
+				nativeWindow->grab_focus();
 			}
 
 			bool GGacWindow::IsFocused()
 			{
-				return true;
+				return nativeWindow->is_focus();
 			}
 
 			void GGacWindow::SetActivate()
@@ -558,7 +600,7 @@ namespace vl {
 
 			bool GGacWindow::IsActivated()
 			{
-				nativeWindow->is_active();
+				return nativeWindow->is_active();
 			}
 
 			void GGacWindow::ShowInTaskBar() {

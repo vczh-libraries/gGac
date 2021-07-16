@@ -75,6 +75,10 @@ namespace vl {
 				frames.Resize(1);
 			}
 
+			GGacImage::~GGacImage()
+			{
+			}
+
 			INativeImage::FormatType GGacImage::GetFormat()
 			{
 				//TODO gif
