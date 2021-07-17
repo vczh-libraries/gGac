@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 project(gGac)
 add_compile_definitions(VCZH_DEBUG_NO_REFLECTION)
 
