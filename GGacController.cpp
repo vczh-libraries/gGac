@@ -66,7 +66,7 @@ namespace vl {
 
 				void InvokeGlobalTimer()
 				{
-					//asyncService.ExecuteAsyncTasks();
+					asyncService.ExecuteAsyncTasks();
 					callbackService.InvokeGlobalTimer();
 				}
 

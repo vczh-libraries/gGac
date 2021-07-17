@@ -29,7 +29,7 @@ namespace vl {
 			mouseHoving(false),
 			mode(_mode)
 			{
-				if (mode == INativeWindow::WindowMode::Normal )
+				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
 				{
 					nativeWindow = new Gtk::Window();
 				}
@@ -558,6 +558,7 @@ namespace vl {
 				{
 					listeners[i]->Closed();
 				}
+				ReleaseCapture();
 			}
 
 			bool GGacWindow::IsVisible()

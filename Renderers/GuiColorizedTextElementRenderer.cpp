@@ -178,7 +178,7 @@ namespace vl {
 						newEntry.selectedUnfocused.text=entry.selectedUnfocused.text;
 						newEntry.selectedUnfocused.background=entry.selectedUnfocused.background;
 
-						colors[i]=newEntry;
+						colors[i] = newEntry;
 					}
 				}
 
