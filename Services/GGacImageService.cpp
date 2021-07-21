@@ -31,6 +31,11 @@ namespace vl {
 				return pixbuf ? Size(pixbuf->get_width(), pixbuf->get_height())  : Size(0, 0);
 			}
 
+			void GGacImageFrame::SetSize(vint width, vint height)
+			{
+				pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::INTERP_BILINEAR);
+			}
+
 			bool GGacImageFrame::SetCache(void* key, Ptr<INativeImageFrameCache> cache)
 			{
 				vint index = caches.Keys().IndexOf(key);

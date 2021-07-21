@@ -33,11 +33,21 @@ public:
 };
 GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
+
+class ViewModel : public Object, public virtual demo::IViewModel
+{
+public:
+	void OpenUrl(const WString& url)override
+	{
+		//ShellExecute(NULL, L"OPEN", url.Buffer(), NULL, NULL, SW_MAXIMIZE);
+	}
+};
+
 void GuiMain()
 {
-	FileStream fileStream(L"/tmp/DataGrid.bin", FileStream::ReadOnly);
+	FileStream fileStream(L"/tmp/RichTextEmbedding.bin", FileStream::ReadOnly);
 	GetResourceManager()->LoadResourceOrPending(fileStream);
-	demo::MainWindow window;
+	demo::MainWindow window(new ViewModel);
 	//window.MoveToScreenCenter();
 	GetApplication()->Run(&window);
 }

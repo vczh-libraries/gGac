@@ -42,6 +42,7 @@ namespace vl {
 					if (element->GetImage())
 					{
 						GGacImageFrame* frame = static_cast<GGacImageFrame*>(element->GetImage()->GetFrame(element->GetFrameIndex()));
+						frame->SetSize(bounds.Width(), bounds.Height());
 						Glib::RefPtr<Gdk::Pixbuf> pixbuf = frame->GetPixbuf();
 						vint x = 0;
 						vint y = 0;
