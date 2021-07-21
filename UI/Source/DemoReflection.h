@@ -11,9 +11,6 @@ https://github.com/vczh-libraries
 #define VCZH_WORKFLOW_COMPILER_GENERATED_DEMOREFLECTION
 
 #include "Demo.h"
-#ifndef VCZH_DEBUG_NO_REFLECTION
-#include "GacUIReflection.h"
-#endif
 
 #if defined( _MSC_VER)
 #pragma warning(push)
@@ -37,33 +34,16 @@ namespace vl
 		namespace description
 		{
 #ifndef VCZH_DEBUG_NO_REFLECTION
-			DECL_TYPE_INFO(::demo::CategoryDisplayer)
-			DECL_TYPE_INFO(::demo::CategoryDisplayerConstructor)
-			DECL_TYPE_INFO(::demo::CategoryEditor)
-			DECL_TYPE_INFO(::demo::CategoryEditorConstructor)
-			DECL_TYPE_INFO(::demo::CategoryItemTemplate)
-			DECL_TYPE_INFO(::demo::CategoryItemTemplateConstructor)
-			DECL_TYPE_INFO(::demo::CategoryVisualizer)
-			DECL_TYPE_INFO(::demo::CategoryVisualizerConstructor)
-			DECL_TYPE_INFO(::demo::DateEditor)
-			DECL_TYPE_INFO(::demo::DateEditorConstructor)
-			DECL_TYPE_INFO(::demo::DateFilter)
-			DECL_TYPE_INFO(::demo::DateFilterConstructor)
-			DECL_TYPE_INFO(::demo::GenderDisplayer)
-			DECL_TYPE_INFO(::demo::GenderDisplayerConstructor)
-			DECL_TYPE_INFO(::demo::GenderEditor)
-			DECL_TYPE_INFO(::demo::GenderEditorConstructor)
-			DECL_TYPE_INFO(::demo::GenderItemTemplate)
-			DECL_TYPE_INFO(::demo::GenderItemTemplateConstructor)
-			DECL_TYPE_INFO(::demo::GenderVisualizer)
-			DECL_TYPE_INFO(::demo::GenderVisualizerConstructor)
+			DECL_TYPE_INFO(::demo::IViewModel)
 			DECL_TYPE_INFO(::demo::MainWindow)
 			DECL_TYPE_INFO(::demo::MainWindowConstructor)
-			DECL_TYPE_INFO(::demo::MyCategory)
-			DECL_TYPE_INFO(::demo::MyDataItem)
-			DECL_TYPE_INFO(::demo::MyGender)
-			DECL_TYPE_INFO(::demo::TextEditor)
-			DECL_TYPE_INFO(::demo::TextEditorConstructor)
+
+			BEGIN_INTERFACE_PROXY_NOPARENT_SHAREDPTR(::demo::IViewModel)
+				void OpenUrl(const ::vl::WString& url) override
+				{
+					INVOKE_INTERFACE_PROXY(OpenUrl, url);
+				}
+			END_INTERFACE_PROXY(::demo::IViewModel)
 #endif
 
 			extern bool LoadDemoTypes();
