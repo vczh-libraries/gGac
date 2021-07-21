@@ -11,7 +11,27 @@
 using namespace vl::collections;
 
 typedef unsigned char BYTE;
-typedef unsigned int WORD;
+typedef unsigned short WORD;
+
+typedef struct _ABC {
+	int  abcA;
+	unsigned int abcB; //width of glyphs
+	int  abcC;
+} ABC;
+
+typedef struct _GOFFSET {
+	long du;
+	long dv;
+} GOFFSET;
+
+typedef struct _SCRIPT_VISATTR {
+	WORD uJustification : 4;
+	WORD fClusterStart : 1;
+	WORD fDiacritic : 1;
+	WORD fZeroWidth : 1;
+	WORD fReserved : 1;
+	WORD fShapeReserved : 8;
+} SCRIPT_VISATTR;
 
 namespace vl {
 
@@ -86,20 +106,17 @@ UniscribeGlyphData
 				{
 					//***************************** Uniscribe Data
 					Array<WORD>						glyphs;
-					Array<int>						glyphAdvances;
-					Array<WORD>						charCluster;
-					PangoAnalysis					sa;
-
-					/*Array<SCRIPT_VISATTR>			glyphVisattrs;
+					Array<PangoGlyphVisAttr>		glyphVisattrs;
 					Array<int>						glyphAdvances;
 					Array<GOFFSET>					glyphOffsets;
+					Array<WORD>						charCluster;
 					ABC								runAbc;
-					SCRIPT_ANALYSIS					sa;*/
+					PangoAnalysis					sa;
 
 					UniscribeGlyphData();
 
 					void							ClearUniscribeData(vint glyphCount, vint length);
-					//bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, SCRIPT_CACHE& scriptCache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
+					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
 					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
 				};
 
@@ -177,7 +194,8 @@ UniscribeTextRun
 				{
 				public:
 					//***************************** Uniscribe Data
-					//SCRIPT_CACHE					scriptCache;
+					Glib::RefPtr<Pango::Context>	pc;
+					PangoGlyphString				scriptCache;
 					vint							advance;
 					UniscribeGlyphData				wholeGlyph;
 					bool							needFontFallback;
