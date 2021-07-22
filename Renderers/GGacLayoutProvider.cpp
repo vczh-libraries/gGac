@@ -399,15 +399,19 @@ UniscribeItem
 
 				void UniscribeItem::ClearUniscribeData()
 				{
+					pango_item_free(&scriptItem);
 					charLogattrs.Resize(0);
 				}
 
 				bool UniscribeItem::BuildUniscribeData()
 				{
 					// generate break information
-					charLogattrs.Resize(length);
-					pango_default_break(Glib::ustring::format(itemText).c_str(), length, &scriptItem.analysis, &charLogattrs[0], length);
+					// pango_break will return n+1 logattrs not n...
+					charLogattrs.Resize(length + 1);
+					Glib::ustring gstr = Glib::ustring::format(itemText);
+					pango_default_break(gstr.c_str(), gstr.bytes(), &scriptItem.analysis, &charLogattrs[0], length);
 					return true;
+					
 					BUILD_UNISCRIBE_DATA_FAILED:
 					ClearUniscribeData();
 					return false;
@@ -454,11 +458,15 @@ UniscribeTextRun
 
 				void UniscribeTextRun::ClearUniscribeData()
 				{
-					/*if(scriptCache)
+					if (scriptCache)
 					{
-						//ScriptFreeCache(&scriptCache);
-						scriptCache=0;
-					}*/
+						pango_glyph_string_free(static_cast<PangoGlyphString*>(scriptCache));
+						scriptCache = 0;
+					}
+					else
+					{
+						scriptCache = pango_glyph_string_new();
+					}
 					advance=0;
 					needFontFallback=false;
 					wholeGlyph.ClearUniscribeData(0, 0);
@@ -523,9 +531,9 @@ UniscribeTextRun
 				{
 					ClearUniscribeData();
 
-					//dc->SetFont(documentFragment->fontObject);
+					pc->set_font_description(*documentFragment->fontObject.Obj());
 					List<bool> breakingAvailabilities;
-					if(!wholeGlyph.BuildUniscribeData(cr, &scriptItem->scriptItem, &scriptCache, runText, length, breakings, breakingAvailabilities))
+					if(!wholeGlyph.BuildUniscribeData(cr, &scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities))
 					{
 						goto BUILD_UNISCRIBE_DATA_FAILED;
 					}
@@ -536,7 +544,7 @@ UniscribeTextRun
 						wholeGlyph.BuildUniscribeData(cr, &scriptItem->scriptItem, charLogattrs, runText, length);
 						needFontFallback=true;
 					}
-					advance = wholeGlyph.runAbc.abcB;//wholeGlyph.runAbc.abcA+wholeGlyph.runAbc.abcB+wholeGlyph.runAbc.abcC;
+					advance = wholeGlyph.runAbc.abcA+wholeGlyph.runAbc.abcB+wholeGlyph.runAbc.abcC;
 
 					return true;
 					BUILD_UNISCRIBE_DATA_FAILED:
@@ -584,7 +592,7 @@ UniscribeTextRun
 					charAdvances=0;
 					for(vint i=tempStart;i<=length;)
 					{
-						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_line_break)
+						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_mandatory_break)
 						{
 							if(width<=maxWidth || (firstRun && charLength==0))
 							{
@@ -705,14 +713,14 @@ UniscribeTextRun
 							//render in cairo context
 							Color fontColor=color.fontColor;
 							cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
-							cr->move_to(rect.x, rect.y + 20);
+							cr->move_to(rect.x, rect.y);
 							pc->set_font_description(*documentFragment->fontObject.Obj());
-							pango_cairo_glyph_string_path(cr->cobj(), wholeGlyph.sa.font, &scriptCache);
+							pango_cairo_glyph_string_path(cr->cobj(), wholeGlyph.sa.font, static_cast<PangoGlyphString*>(scriptCache));
 							cr->fill();
 						}
 
-						startFromFragmentBounds+=charLength*scriptCache.num_glyphs;
-						accumulatedWidth+=clusterWidth*scriptCache.num_glyphs;
+						startFromFragmentBounds+=charLength*static_cast<PangoGlyphString*>(scriptCache)->num_glyphs;
+						accumulatedWidth += clusterWidth;
 					}
 				}
 
@@ -865,21 +873,22 @@ UniscribeLine
 						{
 							// itemize a line
 							Pango::AttrList attr;
-							auto list = pc->itemize(Glib::ustring::format(lineText.Buffer()), attr);
-							vint i = 0, scriptItemCount = list.size();
-							for (auto it = list.begin(); it != list.end(); it++)
+							auto text = Glib::ustring::format(lineText.Buffer());
+							auto list = pango_itemize(pc->gobj(), text.c_str(), 0, text.bytes(), NULL, NULL);
+							while (list)
 							{
-								PangoItem item = *(*it).gobj_copy();
+								PangoItem* item = static_cast<PangoItem*>(list->data);
 								Ptr<UniscribeItem> scriptItem = new UniscribeItem;
-								scriptItem->startFromLine = item.offset;
-								scriptItem->length = item.length;
-								scriptItem->itemText = lineText.Buffer() + item.offset;
-								scriptItem->scriptItem = item;
+								scriptItem->startFromLine = item->offset;
+								scriptItem->length = item->length;
+								scriptItem->itemText = lineText.Buffer() + item->offset;
+								scriptItem->scriptItem = *item;
 								if (!scriptItem->BuildUniscribeData())
 								{
 									goto BUILD_UNISCRIBE_DATA_FAILED;
 								}
 								scriptItems.Add(scriptItem);
+								list = list->next;
 							}
 						}
 						{
@@ -2637,7 +2646,6 @@ UniscribeParagraph (Caret)
 						paragraphOffset = bounds.LeftTop();
 						paragraph->Render(this, true);
 						paragraph->Render(this, false);
-						//paragraphCr = 0;
 
 						if(caret!=-1)
 						{

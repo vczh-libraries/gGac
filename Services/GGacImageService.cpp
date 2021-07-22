@@ -33,7 +33,10 @@ namespace vl {
 
 			void GGacImageFrame::SetSize(vint width, vint height)
 			{
-				pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::INTERP_BILINEAR);
+				if (width > 0 && height > 0)
+				{ 
+					pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::INTERP_BILINEAR);
+				}
 			}
 
 			bool GGacImageFrame::SetCache(void* key, Ptr<INativeImageFrameCache> cache)
