@@ -195,7 +195,7 @@ UniscribeTextRun
 				public:
 					//***************************** Uniscribe Data
 					Glib::RefPtr<Pango::Context>	pc;
-					PangoGlyphString				scriptCache;
+					void*							scriptCache;
 					vint							advance;
 					UniscribeGlyphData				wholeGlyph;
 					bool							needFontFallback;
