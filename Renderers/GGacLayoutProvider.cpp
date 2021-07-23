@@ -713,7 +713,7 @@ UniscribeTextRun
 							//render in cairo context
 							Color fontColor=color.fontColor;
 							cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
-							cr->move_to(rect.x, rect.y);
+							cr->move_to(rect.x, rect.y + 15);
 							pc->set_font_description(*documentFragment->fontObject.Obj());
 							pango_cairo_glyph_string_path(cr->cobj(), wholeGlyph.sa.font, static_cast<PangoGlyphString*>(scriptCache));
 							cr->fill();
@@ -853,7 +853,7 @@ UniscribeLine
 					virtualLines.Clear();
 				}
 
-				bool UniscribeLine::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr)
+				bool UniscribeLine::BuildUniscribeData()
 				{
 					lineText=L"";
 					ClearUniscribeData();
@@ -868,6 +868,8 @@ UniscribeLine
 
 					if(lineText!=L"")
 					{
+						auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+						auto cr = Cairo::Context::create(surface);
 						auto layout = Pango::Layout::create(cr);
 						Glib::RefPtr<Pango::Context> pc = layout->get_context();
 						{
@@ -1272,7 +1274,7 @@ UniscribeParagraph (Initialization)
 					lastAvailableWidth=-1;
 				}
 
-				bool UniscribeParagraph::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr)
+				bool UniscribeParagraph::BuildUniscribeData()
 				{
 					if(built) return false;
 
@@ -1350,7 +1352,7 @@ UniscribeParagraph (Initialization)
 					//build uniscribedata line by line from $lines
 					FOREACH(Ptr<UniscribeLine>, line, lines)
 							{
-								line->BuildUniscribeData(cr);
+								line->BuildUniscribeData();
 							}
 
 					//set $startFromParagraph of line line by line from $lines
@@ -1872,7 +1874,7 @@ UniscribeParagraph (Caret Helper)
 									{
 										if(!frontSide || i==virtualLine->firstRunIndex && j==virtualLine->firstRunBoundsIndex)
 										{
-											if(run->scriptItem->scriptItem.analysis.level % 2 == 0)
+											if(run->scriptItem->IsRightToLeft())
 											{
 												return Rect(bounds.bounds.x2, bounds.bounds.y1, bounds.bounds.x2, bounds.bounds.y2);
 											}
@@ -1886,7 +1888,7 @@ UniscribeParagraph (Caret Helper)
 									{
 										if(frontSide || i==virtualLine->lastRunIndex && j==virtualLine->lastRunBoundsIndex)
 										{
-											if(run->scriptItem->scriptItem.analysis.level % 2 == 0)
+											if(run->scriptItem->IsRightToLeft())
 											{
 												return Rect(bounds.bounds.x1, bounds.bounds.y1, bounds.bounds.x1, bounds.bounds.y2);
 											}
@@ -1925,7 +1927,7 @@ UniscribeParagraph (Caret Helper)
 											{
 												WORD glyph1=0;
 												WORD glyph2=0;
-												if(run->scriptItem->scriptItem.analysis.level % 2 == 0)
+												if(run->scriptItem->IsRightToLeft())
 												{
 													glyph2=textRun->wholeGlyph.charCluster[lastRunChar]+1;
 													glyph1=newLastRunChar==run->length?0:textRun->wholeGlyph.charCluster[newLastRunChar]+1;
@@ -1947,7 +1949,7 @@ UniscribeParagraph (Caret Helper)
 												if(line->startFromParagraph+run->startFromLine+lastRunChar==caret)
 												{
 													vint x=0;
-													if(run->scriptItem->scriptItem.analysis.level % 2 == 0)
+													if(run->scriptItem->IsRightToLeft())
 													{
 														x=bounds.bounds.x2-accumulatedWidth;
 													}
@@ -2003,7 +2005,7 @@ UniscribeParagraph (Caret Helper)
 							clusterWidth+=run->wholeGlyph.glyphAdvances[i+clusterStart];
 						}
 
-						if(run->scriptItem->scriptItem.analysis.level % 2 == 0)
+						if(run->scriptItem->IsRightToLeft())
 						{
 							//from right to left
 							vint x2=bounds.bounds.x2-accumulatedWidth;
@@ -2305,7 +2307,8 @@ UniscribeParagraph (Caret)
 					GetVirtualLineIndexFromTextPos(caret, frontLine, frontVirtualLine, backVirtualLine);
 					vint virtualLineIndex=frontSide?frontVirtualLine:backVirtualLine;
 
-					return GetCaretBoundsWithLine(caret, frontLine, virtualLineIndex, frontSide);
+					Rect x = GetCaretBoundsWithLine(caret, frontLine, virtualLineIndex, frontSide);
+					return x;
 				}
 
 				vint UniscribeParagraph::GetCaretFromPoint(Point point)
@@ -2355,6 +2358,7 @@ UniscribeParagraph (Caret)
 					{
 						return textPos;
 					}
+
 
 					vint frontItem=-1;
 					vint backItem=-1;
@@ -2420,7 +2424,7 @@ UniscribeParagraph (Caret)
 
 					void PrepareUniscribeData()
 					{
-						if(paragraph->BuildUniscribeData(renderTarget->GetGGacContext()))
+						if(paragraph->BuildUniscribeData())
 						{
 							vint width=paragraph->lastAvailableWidth==-1?65536:paragraph->lastAvailableWidth;
 							paragraph->Layout(width, paragraph->paragraphAlignment);
@@ -2490,7 +2494,7 @@ UniscribeParagraph (Caret)
 
 					void SetMaxWidth(vint value)override
 					{
-						paragraph->BuildUniscribeData(renderTarget->GetGGacContext());
+						paragraph->BuildUniscribeData();
 						paragraph->Layout(value, paragraph->paragraphAlignment);
 					}
 
@@ -2501,7 +2505,7 @@ UniscribeParagraph (Caret)
 
 					void SetParagraphAlignment(Alignment value)override
 					{
-						paragraph->BuildUniscribeData(renderTarget->GetGGacContext());
+						paragraph->BuildUniscribeData();
 						paragraph->Layout(paragraph->lastAvailableWidth, value);
 					}
 
@@ -2654,12 +2658,13 @@ UniscribeParagraph (Caret)
 							vint y1=caretBounds.y1+bounds.y1;
 							vint y2=y1+(vint)(caretBounds.Height()*1.5);
 
-							auto cr = renderTarget->GetGGacContext();
 							//dc->SetPen(caretPen);
-							cr->move_to(x-1, y1);
-							cr->line_to(x-1, y2);
-							cr->move_to(x, y1);
-							cr->line_to(x, y2);
+							paragraphCr->set_source_rgba(caretColor.r / 255.f, caretColor.g / 255.f, caretColor.b / 255.f, caretColor.a / 255.f);
+							paragraphCr->move_to(x-1, y1);
+							paragraphCr->line_to(x-1, y2);
+							paragraphCr->move_to(x, y1);
+							paragraphCr->line_to(x, y2);
+							paragraphCr->stroke();
 						}
 					}
 

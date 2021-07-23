@@ -34,7 +34,7 @@ namespace vl {
 
 				///
 				Glib::RefPtr<Gdk::Pixbuf>	GetPixbuf();
-				void						SetSize(vint width, vint height);
+				void						SetSize(vint width, vint height, bool alwaysScaleUp = false);
 			};
 
 			class GGacImage : public Object, public INativeImage

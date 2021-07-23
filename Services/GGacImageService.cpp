@@ -31,10 +31,13 @@ namespace vl {
 				return pixbuf ? Size(pixbuf->get_width(), pixbuf->get_height())  : Size(0, 0);
 			}
 
-			void GGacImageFrame::SetSize(vint width, vint height)
+			void GGacImageFrame::SetSize(vint width, vint height, bool alwaysScaleUp)
 			{
 				if (width > 0 && height > 0)
 				{ 
+					Size size = GetSize();
+					width = alwaysScaleUp ? MAX(width, size.x) : MIN(width, size.x);
+					height = alwaysScaleUp ? MAX(height, size.y) : MIN(height, size.y);
 					pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::INTERP_BILINEAR);
 				}
 			}
