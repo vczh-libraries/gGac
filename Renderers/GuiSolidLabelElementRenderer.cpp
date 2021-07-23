@@ -20,15 +20,15 @@ namespace vl {
 				{
 				}
 
+				GuiSolidLabelElementRenderer::~GuiSolidLabelElementRenderer()
+				{
+				}
+
 				void GuiSolidLabelElementRenderer::CreateFont()
 				{
 					FontProperties font = element->GetFont();
 					IGGacResourceManager* rm = GetGGacResourceManager();
 					auto gFont = rm->CreateGGacFont(font);
-
-					auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
-					auto cr = Cairo::Context::create(surface);
-					layout = Pango::Layout::create(cr);
 					layout->set_font_description(*gFont.Obj());
 				}
 
@@ -43,17 +43,20 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
 				{
+					oldText = element->GetText();
 					FontProperties font = element->GetFont();
 					if (oldFont != font)
 					{
 						CreateFont();
+						UpdateMinSize();
 					}
-					oldText = element->GetText();
-					UpdateMinSize();
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
 				{
+					auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+					auto cr = Cairo::Context::create(surface);
+					layout = Pango::Layout::create(cr);
 				}
 
 				void GuiSolidLabelElementRenderer::FinalizeInternal()

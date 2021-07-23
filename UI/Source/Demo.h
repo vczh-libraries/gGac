@@ -11,5 +11,6 @@ https://github.com/vczh-libraries
 #define VCZH_WORKFLOW_COMPILER_GENERATED_DEMO
 
 #include "DemoPartialClasses.h"
+#include "MainWindow.h"
 
 #endif

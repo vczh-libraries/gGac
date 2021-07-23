@@ -27,6 +27,7 @@ namespace vl {
 			moving(false),
 			opened(false),
 			mouseHoving(false),
+			title(L""),
 			mode(_mode)
 			{
 				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
@@ -37,8 +38,8 @@ namespace vl {
 				{
 					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
 					nativeWindow->set_modal(true);
-					nativeWindow->set_decorated(false);
 				}
+				nativeWindow->set_decorated(false);
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 
@@ -393,12 +394,12 @@ namespace vl {
 
 			WString GGacWindow::GetTitle()
 			{
-				nativeWindow->get_title();
+				return title;
 			}
 
-			void GGacWindow::SetTitle(WString title)
+			void GGacWindow::SetTitle(WString _title)
 			{
-				nativeWindow->set_title(Glib::ustring::format(title.Buffer()));
+				title = _title;
 			}
 
 			INativeCursor *GGacWindow::GetWindowCursor()

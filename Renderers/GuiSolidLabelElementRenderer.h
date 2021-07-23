@@ -18,6 +18,8 @@ namespace vl {
 
 				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
+					DEFINE_GUI_GRAPHICS_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, IGGacRenderTarget)
+
 				protected:
 					Glib::RefPtr<Pango::Layout> layout;
 					Color 						oldColor;
@@ -27,10 +29,16 @@ namespace vl {
 
 					void CreateFont();
 					void UpdateMinSize();
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
 
 				public:
-				DEFINE_ELEMENT_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, GGacRenderTarget)
+					GuiSolidLabelElementRenderer();
+					~GuiSolidLabelElementRenderer();
 
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
 				};
 
 			}

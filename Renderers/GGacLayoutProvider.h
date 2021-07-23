@@ -278,7 +278,7 @@ UniscribeLine
 					UniscribeLine();
 
 					void							ClearUniscribeData();
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr);
+					bool							BuildUniscribeData();
 					void							Layout(vint availableWidth, Alignment alignment, vint top, vint& totalHeight);
 					void							Render(UniscribeRun::IRendererCallback* callback, vint offsetX, vint offsetY, bool renderBackground);
 				};
@@ -305,7 +305,7 @@ UniscribeParagraph
 					~UniscribeParagraph();
 
 					void							ClearUniscribeData();
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr);
+					bool							BuildUniscribeData();
 					void							Layout(vint availableWidth, Alignment alignment);
 					void							Render(UniscribeRun::IRendererCallback* callback, bool renderBackground);
 

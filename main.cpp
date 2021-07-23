@@ -35,7 +35,7 @@ public:
 };
 GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
-/*Ptr<GuiImageData> folderImage;
+Ptr<GuiImageData> folderImage;
 Ptr<GuiImageData> contactBigImage;
 Ptr<GuiImageData> contactSmallImage;
 
@@ -316,9 +316,9 @@ void GuiMain()
 	folderImage = nullptr;
 	contactBigImage = nullptr;
 	contactSmallImage = nullptr;
-}*/
+}
 
-class ViewModel : public Object, public virtual demo::IViewModel
+/*class ViewModel : public Object, public virtual demo::IViewModel
 {
 public:
 	void OpenUrl(const WString& url)override
@@ -336,7 +336,18 @@ void GuiMain()
 	demo::MainWindow window(new ViewModel);
 	window.MoveToScreenCenter();
 	GetApplication()->Run(&window);
-}
+}*/
+
+/*void GuiMain()
+{
+	{
+		FileStream fileStream(L"/tmp/DataGrid.bin", FileStream::ReadOnly);
+		GetResourceManager()->LoadResourceOrPending(fileStream);
+	}
+	demo::MainWindow window;
+	window.MoveToScreenCenter();
+	GetApplication()->Run(&window);
+}*/
 
 int main(int argc, char **argv)
 {
