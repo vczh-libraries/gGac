@@ -12,5 +12,6 @@
 * Code is compiled under VCZH_DEBUG_NO_REFLECTION, if u need Reflection, remember to remove VCZH_DEBUG_NO_REFLECTION in CMakeLists.txt and add all of Reflection cpp files.
 
 ##### TODO
+* Titlebar of darkskin should be removed
 * GuiInnerShadowElementRenderer/Gui3DBorderElementRenderer/Gui3DSplitterElementRenderer is not implemented yet
 * CocoaClipboardWriter and CocoaClipboardReader is not implemented yet
