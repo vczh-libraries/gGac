@@ -38,8 +38,8 @@ namespace vl {
 				{
 					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
 					nativeWindow->set_modal(true);
+					nativeWindow->set_decorated(false);
 				}
-				nativeWindow->set_decorated(false);
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 

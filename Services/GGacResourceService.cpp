@@ -12,7 +12,7 @@ namespace vl {
 
 			GGacResourceService::GGacResourceService()
 			{
-				defaultFont.fontFamily = L"Monospace";
+				defaultFont.fontFamily = L"FreeSans";
 				defaultFont.size = 12;
 				defaultFont.italic = false;
 				defaultFont.bold = false;
