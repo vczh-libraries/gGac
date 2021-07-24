@@ -5,6 +5,7 @@
 #include "GGacLayoutProvider.h"
 #include "GGacRenderer.h"
 #include <pangomm/glyphstring.h>
+#include <iostream>
 
 namespace vl {
 
@@ -192,7 +193,7 @@ UniscribeGlyphData
 				}
 
 
-				bool UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities)
+				bool UniscribeGlyphData::BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, PangoItem* scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities)
 				{
 					vint glyphCount=glyphs.Count();
 					bool resizeGlyphData=false;
@@ -310,12 +311,12 @@ UniscribeGlyphData
 					return false;
 				}
 
-				void UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length)
+				void UniscribeGlyphData::BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, PangoItem* scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length)
 				{
 					vint glyphCount=0;
 					for(vint i=0;i<length;i++)
 					{
-						if(i==0 || charLogattrs[i].is_char_break)
+						if(i==0 || charLogattrs[i].is_cursor_position)
 						{
 							glyphCount++;
 						}
@@ -339,7 +340,7 @@ UniscribeGlyphData
 						vint currentGlyphCount=0;
 						for(vint i=0;i<length;i++)
 						{
-							if(i==0 || charLogattrs[i].is_char_break)
+							if(i==0 || charLogattrs[i].is_cursor_position)
 							{
 								currentGlyphCount++;
 							}
@@ -351,7 +352,7 @@ UniscribeGlyphData
 						vint currentGlyphCount=0;
 						for(vint i=0;i<length;i++)
 						{
-							if(i==0 || charLogattrs[i].is_char_break)
+							if(i==0 || charLogattrs[i].is_cursor_position)
 							{
 								currentGlyphCount++;
 							}
@@ -364,11 +365,12 @@ UniscribeGlyphData
 						vint lastGlyphIndex=0;
 						for(vint i=1;i<=length;i++)
 						{
-							if(i==0 || charLogattrs[i].is_char_break)
+							if(i==0 || charLogattrs[i].is_cursor_position)
 							{
 								vint glyphLength=i-lastCharIndex;
 								const wchar_t* glyphText = sa.level % 2 == 1 ? runText + length - lastCharIndex - glyphLength : runText + lastCharIndex;
 								//SIZE size=dc->MeasureBuffer(runText, glyphLength, -1);
+								//pango_glyph_string_extents()
 								glyphAdvances[lastGlyphIndex] = 12;//size.cx;
 								lastCharIndex=i;
 								lastGlyphIndex++;
@@ -495,7 +497,7 @@ UniscribeTextRun
 					vint currentFromItem=startFromItem;
 					while(++currentFromItem<scriptItem->length)
 					{
-						if(scriptItem->charLogattrs[currentFromItem].is_char_break)
+						if(scriptItem->charLogattrs[currentFromItem].is_cursor_position)
 						{
 							break;
 						}
@@ -527,13 +529,13 @@ UniscribeTextRun
 					}
 				}
 
-				bool UniscribeTextRun::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)
+				bool UniscribeTextRun::BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, List<vint>& breakings)
 				{
 					ClearUniscribeData();
 
 					pc->set_font_description(*documentFragment->fontObject.Obj());
 					List<bool> breakingAvailabilities;
-					if(!wholeGlyph.BuildUniscribeData(cr, &scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities))
+					if(!wholeGlyph.BuildUniscribeData(pc, &scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities))
 					{
 						goto BUILD_UNISCRIBE_DATA_FAILED;
 					}
@@ -541,7 +543,7 @@ UniscribeTextRun
 					if(breakings.Count()==1 && !breakingAvailabilities[0])
 					{
 						PangoLogAttr* charLogattrs=&scriptItem->charLogattrs[0]+startFromLine-scriptItem->startFromLine;
-						wholeGlyph.BuildUniscribeData(cr, &scriptItem->scriptItem, charLogattrs, runText, length);
+						wholeGlyph.BuildUniscribeData(pc, &scriptItem->scriptItem, charLogattrs, runText, length);
 						needFontFallback=true;
 					}
 					advance = wholeGlyph.runAbc.abcA+wholeGlyph.runAbc.abcB+wholeGlyph.runAbc.abcC;
@@ -664,15 +666,15 @@ UniscribeTextRun
 
 						vint clusterStart=0;
 						vint clusterCount=0;
-						if(scriptItem->IsRightToLeft())
+						if (scriptItem->IsRightToLeft())
 						{
-							clusterStart=nextCluster+1;
-							clusterCount=cluster-nextCluster;
+							clusterStart = nextCluster + 1;
+							clusterCount = cluster - nextCluster;
 						}
 						else
 						{
-							clusterStart=cluster;
-							clusterCount=nextCluster-cluster;
+							clusterStart = cluster;
+							clusterCount = nextCluster - cluster;
 						}
 
 						vint clusterWidth=0;
@@ -736,7 +738,7 @@ UniscribeEmbeddedObjectRun
 				{
 				}
 
-				bool UniscribeEmbeddedObjectRun::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)
+				bool UniscribeEmbeddedObjectRun::BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, List<vint>& breakings)
 				{
 					breakings.Add(0);
 					return true;
@@ -874,7 +876,6 @@ UniscribeLine
 						Glib::RefPtr<Pango::Context> pc = layout->get_context();
 						{
 							// itemize a line
-							Pango::AttrList attr;
 							auto text = Glib::ustring::format(lineText.Buffer());
 							auto list = pango_itemize(pc->gobj(), text.c_str(), 0, text.bytes(), NULL, NULL);
 							while (list)
@@ -978,7 +979,7 @@ UniscribeLine
 							{
 								Ptr<UniscribeRun> run=scriptRuns[runIndex];
 								List<vint> breakings;
-								if(!run->BuildUniscribeData(cr, breakings))
+								if(!run->BuildUniscribeData(pc, breakings))
 								{
 									goto BUILD_UNISCRIBE_DATA_FAILED;
 								}

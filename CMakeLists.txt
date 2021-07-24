@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
-project(gGac)
 add_compile_definitions(VCZH_DEBUG_NO_REFLECTION)
 
 set(CMAKE_CXX_STANDARD 14)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+
+project(gGac)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtkmm-3.0)
@@ -19,13 +20,43 @@ add_library(GacUI
         GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
         )
 
-include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import)
-link_directories(${GTK3_LIBRARY_DIRS} GacUI)
-list(APPEND FC_DEP_LIBS ${GTK3_LIBRARIES} GacUI)
-
-add_executable(gGac GGacController.cpp GGacController.h Services/GGacCallbackService.cpp Services/GGacCallbackService.h Services/GGacInputService.cpp Services/GGacInputService.h Services/GGacAsyncService.cpp Services/GGacAsyncService.h Services/GGacImageService.cpp Services/GGacImageService.h Services/GGacDialogService.cpp Services/GGacDialogService.h Services/GGacResourceService.cpp Services/GGacResourceService.h Services/GGacScreenService.cpp Services/GGacScreenService.h Services/GGacClipboardService.cpp Services/GGacClipboardService.h GGacWindow.cpp GGacWindow.h GGacWindowListener.cpp GGacWindowListener.h GGacHelper.cpp GGacHelper.h GGacControllerListener.cpp GGacControllerListener.h Renderers/GuiSolidBorderElementRenderer.cpp Renderers/GuiSolidBorderElementRenderer.h Renderers/GGacRenderer.cpp Renderers/GGacRenderer.h Renderers/Gui3DBorderElementRenderer.cpp Renderers/Gui3DBorderElementRenderer.h Renderers/GuiSoldBackgroundElementRenderer.cpp Renderers/GuiSoldBackgroundElementRenderer.h Renderers/GuiSolidLabelElementRenderer.cpp Renderers/GuiSolidLabelElementRenderer.h Renderers/Gui3DSplitterElementRenderer.cpp Renderers/Gui3DSplitterElementRenderer.h Renderers/GuiGradientBackgroundElementRenderer.cpp Renderers/GuiGradientBackgroundElementRenderer.h Renderers/GuiImageFrameElementRenderer.cpp Renderers/GuiImageFrameElementRenderer.h Renderers/GuiPolygonElementRenderer.cpp Renderers/GuiPolygonElementRenderer.h Renderers/GuiFocusRectangleElementRenderer.cpp Renderers/GuiFocusRectangleElementRenderer.h Renderers/GuiColorizedTextElementRenderer.cpp Renderers/GuiColorizedTextElementRenderer.h Renderers/GuiInnerShadowElementRenderer.cpp Renderers/GuiInnerShadowElementRenderer.h Renderers/GGacLayoutProvider.cpp Renderers/GGacLayoutProvider.h GGacView.cpp GGacView.h Renderers/GuiGGacElementRenderer.cpp Renderers/GuiGGacElementRenderer.h
-        UI/Source/DemoPartialClasses.cpp UI/Source/DemoPartialClasses.h
-		UI/Source/MainWindow.cpp UI/Source/MainWindow.h
-		main.cpp 
+add_library(gGac
+		GGacController.cpp 
+        Services/GGacCallbackService.cpp 
+        Services/GGacInputService.cpp 
+        Services/GGacAsyncService.cpp 
+        Services/GGacImageService.cpp 
+        Services/GGacDialogService.cpp 
+        Services/GGacResourceService.cpp 
+        Services/GGacScreenService.cpp 
+        Services/GGacClipboardService.cpp 
+        GGacWindow.cpp 
+        GGacWindowListener.cpp 
+        GGacHelper.cpp 
+        GGacControllerListener.cpp 
+        Renderers/GuiSolidBorderElementRenderer.cpp 
+        Renderers/GGacRenderer.cpp 
+        Renderers/Gui3DBorderElementRenderer.cpp 
+        Renderers/GuiSoldBackgroundElementRenderer.cpp 
+        Renderers/GuiSolidLabelElementRenderer.cpp 
+        Renderers/Gui3DSplitterElementRenderer.cpp 
+        Renderers/GuiGradientBackgroundElementRenderer.cpp 
+        Renderers/GuiImageFrameElementRenderer.cpp 
+        Renderers/GuiPolygonElementRenderer.cpp 
+        Renderers/GuiFocusRectangleElementRenderer.cpp 
+        Renderers/GuiColorizedTextElementRenderer.cpp 
+        Renderers/GuiInnerShadowElementRenderer.cpp 
+        Renderers/GGacLayoutProvider.cpp 
+        GGacView.cpp 
+        Renderers/GuiGGacElementRenderer.cpp 
         )
-target_link_libraries (gGac ${FC_DEP_LIBS})
+target_link_libraries(gGac ${GTK3_LIBRARIES})
+
+include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import Renderers Services)
+list(APPEND FC_DEP_LIBS GacUI gGac)
+
+ADD_SUBDIRECTORY(Tests/GacUI_Controls/AddressBook)
+ADD_SUBDIRECTORY(Tests/GacUI_Controls/Animation)
+ADD_SUBDIRECTORY(Tests/GacUI_Controls/CalculatorAndStateMachine)
+ADD_SUBDIRECTORY(Tests/GacUI_Layout/RichTextEmbedding)
+ADD_SUBDIRECTORY(Tests/GacUI_HelloWorlds/Cpp)

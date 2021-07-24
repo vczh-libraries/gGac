@@ -116,8 +116,8 @@ UniscribeGlyphData
 					UniscribeGlyphData();
 
 					void							ClearUniscribeData(vint glyphCount, vint length);
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
-					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, PangoItem* scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
+					bool							BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, PangoItem* scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
+					void							BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, PangoItem* scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
 				};
 
 /***********************************************************************
@@ -178,7 +178,7 @@ UniscribeRun
 					UniscribeRun();
 					~UniscribeRun();
 
-					virtual bool					BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)=0;
+					virtual bool					BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, List<vint>& breakings)=0;
 					virtual vint					SumWidth(vint charStart, vint charLength)=0;
 					virtual vint					SumHeight()=0;
 					virtual vint					SumTextHeight()=0;
@@ -207,7 +207,7 @@ UniscribeTextRun
 					void							SearchSingleGlyphCluster(vint charStart, vint& charLength, vint& cluster, vint& nextCluster);
 					void							SearchSingleChar(vint charStart, vint& charLength, vint& cluster, vint& nextCluster);
 					void							SearchGlyphCluster(vint charStart, vint charLength, vint& cluster, vint& nextCluster);
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)override;
+					bool							BuildUniscribeData(Glib::RefPtr<Pango::Context> cr, List<vint>& breakings)override;
 					vint							SumWidth(vint charStart, vint charLength)override;
 					vint							SumHeight()override;
 					vint							SumTextHeight()override;
@@ -228,7 +228,7 @@ UniscribeElementRun
 					UniscribeEmbeddedObjectRun();
 					~UniscribeEmbeddedObjectRun();
 
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)override;
+					bool							BuildUniscribeData(Glib::RefPtr<Pango::Context> pc, List<vint>& breakings)override;
 					vint							SumWidth(vint charStart, vint charLength)override;
 					vint							SumHeight()override;
 					vint							SumTextHeight()override;
