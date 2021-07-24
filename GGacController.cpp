@@ -55,7 +55,7 @@ namespace vl {
 				:mainWindow(0),
 				inputService(&GlobalTimerFunc)
 				{
-					app = Gtk::Application::create("org.gtkmm.examples.base");
+					app = Gtk::Application::create("gGac");
 					app->signal_activate().connect(sigc::mem_fun(*this, &GGacController::onActive));
 				}
 
