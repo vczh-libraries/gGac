@@ -1,27 +1,5 @@
 #define GAC_HEADER_USE_NAMESPACE
 #include "UI/Source/Demo.h"
-#include <Skins/DarkSkin/DarkSkin.h>
-#include "GGacRenderer.h"
-
-class DefaultSkinPlugin : public Object, public IGuiPlugin
-{
-public:
-
-	GUI_PLUGIN_NAME(Custom_DefaultSkinPlugin)
-	{
-		GUI_PLUGIN_DEPEND(GacGen_DarkSkinResourceLoader);
-	}
-
-	void Load()override
-	{
-		RegisterTheme(MakePtr<darkskin::Theme>());
-	}
-
-	void Unload()override
-	{
-	}
-};
-GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
 using namespace vl::collections;
 using namespace vl::stream;
@@ -309,9 +287,4 @@ void GuiMain()
 	folderImage = nullptr;
 	contactBigImage = nullptr;
 	contactSmallImage = nullptr;
-}
-
-int main(int argc, char **argv)
-{
-    return vl::presentation::elements::gtk::SetupGGacRenderer();
 }
