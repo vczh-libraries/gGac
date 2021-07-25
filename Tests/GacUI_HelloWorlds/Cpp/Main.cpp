@@ -1,26 +1,5 @@
 #define GAC_HEADER_USE_NAMESPACE
-#include <Skins/DarkSkin/DarkSkin.h>
-#include "GGacRenderer.h"
-
-class DefaultSkinPlugin : public Object, public IGuiPlugin
-{
-public:
-
-	GUI_PLUGIN_NAME(Custom_DefaultSkinPlugin)
-	{
-		GUI_PLUGIN_DEPEND(GacGen_DarkSkinResourceLoader);
-	}
-
-	void Load()override
-	{
-		RegisterTheme(MakePtr<darkskin::Theme>());
-	}
-
-	void Unload()override
-	{
-	}
-};
-GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
+#include <GacUI.h>
 
 void GuiMain()
 {
@@ -42,9 +21,4 @@ void GuiMain()
 	window->AddChild(label);
 	GetApplication()->Run(window);
 	delete window;
-}
-
-int main(int argc, char **argv)
-{
-    return vl::presentation::elements::gtk::SetupGGacRenderer();
 }
