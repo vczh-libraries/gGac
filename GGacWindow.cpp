@@ -451,16 +451,6 @@ namespace vl {
 				return mode;
 			}
 
-			void GGacWindow::SetWindowMode(INativeWindow::WindowMode _mode)
-			{
-				switch (_mode)
-				{
-					case INativeWindow::Menu:
-						break;
-				}
-				mode = _mode;
-			}
-
 			void GGacWindow::EnableCustomFrameMode()
 			{
 				customFrameMode = true;

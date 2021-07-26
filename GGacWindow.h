@@ -93,8 +93,6 @@ namespace vl {
 
 				WindowMode GetWindowMode() override;
 
-				void SetWindowMode(WindowMode mode) override;
-
 				void EnableCustomFrameMode() override;
 
 				void DisableCustomFrameMode() override;
