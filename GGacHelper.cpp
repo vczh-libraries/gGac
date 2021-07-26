@@ -40,6 +40,8 @@ namespace vl {
 				{
 					switch (keycode)
 					{
+					case GDK_KEY_Return:
+						return VKEY::_RETURN;
 					case GDK_KEY_Tab:
 						return VKEY::_TAB;
 					case GDK_KEY_Caps_Lock:
