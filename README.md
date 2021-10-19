@@ -4,7 +4,7 @@ using gtkmm/cairomm/pangomm
 
 ## License
 
-**Read the [LICENSE](https://github.com/vczh-libraries/iGac/blob/master/LICENSE.md) first.**
+**Read the [LICENSE](https://github.com/vczh-libraries/gGac/blob/master/LICENSE.md) first.**
 
 ## Building this repo
 
