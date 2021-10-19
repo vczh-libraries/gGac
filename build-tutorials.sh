@@ -2,16 +2,36 @@
 
 function create-tutorial() {
     CATEGORY=$1
+    APP=$2
+    cd Tests
+    if ! [ -d "$CATEGORY" ]; then
+        mkdir $CATEGORY
+    fi
+    cd $CATEGORY
+    if ! [ -d "$APP" ]; then
+        mkdir $APP
+    fi
+    cd $APP
+    echo "project($APP)" >> CMakeLists.txt
+    echo "add_executable($APP" >> CMakeLists.txt
+    echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/UI/Source/DemoPartialClasses.cpp" >> CMakeLists.txt
+    echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/Main.cpp" >> CMakeLists.txt
+    echo "	  ../../App.cpp)" >> CMakeLists.txt
+    echo "target_link_libraries (Animation \${FC_DEP_LIBS})" >> CMakeLists.txt
+    cd ..
+    cd ..
+    cd ..
+}
+
+function create-tutorial-category() {
+    CATEGORY=$1
     APPS=("${@:2}")
-    echo $CATEGORY
     for APP in "${APPS[@]}"; do
         APP_SOURCE="./GacUI/Tutorial/$CATEGORY/$APP"
         APP_DEST="./Tests/$CATEGORY/$APP"
         if [ -d "$APP_SOURCE" ]; then
             if ! [ -d "$APP_DEST" ]; then
-                echo "    $APP"
-            else
-                echo "$APP_DEST found" >> build-tutorials.log
+                create-tutorial $CATEGORY $APP
             fi
         else
             echo "$APP_SOURCE not found" >> build-tutorials.log
@@ -73,7 +93,7 @@ GACUI_CONTROLS=(GacUI_Controls
 if [ -a "build-tutorials.log" ]; then
     rm build-tutorials.log
 fi
-create-tutorial "${GACUI_HELLOWORLDS[@]}"
-create-tutorial "${GACUI_LAYOUT[@]}"
-create-tutorial "${GACUI_XML[@]}"
-create-tutorial "${GACUI_CONTROLS[@]}"
+create-tutorial-category "${GACUI_HELLOWORLDS[@]}"
+create-tutorial-category "${GACUI_LAYOUT[@]}"
+create-tutorial-category "${GACUI_XML[@]}"
+create-tutorial-category "${GACUI_CONTROLS[@]}"
