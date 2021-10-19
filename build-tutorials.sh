@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git submodule update
+
 function create-tutorial() {
     CATEGORY=$1
     APP=$2
@@ -16,8 +18,8 @@ function create-tutorial() {
     echo "add_executable($APP" >> CMakeLists.txt
     echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/UI/Source/DemoPartialClasses.cpp" >> CMakeLists.txt
     echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/Main.cpp" >> CMakeLists.txt
-    echo "	  ../../App.cpp)" >> CMakeLists.txt
-    echo "target_link_libraries (Animation \${FC_DEP_LIBS})" >> CMakeLists.txt
+    echo "    ../../App.cpp)" >> CMakeLists.txt
+    echo "target_link_libraries ($APP \${FC_DEP_LIBS})" >> CMakeLists.txt
     cd ..
     cd ..
     cd ..
@@ -35,6 +37,28 @@ function create-tutorial-category() {
             fi
         else
             echo "$APP_SOURCE not found" >> build-tutorials.log
+        fi
+    done
+}
+
+function build-tutorial() {
+    CATEGORY=$1
+    APP=$2
+    cd $CATEGORY
+    cd $APP
+    cd ..
+    cd ..
+}
+
+function build-tutorial-category() {
+    CATEGORY=$1
+    APPS=("${@:2}")
+    for APP in "${APPS[@]}"; do
+        APP_DEST="./Tests/$CATEGORY/$APP"
+        if [ -d "$APP_DEST" ]; then
+            build-tutorial $CATEGORY $APP
+        else
+            echo "$APP_DEST not found" >> build-tutorials.log
         fi
     done
 }
@@ -97,3 +121,11 @@ create-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 create-tutorial-category "${GACUI_LAYOUT[@]}"
 create-tutorial-category "${GACUI_XML[@]}"
 create-tutorial-category "${GACUI_CONTROLS[@]}"
+./build-cmake.sh
+cd out
+cmake ..
+build-tutorial-category "${GACUI_HELLOWORLDS[@]}"
+build-tutorial-category "${GACUI_LAYOUT[@]}"
+build-tutorial-category "${GACUI_XML[@]}"
+build-tutorial-category "${GACUI_CONTROLS[@]}"
+cd ..
