@@ -271,7 +271,7 @@ public:
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/AddressBook.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/AddressBook.bin", FileStream::ReadOnly);
 		auto resource = GuiResource::LoadPrecompiledBinary(fileStream);
 		GuiResourceError::List errors;
 		GetResourceManager()->SetResource(resource, errors);

@@ -9,11 +9,11 @@ using namespace demo;
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/DocumentEditor.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/DocumentEditor.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	{
-		FileStream fileStream(L"/tmp/DocumentEditorRibbon.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/DocumentEditorRibbon.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	demo::MainWindow window;

@@ -7,7 +7,7 @@ using namespace vl::stream;
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/Flow.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/Flow.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	demo::MainWindow window;
