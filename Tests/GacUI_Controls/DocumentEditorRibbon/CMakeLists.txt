@@ -1,7 +1,8 @@
 project(DocumentEditorRibbon)
 add_executable(DocumentEditorRibbon
-		UI/Source/DocumentEditorBase.cpp UI/Source/DocumentEditorBase.h
-		UI/Source/EditorBasePartialClasses.cpp UI/Source/EditorBasePartialClasses.h UI/Source/EditorBase.h
-		UI/Source/EditorRibbonPartialClasses.cpp UI/Source/EditorRibbonPartialClasses.h UI/Source/EditorRibbon.h
-		../../App.cpp Main.cpp)
+		../../../GacUI/Tutorial/GacUI_Controls//DocumentEditor/UI/Source/DocumentEditorBase.cpp
+		../../../GacUI/Tutorial/GacUI_Controls//DocumentEditor/UI/Source/EditorBasePartialClasses.cpp
+		../../../GacUI/Tutorial/GacUI_Controls//DocumentEditorRibbon/UI/Source/EditorRibbonPartialClasses.cpp
+		../../../GacUI/Tutorial/GacUI_Controls//DocumentEditorRibbon/Main.cpp
+		../../App.cpp)
 target_link_libraries (DocumentEditorRibbon ${FC_DEP_LIBS})
