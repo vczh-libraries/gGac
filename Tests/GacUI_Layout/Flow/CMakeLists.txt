@@ -1,4 +1,5 @@
 add_executable(Flow
-        UI/Source/DemoPartialClasses.cpp UI/Source/DemoPartialClasses.h  UI/Source/Demo.h
-		../../App.cpp Main.cpp)
+        ../../../GacUI/Tutorial/GacUI_Layout/Flow/UI/Source/DemoPartialClasses.cpp
+        ../../../GacUI/Tutorial/GacUI_Layout/Flow/Main.cpp
+		../../App.cpp)
 target_link_libraries (Flow ${FC_DEP_LIBS})

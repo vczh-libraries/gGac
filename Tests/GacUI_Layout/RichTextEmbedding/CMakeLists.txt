@@ -1,5 +1,6 @@
 project(RichTextEmbedding)
 add_executable(RichTextEmbedding
-        UI/Source/DemoPartialClasses.cpp UI/Source/DemoPartialClasses.h  UI/Source/Demo.h
-		../../App.cpp Main.cpp)
+        ../../../GacUI/Tutorial/GacUI_Layout/RichTextEmbedding/UI/Source/DemoPartialClasses.cpp
+        ../../../GacUI/Tutorial/GacUI_Layout/RichTextEmbedding/Main.cpp
+		../../App.cpp)
 target_link_libraries (RichTextEmbedding ${FC_DEP_LIBS})
