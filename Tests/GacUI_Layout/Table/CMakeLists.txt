@@ -1,4 +1,5 @@
 add_executable(Table
-        UI/Source/DemoPartialClasses.cpp UI/Source/DemoPartialClasses.h  UI/Source/Demo.h
-		../../App.cpp Main.cpp)
+        ../../../GacUI/Tutorial/GacUI_Layout/Table/UI/Source/DemoPartialClasses.cpp
+        ../../../GacUI/Tutorial/GacUI_Layout/Table/Main.cpp
+		../../App.cpp)
 target_link_libraries (Table ${FC_DEP_LIBS})
