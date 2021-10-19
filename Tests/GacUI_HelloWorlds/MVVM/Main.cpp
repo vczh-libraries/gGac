@@ -78,7 +78,7 @@ public:
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/MVVM.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/MVVM.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	auto viewModel = MakePtr<ViewModel>();

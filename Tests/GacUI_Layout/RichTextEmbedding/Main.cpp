@@ -17,7 +17,7 @@ public:
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/RichTextEmbedding.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/RichTextEmbedding.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	demo::MainWindow window(new ViewModel);

@@ -7,7 +7,7 @@ using namespace vl::stream;
 void GuiMain()
 {
 	{
-		FileStream fileStream(L"/tmp/CalculatorAndStateMachine.bin", FileStream::ReadOnly);
+		FileStream fileStream(L"../UIRes/CalculatorAndStateMachine.bin", FileStream::ReadOnly);
 		GetResourceManager()->LoadResourceOrPending(fileStream);
 	}
 	demo::MainWindow window(new demo::Calculator);
