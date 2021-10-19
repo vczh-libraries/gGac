@@ -44,10 +44,12 @@ function create-tutorial-category() {
 function build-tutorial() {
     CATEGORY=$1
     APP=$2
-    cd $CATEGORY
-    cd $APP
-    cd ..
-    cd ..
+    cd "./$CATEGORY/$APP"
+    make
+    if ! [ -a "$APP" ]; then
+        echo "$CATEGORY/$APP does not compile" >> ../../../../build-tutorials.log
+    fi
+    cd ../..
 }
 
 function build-tutorial-category() {
