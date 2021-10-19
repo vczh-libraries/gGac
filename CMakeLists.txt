@@ -20,38 +20,38 @@ add_library(GacUI
         )
 
 add_library(gGac
-		GGacController.cpp 
-        Services/GGacCallbackService.cpp 
-        Services/GGacInputService.cpp 
-        Services/GGacAsyncService.cpp 
-        Services/GGacImageService.cpp 
-        Services/GGacDialogService.cpp 
-        Services/GGacResourceService.cpp 
-        Services/GGacScreenService.cpp 
-        Services/GGacClipboardService.cpp 
-        GGacWindow.cpp 
-        GGacWindowListener.cpp 
-        GGacHelper.cpp 
-        GGacControllerListener.cpp 
-        Renderers/GuiSolidBorderElementRenderer.cpp 
-        Renderers/GGacRenderer.cpp 
-        Renderers/Gui3DBorderElementRenderer.cpp 
-        Renderers/GuiSoldBackgroundElementRenderer.cpp 
-        Renderers/GuiSolidLabelElementRenderer.cpp 
-        Renderers/Gui3DSplitterElementRenderer.cpp 
-        Renderers/GuiGradientBackgroundElementRenderer.cpp 
-        Renderers/GuiImageFrameElementRenderer.cpp 
-        Renderers/GuiPolygonElementRenderer.cpp 
-        Renderers/GuiFocusRectangleElementRenderer.cpp 
-        Renderers/GuiColorizedTextElementRenderer.cpp 
-        Renderers/GuiInnerShadowElementRenderer.cpp 
-        Renderers/GGacLayoutProvider.cpp 
-        GGacView.cpp 
-        Renderers/GuiGGacElementRenderer.cpp 
+        Source/Services/GGacCallbackService.cpp
+        Source/Services/GGacInputService.cpp
+        Source/Services/GGacAsyncService.cpp
+        Source/Services/GGacImageService.cpp
+        Source/Services/GGacDialogService.cpp
+        Source/Services/GGacResourceService.cpp
+        Source/Services/GGacScreenService.cpp
+        Source/Services/GGacClipboardService.cpp
+        Source/Renderers/GuiSolidBorderElementRenderer.cpp
+        Source/Renderers/GGacRenderer.cpp
+        Source/Renderers/Gui3DBorderElementRenderer.cpp
+        Source/Renderers/GuiSoldBackgroundElementRenderer.cpp
+        Source/Renderers/GuiSolidLabelElementRenderer.cpp
+        Source/Renderers/Gui3DSplitterElementRenderer.cpp
+        Source/Renderers/GuiGradientBackgroundElementRenderer.cpp
+        Source/Renderers/GuiImageFrameElementRenderer.cpp
+        Source/Renderers/GuiPolygonElementRenderer.cpp
+        Source/Renderers/GuiFocusRectangleElementRenderer.cpp
+        Source/Renderers/GuiColorizedTextElementRenderer.cpp
+        Source/Renderers/GuiInnerShadowElementRenderer.cpp
+        Source/Renderers/GGacLayoutProvider.cpp
+        Source/Renderers/GuiGGacElementRenderer.cpp
+	Source/GGacController.cpp
+        Source/GGacWindow.cpp
+        Source/GGacWindowListener.cpp
+        Source/GGacHelper.cpp
+        Source/GGacControllerListener.cpp
+        Source/GGacView.cpp
         )
 target_link_libraries(gGac ${GTK3_LIBRARIES})
 
-include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import Renderers Services)
+include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import Source Source/Renderers Source/Services)
 list(APPEND FC_DEP_LIBS GacUI gGac)
 
 ADD_SUBDIRECTORY(Tests/GacUI_Controls/AddressBook)
