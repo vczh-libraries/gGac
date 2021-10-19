@@ -7,14 +7,16 @@ mkdir ./out
 cd ./out
 cmake ..
 
-pushd ./Tests/GacUI_HelloWorlds
-ln -s ../../../GacUI/Tutorial/GacUI_HelloWorlds/UIRes UIRes
-popd
-
-pushd ./Tests/GacUI_Controls
-ln -s ../../../GacUI/Tutorial/GacUI_Controls/UIRes UIRes
-popd
-
-pushd ./Tests/GacUI_Layout
-ln -s ../../../GacUI/Tutorial/GacUI_Layout/UIRes UIRes
-popd
+if [ -d "Tests" ]; then
+    cd Tests
+    GACUI_FOLDERS=(GacUI_HelloWorlds GacUI_Layout GacUI_Xml GacUI_Controls GacUI_ControlTemplate)
+    for i in "${GACUI_FOLDERS[@]}"; do
+        if ! [ -d "$i" ]; then
+            mkdir "$i"
+        fi
+        cd "$i"
+        ln -s "../../../GacUI/Tutorial/$i/UIRes" UIRes
+        cd ..
+    done
+    cd ..
+fi
