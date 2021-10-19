@@ -122,10 +122,11 @@ create-tutorial-category "${GACUI_LAYOUT[@]}"
 create-tutorial-category "${GACUI_XML[@]}"
 create-tutorial-category "${GACUI_CONTROLS[@]}"
 ./build-cmake.sh
-cd out
+cd ./out
 cmake ..
+cd ./Tests
 build-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 build-tutorial-category "${GACUI_LAYOUT[@]}"
 build-tutorial-category "${GACUI_XML[@]}"
 build-tutorial-category "${GACUI_CONTROLS[@]}"
-cd ..
+cd ../..
