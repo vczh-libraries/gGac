@@ -5,7 +5,17 @@ function create-tutorial() {
     APPS=("${@:2}")
     echo $CATEGORY
     for APP in "${APPS[@]}"; do
-        echo "    " $APP
+        APP_SOURCE="./GacUI/Tutorial/$CATEGORY/$APP"
+        APP_DEST="./Tests/$CATEGORY/$APP"
+        if [ -d "$APP_SOURCE" ]; then
+            if ! [ -d "$APP_DEST" ]; then
+                echo "    $APP"
+            else
+                echo "$APP_DEST found" >> build-tutorials.log
+            fi
+        else
+            echo "$APP_SOURCE not found" >> build-tutorials.log
+        fi
     done
 }
 
@@ -46,6 +56,7 @@ GACUI_CONTROLS=(GacUI_Controls
     AddressBook
     Animation
     CalculatorAndStateMachine
+    ColorPicker
     ContainersAndButtons
     DataGrid
     DocumentEditorRibbon
