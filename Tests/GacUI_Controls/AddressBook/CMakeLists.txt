@@ -1,6 +1,7 @@
 project(AddressBook)
 add_executable(AddressBook
-        UI/Source/DemoPartialClasses.cpp UI/Source/DemoPartialClasses.h  UI/Source/Demo.h
-        UI/Source/MainWindow.cpp UI/Source/MainWindow.h  UI/Source/Demo.h
-		../../App.cpp Main.cpp)
+        ../../../GacUI/Tutorial/GacUI_Controls/AddressBook/UI/Source/DemoPartialClasses.cpp
+        ../../../GacUI/Tutorial/GacUI_Controls/AddressBook/UI/Source/MainWindow.cpp
+        ../../../GacUI/Tutorial/GacUI_Controls/AddressBook/Main.cpp
+		../../App.cpp)
 target_link_libraries (AddressBook ${FC_DEP_LIBS})
