@@ -116,6 +116,9 @@ GACUI_CONTROLS=(GacUI_Controls
     TextEditor
     TriplePhaseImageButton
     )
+GACUI_CONTROLTEMPLATE=(GacUI_TEMPLATE
+    WindowSkin
+    )
 
 if [ -a "build-tutorials.index.log" ]; then
     rm build-tutorials.index.log
@@ -127,6 +130,7 @@ create-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 create-tutorial-category "${GACUI_LAYOUT[@]}"
 create-tutorial-category "${GACUI_XML[@]}"
 create-tutorial-category "${GACUI_CONTROLS[@]}"
+create-tutorial-category "${GACUI_GACUI_CONTROLTEMPLATECONTROLS[@]}"
 ./build-cmake.sh
 cd ./out
 cmake ..
@@ -135,6 +139,7 @@ build-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 build-tutorial-category "${GACUI_LAYOUT[@]}"
 build-tutorial-category "${GACUI_XML[@]}"
 build-tutorial-category "${GACUI_CONTROLS[@]}"
+create-tutorial-category "${GACUI_GACUI_CONTROLTEMPLATECONTROLS[@]}"
 cd ../..
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 if [ -a "build-tutorials.index.log" ]; then
