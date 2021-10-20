@@ -14,12 +14,10 @@ namespace vl {
 
 		namespace gtk {
 
-			using namespace collections;
-
 			class GGacControllerListener : public Object, public INativeControllerListener
 			{
 			protected:
-				Dictionary<INativeWindow*, Ptr<GGacWindowListener>>  nativeWindowListeners;
+				collections::Dictionary<INativeWindow*, Ptr<GGacWindowListener>>  nativeWindowListeners;
 
 			public:
 				void GlobalTimer() override;
