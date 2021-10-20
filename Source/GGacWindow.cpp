@@ -362,7 +362,7 @@ namespace vl {
 				NativeRect newBounds = bounds;
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
-					listeners[i]->Moving(newBounds, true);
+					listeners[i]->Moving(newBounds, true, false);
 				}
 				nativeWindow->move(newBounds.Left().value, newBounds.Top().value);
 				nativeWindow->set_default_size(newBounds.Width().value, newBounds.Height().value);
