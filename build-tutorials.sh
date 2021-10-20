@@ -130,7 +130,7 @@ create-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 create-tutorial-category "${GACUI_LAYOUT[@]}"
 create-tutorial-category "${GACUI_XML[@]}"
 create-tutorial-category "${GACUI_CONTROLS[@]}"
-create-tutorial-category "${GACUI_GACUI_CONTROLTEMPLATECONTROLS[@]}"
+create-tutorial-category "${GACUI_CONTROLTEMPLATE[@]}"
 ./build-cmake.sh
 cd ./out
 cmake ..
@@ -139,7 +139,7 @@ build-tutorial-category "${GACUI_HELLOWORLDS[@]}"
 build-tutorial-category "${GACUI_LAYOUT[@]}"
 build-tutorial-category "${GACUI_XML[@]}"
 build-tutorial-category "${GACUI_CONTROLS[@]}"
-create-tutorial-category "${GACUI_GACUI_CONTROLTEMPLATECONTROLS[@]}"
+build-tutorial-category "${GACUI_CONTROLTEMPLATE[@]}"
 cd ../..
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 if [ -a "build-tutorials.index.log" ]; then
