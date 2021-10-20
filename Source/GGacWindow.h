@@ -14,15 +14,14 @@ namespace vl {
 
 		namespace gtk {
 
-			using namespace collections;
-
 			class GGacWindow : public Object, public INativeWindow
 			{
+				using WindowListenerList = collections::List<INativeWindowListener*>;
 			protected:
 				Gtk::Window* 					nativeWindow;
 				GGacWindow* 					parentWindow;
 				Interface* 						graphicsHandler;
-				List<INativeWindowListener*>	listeners;
+				WindowListenerList				listeners;
 				WString							title;
 				WindowMode 						mode;
 

@@ -69,8 +69,8 @@ namespace vl {
 					case GDK_KEY_Down:
 						return VKEY::_DOWN;
 					}
-					return VKEY::_UNKNOWN;
 				}
+				return VKEY::_UNKNOWN;
 			}
 
 		}

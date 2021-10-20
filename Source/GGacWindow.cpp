@@ -714,12 +714,14 @@ namespace vl {
 
 			bool GGacWindow::InstallListener(INativeWindowListener *listener)
 			{
+				if (listeners.Contains(listener)) return false;
 				listeners.Add(listener);
+				return true;
 			}
 
 			bool GGacWindow::UninstallListener(INativeWindowListener *listener)
 			{
-				listeners.Remove(listener);
+				return listeners.Remove(listener);
 			}
 
 			void GGacWindow::RedrawContent()

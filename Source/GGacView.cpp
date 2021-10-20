@@ -37,6 +37,7 @@ namespace vl {
 				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), width, height);
 				context = Cairo::Context::create(surface);
 				needRepaint = true;
+				return false;
 			}
 
 			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
@@ -48,6 +49,7 @@ namespace vl {
 				}
 				cr->set_source(surface, 0, 0);
 				cr->paint();
+				return true;
 			}
 
 			bool GGacView::onEvent(GdkEvent *gdk_event)
