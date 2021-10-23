@@ -291,7 +291,7 @@ namespace vl {
 			{
 				info.ctrl = (event->key.state & GDK_CONTROL_MASK) > 0;
 				info.shift = (event->key.state & GDK_SHIFT_MASK) > 0;
-				info.alt = false;
+				info.alt = (event->key.state & GDK_MOD1_MASK) > 0;
 				info.capslock = (event->key.state & GDK_LOCK_MASK) > 0;
 
 				if (info.ctrl || info.alt)
