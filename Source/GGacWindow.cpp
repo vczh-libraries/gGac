@@ -33,6 +33,7 @@ namespace vl {
 				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
 				{
 					nativeWindow = new Gtk::Window();
+					nativeWindow->set_decorated(false);
 				}
 				else
 				{
@@ -365,7 +366,7 @@ namespace vl {
 					listeners[i]->Moving(newBounds, true, false);
 				}
 				nativeWindow->move(newBounds.Left().value, newBounds.Top().value);
-				nativeWindow->set_default_size(newBounds.Width().value, newBounds.Height().value);
+				nativeWindow->set_size_request(newBounds.Width().value, newBounds.Height().value);
 			}
 
 			NativeSize GGacWindow::GetClientSize()
@@ -378,7 +379,7 @@ namespace vl {
 			void GGacWindow::SetClientSize(NativeSize size)
 			{
 				if (size.x.value > 0 && size.y.value > 0)
-					nativeWindow->set_default_size(size.x.value, size.y.value);
+					nativeWindow->set_size_request(size.x.value, size.y.value);
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
