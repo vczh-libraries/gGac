@@ -289,10 +289,10 @@ namespace vl {
 
 			bool GGacInputService::ConvertToPrintable(NativeWindowCharInfo &info, GdkEvent *event)
 			{
-				info.ctrl = (event->key.state & GDK_CONTROL_MASK) > 0;
-				info.shift = (event->key.state & GDK_SHIFT_MASK) > 0;
-				info.alt = (event->key.state & GDK_MOD1_MASK) > 0;
-				info.capslock = (event->key.state & GDK_LOCK_MASK) > 0;
+				info.ctrl = event->key.state & GDK_CONTROL_MASK;
+				info.shift = event->key.state & GDK_SHIFT_MASK;
+				info.alt = event->key.state & GDK_MOD1_MASK;
+				info.capslock = event->key.state & GDK_LOCK_MASK;
 
 				if (info.ctrl || info.alt)
 					return false;

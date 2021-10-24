@@ -85,10 +85,8 @@ namespace vl {
 				info.right = event->button.button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS;
 				info.middle = event->button.button == GDK_BUTTON_MIDDLE && event->type == GDK_BUTTON_PRESS;
 
-				info.ctrl = false;
-				info.shift = false;
-				/*info.ctrl = event.modifierFlags & NSEventModifierFlagControl;
-				info.shift = event.modifierFlags & NSEventModifierFlagShift;*/
+				info.ctrl = event->key.state & GDK_CONTROL_MASK;
+				info.shift = event->key.state & GDK_SHIFT_MASK;
 
 				int width, height;
 				nativeWindow->get_size(width, height);
@@ -103,10 +101,10 @@ namespace vl {
 			{
 				NativeWindowKeyInfo info{};
 
-				info.ctrl = false;
-				info.shift = false;
-				info.alt = false;
-				info.capslock = false;
+				info.ctrl = event->key.state & GDK_CONTROL_MASK;
+				info.shift = event->key.state & GDK_SHIFT_MASK;
+				info.alt = event->key.state & GDK_MOD1_MASK;
+				info.capslock = event->key.state & GDK_LOCK_MASK;
 				info.code = GdkEventKeyCodeToGacKeyCode(event->key.keyval);
 
 				return info;
