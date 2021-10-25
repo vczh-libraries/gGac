@@ -3,7 +3,6 @@
 //
 
 #include "GuiColorizedTextElementRenderer.h"
-#include <iostream>
 
 namespace vl {
 
@@ -50,13 +49,10 @@ namespace vl {
 
 						Point viewPosition = element->GetViewPosition();
 						Rect viewBounds(viewPosition, bounds.GetSize());
-
 						vint startRow = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x1, viewBounds.y1)).row;
 						vint endRow = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x2, viewBounds.y2)).row;
-
 						TextPos selectionBegin = element->GetCaretBegin() < element->GetCaretEnd() ? element->GetCaretBegin() : element->GetCaretEnd();
 						TextPos selectionEnd = element->GetCaretBegin() > element->GetCaretEnd() ? element->GetCaretBegin() :element->GetCaretEnd();
-
 						bool focused = element->GetFocused();
 
 						//draw each line of text
@@ -64,14 +60,11 @@ namespace vl {
 						{
 							Rect startRect = element->GetLines().GetRectFromTextPos(TextPos(row, 0));
 							Point startPoint = startRect.LeftTop();
-
 							vint startColumn = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x1, startPoint.y)).column;
 							vint endColumn = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x2, startPoint.y)).column;
-
 							text::TextLine& line = element->GetLines().GetLine(row);
 							vint x = startColumn == 0 ? 0 : line.att[startColumn-1].rightOffset;
 
-							Glib::ustring gLine = Glib::ustring::format(line.text).substr(0, line.dataLength);
 							//draw each column of text
 							for (vint column = startColumn; column <= endColumn; column++)
 							{
@@ -122,7 +115,7 @@ namespace vl {
 									Glib::RefPtr<Pango::Layout> layout;
 									layout = Pango::Layout::create(cr);
 									layout->set_font_description(*gFont.Obj());
-									layout->set_text(gLine.substr(column, 1));
+									layout->set_text(Glib::ustring::format(line.text[column]));
 									cr->move_to(tx, ty);
 									layout->show_in_cairo_context(cr);
 								}
