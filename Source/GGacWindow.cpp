@@ -153,50 +153,61 @@ namespace vl {
 					case GDK_BUTTON_RELEASE:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
-						for (vint i = 0; i < listeners.Count(); i++)
+						
+						switch (event->button.button)
 						{
-							switch (event->button.button)
+						case GDK_BUTTON_PRIMARY:
+							for (vint i = 0; i < listeners.Count(); i++)
 							{
-								case GDK_BUTTON_PRIMARY:
-									listeners[i]->LeftButtonUp(info);
-									if (customFrameMode)
-									{
-										auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
-										switch(control)
-										{
-											case INativeWindowListener::ButtonMinimum:
-												ShowMinimized();
-												return true;
-											case INativeWindowListener::ButtonMaximum:
-												if (GetSizeState() == INativeWindow::Maximized)
-												{
-													ShowRestored();
-												}
-												else
-												{
-													ShowMaximized();
-												}
-												return true;
-											case INativeWindowListener::ButtonClose:
-												Hide(true);
-												return true;
-											case INativeWindowListener::NoDecision:
-												break;
-											case INativeWindowListener::Client:
-												return true;
-											default:
-												break;
-										}
-									}
-									break;
-								case GDK_BUTTON_SECONDARY:
-									listeners[i]->RightButtonUp(info);
-									break;
-
-								case GDK_BUTTON_MIDDLE:
-									listeners[i]->MiddleButtonUp(info);
-									break;
+								listeners[i]->LeftButtonUp(info);
 							}
+							for (vint i = 0; i < listeners.Count(); i++)
+							{
+								if (customFrameMode)
+								{
+									auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
+									switch (control)
+									{
+									case INativeWindowListener::ButtonMinimum:
+										ShowMinimized();
+										return true;
+									case INativeWindowListener::ButtonMaximum:
+										if (GetSizeState() == INativeWindow::Maximized)
+										{
+											ShowRestored();
+										}
+										else
+										{
+											ShowMaximized();
+										}
+										return true;
+									case INativeWindowListener::ButtonClose:
+										Hide(true);
+										return true;
+									case INativeWindowListener::NoDecision:
+										break;
+									case INativeWindowListener::Client:
+										return true;
+									default:
+										break;
+									}
+								}
+							}
+							break;
+
+						case GDK_BUTTON_SECONDARY:
+							for (vint i = 0; i < listeners.Count(); i++)
+							{
+								listeners[i]->RightButtonUp(info);
+							}
+							break;
+
+						case GDK_BUTTON_MIDDLE:
+							for (vint i = 0; i < listeners.Count(); i++)
+							{
+								listeners[i]->MiddleButtonUp(info);
+							}
+							break;
 						}
 						break;
 					}
@@ -720,7 +731,15 @@ namespace vl {
 
 			bool GGacWindow::UninstallListener(INativeWindowListener *listener)
 			{
-				return listeners.Remove(listener);
+				if (listeners.Contains(listener))
+				{
+					listeners.Remove(listener);
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 
 			void GGacWindow::RedrawContent()
