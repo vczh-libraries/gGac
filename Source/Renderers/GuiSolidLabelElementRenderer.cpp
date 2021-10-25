@@ -26,15 +26,39 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::CreateFont()
 				{
-					FontProperties font = element->GetFont();
+					oldFont = element->GetFont();
 					IGGacResourceManager* rm = GetGGacResourceManager();
-					auto gFont = rm->CreateGGacFont(font);
+					auto gFont = rm->CreateGGacFont(oldFont);
 					layout->set_font_description(*gFont.Obj());
 				}
 
 				void GuiSolidLabelElementRenderer::UpdateMinSize()
 				{
-					layout->set_text(Glib::ustring::format(oldText.Buffer()));
+					if (oldFont.fontFamily == L"Webdings" && oldText.Length() > 0)
+					{
+						// map webdings to unicode
+						wchar_t* wsStr = new wchar_t[oldText.Length()];
+						for (vint i = 0; i < oldText.Length(); ++i)
+						{
+							switch (oldText[i])
+							{
+							case L'a': wsStr[i] = 0x00002713; break;
+							case L'r': wsStr[i] = 0x00002715; break;
+							case L'0': wsStr[i] = 0x0000035F; break;
+							case L'1': wsStr[i] = 0x0000002B; break;
+							case L'2': wsStr[i] = 0x0000002B; break;
+								// more todo
+							default: wsStr[i] = oldText[i];
+							}
+						}
+
+						layout->set_text(Glib::ustring::format(wsStr));
+						delete[] wsStr;
+					} 
+					else
+					{
+						layout->set_text(Glib::ustring::format(oldText.Buffer()));
+					}
 					int text_width;
 					int text_height;
 					layout->get_pixel_size(text_width, text_height);
