@@ -5,7 +5,6 @@
 #ifndef GGAC_GUISOLIDLABELELEMENTRENDERER_H
 #define GGAC_GUISOLIDLABELELEMENTRENDERER_H
 
-#include <gtkmm.h>
 #include "GGacRenderer.h"
 
 namespace vl {
