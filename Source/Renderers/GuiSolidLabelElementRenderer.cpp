@@ -3,8 +3,6 @@
 //
 
 #include "GuiSolidLabelElementRenderer.h"
-#include <gtkmm.h>
-#include <iostream>
 
 namespace vl {
 
@@ -24,45 +22,38 @@ namespace vl {
 				{
 				}
 
-				void GuiSolidLabelElementRenderer::CreateFont()
-				{
-					oldFont = element->GetFont();
-					IGGacResourceManager* rm = GetGGacResourceManager();
-					auto gFont = rm->CreateGGacFont(oldFont);
-					layout->set_font_description(*gFont.Obj());
-				}
-
 				void GuiSolidLabelElementRenderer::UpdateMinSize()
 				{
-					if (oldFont.fontFamily == L"Webdings" && oldText.Length() > 0)
+					if (renderTarget)
 					{
-						// map webdings to unicode
-						wchar_t* wsStr = new wchar_t[oldText.Length()];
-						for (vint i = 0; i < oldText.Length(); ++i)
+						int text_width;
+						int text_height;
+						if (element->GetWrapLine())
 						{
-							switch (oldText[i])
+							if (element->GetWrapLineHeightCalculation())
 							{
-							case L'a': wsStr[i] = 0x00002713; break;
-							case L'r': wsStr[i] = 0x00002715; break;
-							case L'0': wsStr[i] = 0x0000035F; break;
-							case L'1': wsStr[i] = 0x0000002B; break;
-							case L'2': wsStr[i] = 0x0000002B; break;
-								// more todo
-							default: wsStr[i] = oldText[i];
+								if (oldMaxWidth == -1 || oldText.Length() == 0)
+								{
+									layout->set_text(Glib::ustring::format(L""));
+								}
+								else
+								{
+									layout->set_width(oldMaxWidth * Pango::SCALE);
+									layout->set_text(Glib::ustring::format(oldText.Buffer()));
+								}
 							}
 						}
-
-						layout->set_text(Glib::ustring::format(wsStr));
-						delete[] wsStr;
-					} 
+						else
+						{
+							layout->set_text(Glib::ustring::format(oldText.Length() == 0 ? L"" : oldText.Buffer()));
+						}
+						layout->get_pixel_size(text_width, text_height);
+						minSize = Size((element->GetEllipse() ? 0 : text_width), text_height);
+					}
 					else
 					{
-						layout->set_text(Glib::ustring::format(oldText.Buffer()));
+						minSize = Size(0, 0);
 					}
-					int text_width;
-					int text_height;
-					layout->get_pixel_size(text_width, text_height);
-					minSize = Size(text_width, text_height);
 				}
 
 				void GuiSolidLabelElementRenderer::OnElementStateChanged()
@@ -71,9 +62,12 @@ namespace vl {
 					FontProperties font = element->GetFont();
 					if (oldFont != font)
 					{
-						CreateFont();
-						UpdateMinSize();
+						oldFont = font;
+						IGGacResourceManager* rm = GetGGacResourceManager();
+						auto gFont = rm->CreateGGacFont(font);
+						layout->set_font_description(*gFont.Obj());
 					}
+					UpdateMinSize();
 				}
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
@@ -90,7 +84,6 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
 				{
-					CreateFont();
 					UpdateMinSize();
 				}
 
@@ -137,6 +130,12 @@ namespace vl {
 
 					cr->move_to(x, y);
 					layout->show_in_cairo_context(cr);
+					if (oldMaxWidth != bounds.Width())
+					{
+						oldMaxWidth = bounds.Width();
+						UpdateMinSize();
+					}
+
 				}
 
 			}
