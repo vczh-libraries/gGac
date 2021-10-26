@@ -33,7 +33,8 @@ namespace vl {
 				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
 				{
 					nativeWindow = new Gtk::Window();
-					nativeWindow->set_decorated(false);
+					auto tb = Gtk::HeaderBar();
+					nativeWindow->set_titlebar(tb);
 				}
 				else
 				{
