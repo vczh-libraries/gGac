@@ -40,11 +40,13 @@ namespace vl {
 
 			double GGacScreen::GetScalingX()
 			{
+				//TODO: get screen scale
 				return 1.0;
 			}
 
 			double GGacScreen::GetScalingY()
 			{
+				//TODO: get screen scale
 				return 1.0;
 			}
 

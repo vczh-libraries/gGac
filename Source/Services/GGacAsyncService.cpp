@@ -107,7 +107,7 @@ namespace vl {
 					}
 				}
 
-				FOREACH(TaskItem, item, items)
+				for (auto item : items)
 				{
 					item.proc();
 					if (item.semaphore)
@@ -116,7 +116,7 @@ namespace vl {
 					}
 				}
 
-				FOREACH(Ptr<DelayItem>, item, executableDelayItems)
+				for (auto item : executableDelayItems)
 				{
 					if (item->executeInMainThread)
 					{

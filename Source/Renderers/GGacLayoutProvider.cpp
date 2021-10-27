@@ -861,14 +861,14 @@ UniscribeLine
 					ClearUniscribeData();
 					vint current=0;
 					List<vint> fragmentStarts;
-					FOREACH(Ptr<UniscribeFragment>, fragment, documentFragments)
-							{
-								fragmentStarts.Add(current);
-								lineText+=fragment->text;
-								current+=fragment->text.Length();
-							}
+					for (Ptr<UniscribeFragment> fragment : documentFragments)
+					{
+						fragmentStarts.Add(current);
+						lineText += fragment->text;
+						current += fragment->text.Length();
+					}
 
-					if(lineText!=L"")
+					if (lineText!=L"")
 					{
 						auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
 						auto cr = Cairo::Context::create(surface);
@@ -929,43 +929,43 @@ UniscribeLine
 									bool skip=false;
 									{
 										vint elementCurrent=0;
-										FOREACH(Ptr<UniscribeFragment>, elementFragment, documentFragments)
+										for (Ptr<UniscribeFragment> elementFragment : documentFragments)
+										{
+											vint elementLength = elementFragment->text.Length();
+											//embeddedobject
+											if (elementFragment->inlineObjectProperties)
+											{
+												if (elementCurrent <= currentStart && currentStart + shortLength <= elementCurrent + elementLength)
 												{
-													vint elementLength=elementFragment->text.Length();
-													//embeddedobject
-													if(elementFragment->inlineObjectProperties)
+													if (elementCurrent == currentStart)
 													{
-														if(elementCurrent<=currentStart && currentStart+shortLength<=elementCurrent+elementLength)
-														{
-															if(elementCurrent==currentStart)
-															{
-																auto run=MakePtr<UniscribeEmbeddedObjectRun>();
-																run->documentFragment=fragment;
-																run->scriptItem=scriptItem.Obj();
-																run->startFromLine=currentStart;
-																run->startFromFragment=currentStart-fragmentStarts[fragmentIndex];
-																run->length=elementLength;
-																run->runText=lineText.Buffer()+currentStart;
-																run->properties=elementFragment->inlineObjectProperties.Value();
-																scriptRuns.Add(run);
-															}
-															skip=true;
-															break;
-														}
+														auto run = MakePtr<UniscribeEmbeddedObjectRun>();
+														run->documentFragment = fragment;
+														run->scriptItem = scriptItem.Obj();
+														run->startFromLine = currentStart;
+														run->startFromFragment = currentStart - fragmentStarts[fragmentIndex];
+														run->length = elementLength;
+														run->runText = lineText.Buffer() + currentStart;
+														run->properties = elementFragment->inlineObjectProperties.Value();
+														scriptRuns.Add(run);
 													}
-													elementCurrent+=elementLength;
+													skip = true;
+													break;
 												}
+											}
+											elementCurrent += elementLength;
+										}
 									}
-									if(!skip)
+									if (!skip)
 									{
 										//text
-										Ptr<UniscribeTextRun> run=new UniscribeTextRun;
+										Ptr<UniscribeTextRun> run = new UniscribeTextRun;
 										run->pc = pc;
-										run->documentFragment=fragment;
-										run->scriptItem=scriptItem.Obj();
-										run->startFromLine=currentStart;
-										run->startFromFragment=currentStart-fragmentStarts[fragmentIndex];
-										run->length=shortLength;
+										run->documentFragment = fragment;
+										run->scriptItem = scriptItem.Obj();
+										run->startFromLine = currentStart;
+										run->startFromFragment = currentStart - fragmentStarts[fragmentIndex];
+										run->length = shortLength;
 										run->runText=lineText.Buffer()+currentStart;
 										scriptRuns.Add(run);
 									}
@@ -1030,10 +1030,10 @@ UniscribeLine
 					}
 					else
 					{
-						FOREACH(Ptr<UniscribeRun>, run, scriptRuns)
-								{
-									run->fragmentBounds.Clear();
-								}
+						for (Ptr<UniscribeRun> run : scriptRuns)
+						{
+							run->fragmentBounds.Clear();
+						}
 
 						// render this line into lines with auto line wrapping
 						vint startRun=0;
@@ -1217,17 +1217,17 @@ UniscribeLine
 						vint minY=top;
 						vint maxX=0;
 						vint maxY=top;
-						FOREACH(Ptr<UniscribeRun>, run, scriptRuns)
-								{
-									FOREACH(UniscribeRun::RunFragmentBounds, fragmentBounds, run->fragmentBounds)
-											{
-												Rect bounds=fragmentBounds.bounds;
-												if(minX>bounds.Left()) minX=bounds.Left();
-												if(minY>bounds.Top()) minX=bounds.Top();
-												if(maxX<bounds.Right()) maxX=bounds.Right();
-												if(maxY<bounds.Bottom()) maxY=bounds.Bottom();
-											}
-								}
+						for (Ptr<UniscribeRun> run : scriptRuns)
+						{
+							for (UniscribeRun::RunFragmentBounds fragmentBounds : run->fragmentBounds)
+							{
+								Rect bounds = fragmentBounds.bounds;
+								if (minX > bounds.Left()) minX = bounds.Left();
+								if (minY > bounds.Top()) minX = bounds.Top();
+								if (maxX < bounds.Right()) maxX = bounds.Right();
+								if (maxY < bounds.Bottom()) maxY = bounds.Bottom();
+							}
+						}
 						bounds=Rect(minX, minY, maxX, maxY);
 					}
 					totalHeight=cy;
@@ -1235,13 +1235,13 @@ UniscribeLine
 
 				void UniscribeLine::Render(UniscribeRun::IRendererCallback* callback, vint offsetX, vint offsetY, bool renderBackground)
 				{
-					FOREACH(Ptr<UniscribeRun>, run, scriptRuns)
-							{
-								for(vint i=0;i<run->fragmentBounds.Count();i++)
-								{
-									run->Render(callback, i, offsetX, offsetY, renderBackground);
-								}
-							}
+					for (Ptr<UniscribeRun> run : scriptRuns)
+					{
+						for (vint i = 0; i < run->fragmentBounds.Count(); i++)
+						{
+							run->Render(callback, i, offsetX, offsetY, renderBackground);
+						}
+					}
 				}
 
 /***********************************************************************
@@ -1266,11 +1266,11 @@ UniscribeParagraph (Initialization)
 
 				void UniscribeParagraph::ClearUniscribeData()
 				{
-					FOREACH(Ptr<UniscribeFragment>, fragment, documentFragments)
-							{
-								//GetGGacResourceManager()->DestroyGdiFont(fragment->fontStyle);
-								fragment->fontObject=0;
-							}
+					for (Ptr<UniscribeFragment> fragment : documentFragments)
+					{
+						//GetGGacResourceManager()->DestroyGdiFont(fragment->fontStyle);
+						fragment->fontObject = 0;
+					}
 					lines.Clear();
 					lastAvailableWidth=-1;
 				}
@@ -1284,34 +1284,34 @@ UniscribeParagraph (Initialization)
 
 					//set $fonts
 					Dictionary<WString, Ptr<Pango::FontDescription>> fonts;
-					FOREACH(Ptr<UniscribeFragment>, fragment, documentFragments)
+					for (Ptr<UniscribeFragment> fragment : documentFragments)
+					{
+						if (!fragment->fontObject)
+						{
+							WString fragmentFingerPrint = fragment->GetFingerprint();
+							vint index = fonts.Keys().IndexOf(fragmentFingerPrint);
+							if (index == -1)
 							{
-								if(!fragment->fontObject)
-								{
-									WString fragmentFingerPrint=fragment->GetFingerprint();
-									vint index=fonts.Keys().IndexOf(fragmentFingerPrint);
-									if(index==-1)
-									{
-										fragment->fontObject=GetGGacResourceManager()->CreateGGacFont(fragment->fontStyle);
-										fonts.Add(fragmentFingerPrint, fragment->fontObject);
-									}
-									else
-									{
-										fragment->fontObject=fonts.Values().Get(index);
-									}
-								}
+								fragment->fontObject = GetGGacResourceManager()->CreateGGacFont(fragment->fontStyle);
+								fonts.Add(fragmentFingerPrint, fragment->fontObject);
 							}
+							else
+							{
+								fragment->fontObject = fonts.Values().Get(index);
+							}
+						}
+					}
 
 					//split paragraph fragment into $lines
 					{
 						Regex regexLine(L"\r\n");
 						Ptr<UniscribeLine> line;
-						FOREACH(Ptr<UniscribeFragment>, fragment, documentFragments)
+						for (Ptr<UniscribeFragment> fragment : documentFragments)
+						{
+							if (fragment->inlineObjectProperties)
+							{
+								if (!line)
 								{
-									if(fragment->inlineObjectProperties)
-									{
-										if(!line)
-										{
 											line=new UniscribeLine;
 											lines.Add(line);
 										}
@@ -1351,18 +1351,18 @@ UniscribeParagraph (Initialization)
 					}
 
 					//build uniscribedata line by line from $lines
-					FOREACH(Ptr<UniscribeLine>, line, lines)
-							{
-								line->BuildUniscribeData();
-							}
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						line->BuildUniscribeData();
+					}
 
 					//set $startFromParagraph of line line by line from $lines
 					vint lineStart=0;
-					FOREACH(Ptr<UniscribeLine>, line, lines)
-							{
-								line->startFromParagraph=lineStart;
-								lineStart+=line->lineText.Length()+2;
-							}
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						line->startFromParagraph = lineStart;
+						lineStart += line->lineText.Length() + 2;
+					}
 
 					return true;
 				}
@@ -1377,47 +1377,47 @@ UniscribeParagraph (Initialization)
 					paragraphAlignment=alignment;
 
 					vint cy=0;
-					FOREACH(Ptr<UniscribeLine>, line, lines)
-							{
-								line->Layout(availableWidth, alignment, cy, cy);
-							}
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						line->Layout(availableWidth, alignment, cy, cy);
+					}
 
 					// calculate paragraph bounds
 					vint minX=0;
 					vint minY=0;
 					vint maxX=0;
 					vint maxY=0;
-					FOREACH(Ptr<UniscribeLine>, line, lines)
-							{
-								Rect bounds=line->bounds;
-								if(minX>bounds.Left()) minX=bounds.Left();
-								if(minY>bounds.Top()) minX=bounds.Top();
-								if(maxX<bounds.Right()) maxX=bounds.Right();
-								if(maxY<bounds.Bottom()) maxY=bounds.Bottom();
-							}
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						Rect bounds = line->bounds;
+						if (minX > bounds.Left()) minX = bounds.Left();
+						if (minY > bounds.Top()) minX = bounds.Top();
+						if (maxX < bounds.Right()) maxX = bounds.Right();
+						if (maxY < bounds.Bottom()) maxY = bounds.Bottom();
+					}
 
 					vint offsetY=0;
-					FOREACH(Ptr<UniscribeLine>, line, lines)
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						for (Ptr<UniscribeFragment> fragment : line->documentFragments)
+						{
+							vint size = fragment->fontStyle.size / 3;
+							if (size > offsetY)
 							{
-								FOREACH(Ptr<UniscribeFragment>, fragment, line->documentFragments)
-										{
-											vint size=fragment->fontStyle.size/3;
-											if(size>offsetY)
-											{
-												offsetY=size;
-											}
-										}
+								offsetY = size;
 							}
+						}
+					}
 					bounds=Rect(minX, minY, maxX, maxY+offsetY);
 				}
 
 				void UniscribeParagraph::Render(UniscribeRun::IRendererCallback* callback, bool renderBackground)
 				{
 					auto offset = callback->GetParagraphOffset();
-					FOREACH(Ptr<UniscribeLine>, line, lines)
-							{
-								line->Render(callback, offset.x, offset.y, renderBackground);
-							}
+					for (Ptr<UniscribeLine> line : lines)
+					{
+						line->Render(callback, offset.x, offset.y, renderBackground);
+					}
 				}
 
 /***********************************************************************
