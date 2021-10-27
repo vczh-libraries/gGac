@@ -76,12 +76,16 @@ namespace vl {
 					{
 					protected:
 						Ptr<Pango::FontDescription> gFont;
+						Glib::RefPtr<Pango::Layout> layout;
 
 					public:
 						GGacCharMeasurer(Ptr<Pango::FontDescription> font):
 								text::CharMeasurer(font->get_size() / PANGO_SCALE),
 								gFont(font)
 						{
+							auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 12, 12);
+							auto cr = Cairo::Context::create(surface);
+							layout = Pango::Layout::create(cr);
 						}
 
 						~GGacCharMeasurer()
@@ -90,15 +94,9 @@ namespace vl {
 
 						Size MeasureInternal(wchar_t character, IGuiGraphicsRenderTarget* renderTarget)
 						{
-							auto gStr = Glib::ustring::format(character);
-
-							auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 12, 12);
-							auto cr = Cairo::Context::create(surface);
-							auto layout = Pango::Layout::create(cr);
-							layout->set_font_description(*gFont.Obj());
-							layout->set_text(gStr);
-
 							int width, height;
+							layout->set_font_description(*gFont.Obj());
+							layout->set_text(Glib::ustring::format(character));
 							layout->get_pixel_size(width, height);
 							return Size(width, height);
 						}
@@ -304,7 +302,12 @@ namespace vl {
 					GGacResourceManager()
 					{
 						g_gGacObjectProvider = new GGacObjectProvider;
-						layoutProvider = new GGacLayoutProvider;
+						layoutProvider = MakePtr<GGacLayoutProvider>();
+					}
+					
+					~GGacResourceManager()
+					{
+						delete g_gGacObjectProvider;
 					}
 
 					IGuiGraphicsRenderTarget *GetRenderTarget(INativeWindow *window) override
@@ -425,6 +428,7 @@ namespace vl {
 						}
 						GetCurrentController()->CallbackService()->UninstallListener(&resourceManager);
 						GetCurrentController()->CallbackService()->UninstallListener(g_gGacControllerListener);
+						delete g_gGacControllerListener;
 					}
 					DestroyGGacController(controller);
 					return 0;
