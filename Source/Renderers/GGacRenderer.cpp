@@ -54,7 +54,7 @@ namespace vl {
 					static Ptr<Pango::FontDescription> CreateGGacFont(const FontProperties& font)
 					{
 						auto gFont = MakePtr<Pango::FontDescription>();
-						gFont->set_family("Monospace");
+						//gFont->set_family("STHeiti");
 						gFont->set_size(font.size * PANGO_SCALE);
 						return gFont;
 					}
@@ -90,8 +90,7 @@ namespace vl {
 
 						Size MeasureInternal(wchar_t character, IGuiGraphicsRenderTarget* renderTarget)
 						{
-							WString str(character);
-							auto gStr = Glib::ustring::format(str.Buffer());
+							auto gStr = Glib::ustring::format(character);
 
 							auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 12, 12);
 							auto cr = Cairo::Context::create(surface);
@@ -100,8 +99,8 @@ namespace vl {
 							layout->set_text(gStr);
 
 							int width, height;
-							layout->get_size(width, height);
-							return Size(width / PANGO_SCALE, height / PANGO_SCALE);
+							layout->get_pixel_size(width, height);
+							return Size(width, height);
 						}
 
 						vint MeasureWidthInternal(wchar_t character, IGuiGraphicsRenderTarget* renderTarget)
