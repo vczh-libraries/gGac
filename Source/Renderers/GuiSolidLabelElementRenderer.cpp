@@ -38,7 +38,7 @@ namespace vl {
 								}
 								else
 								{
-									layout->set_width(oldMaxWidth * Pango::SCALE);
+									layout->set_width(oldMaxWidth * PANGO_SCALE);
 									layout->set_text(Glib::ustring::format(oldText.Buffer()));
 								}
 							}

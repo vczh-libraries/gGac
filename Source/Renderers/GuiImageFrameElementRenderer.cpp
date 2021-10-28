@@ -42,18 +42,16 @@ namespace vl {
 					if (element->GetImage())
 					{
 						GGacImageFrame* frame = static_cast<GGacImageFrame*>(element->GetImage()->GetFrame(element->GetFrameIndex()));
-						frame->SetSize(bounds.Width(), bounds.Height());
-						Glib::RefPtr<Gdk::Pixbuf> pixbuf = frame->GetPixbuf();
-						vint x = 0;
-						vint y = 0;
+
+						Rect destination;
 						if (element->GetStretch())
 						{
-							x = bounds.x1;
-							y = bounds.y1;
+							destination = Rect(bounds.x1, bounds.y1, bounds.x2, bounds.y2);
 						}
 						else
 						{
-
+							vint x;
+							vint y;
 							switch(element->GetVerticalAlignment())
 							{
 								case Alignment::Top:
@@ -83,9 +81,12 @@ namespace vl {
 									x = bounds.Right() - minSize.x;
 									break;
 							}
+							destination = Rect(x, y, minSize.x + x, minSize.y + y);
 						}
 
-						Gdk::Cairo::set_source_pixbuf(cr, pixbuf, x, y);
+						frame->SetSize(destination.Width(), destination.Height());
+						Glib::RefPtr<Gdk::Pixbuf> pixbuf = frame->GetPixbuf();
+						Gdk::Cairo::set_source_pixbuf(cr, pixbuf, destination.x1, destination.y1);
 						cr->paint();
 					}
 
