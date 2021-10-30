@@ -3,6 +3,7 @@
 //
 
 #include "GGacDialogService.h"
+#include <gtkmm.h>
 
 vl::presentation::INativeDialogService::MessageBoxButtonsOutput
 vl::presentation::gtk::GGacDialogService::ShowMessageBox(vl::presentation::INativeWindow *window,
@@ -11,7 +12,17 @@ vl::presentation::gtk::GGacDialogService::ShowMessageBox(vl::presentation::INati
 														 vl::presentation::INativeDialogService::MessageBoxDefaultButton defaultButton,
 														 vl::presentation::INativeDialogService::MessageBoxIcons icon,
 														 vl::presentation::INativeDialogService::MessageBoxModalOptions modal) {
-	return SelectNo;
+	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+	dialog.set_secondary_text(Glib::ustring::format(text.Buffer()));
+	dialog.set_default_response(Gtk::RESPONSE_YES);
+	switch (dialog.run()) {
+	case Gtk::RESPONSE_YES:
+		return SelectYes;
+	case Gtk::RESPONSE_NO:
+	case Gtk::RESPONSE_NONE:
+	case Gtk::RESPONSE_CLOSE:
+		return SelectNo;
+	}
 }
 
 bool vl::presentation::gtk::GGacDialogService::ShowColorDialog(vl::presentation::INativeWindow *window,
