@@ -30,7 +30,7 @@ namespace vl {
 
 			WString GGacScreen::GetName()
 			{
-				return L"?";
+				return L"";
 			}
 
 			bool GGacScreen::IsPrimary()
@@ -40,14 +40,12 @@ namespace vl {
 
 			double GGacScreen::GetScalingX()
 			{
-				//TODO: get screen scale
-				return 1.0;
+				return monitor->get_scale_factor() * 1.0;
 			}
 
 			double GGacScreen::GetScalingY()
 			{
-				//TODO: get screen scale
-				return 1.0;
+				return monitor->get_scale_factor() * 1.0;
 			}
 
 			void GGacScreenService::RefreshScreenInformation()
@@ -74,7 +72,7 @@ namespace vl {
 			INativeScreen* GGacScreenService::GetScreen(INativeWindow* window)
 			{
 				auto nativeWindow = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
-				if (nativeWindow)
+				if (nativeWindow && nativeWindow->get_window())
 				{
 					int num = nativeWindow->get_screen()->get_monitor_at_window(nativeWindow->get_window());
 					if (num >= 0)

@@ -13,6 +13,8 @@ namespace vl {
 
 		namespace gtk {
 
+			sigc::signal<void()> signal_blur;
+
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
 			parentWindow(0),
@@ -38,8 +40,8 @@ namespace vl {
 				else
 				{
 					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
-					nativeWindow->set_modal(true);
 					nativeWindow->set_decorated(false);
+					signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
@@ -51,6 +53,15 @@ namespace vl {
 			}
 
 			///
+
+			void GGacWindow::onBlur()
+			{
+				nativeWindow->hide();
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Closed();
+				}
+			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
 			{
@@ -131,6 +142,10 @@ namespace vl {
 										switch(control)
 										{
 											case INativeWindowListener::NoDecision:
+												if (mode == INativeWindow::WindowMode::Normal)
+												{
+													signal_blur.emit();
+												}
 												break;
 											case INativeWindowListener::Client:
 												return true;
@@ -163,34 +178,32 @@ namespace vl {
 							}
 							for (vint i = 0; i < listeners.Count(); i++)
 							{
-								if (customFrameMode)
+								auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
+								switch (control)
 								{
-									auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
-									switch (control)
+								case INativeWindowListener::ButtonMinimum:
+									ShowMinimized();
+									return true;
+								case INativeWindowListener::ButtonMaximum:
+									if (GetSizeState() == INativeWindow::Maximized)
 									{
-									case INativeWindowListener::ButtonMinimum:
-										ShowMinimized();
-										return true;
-									case INativeWindowListener::ButtonMaximum:
-										if (GetSizeState() == INativeWindow::Maximized)
-										{
-											ShowRestored();
-										}
-										else
-										{
-											ShowMaximized();
-										}
-										return true;
-									case INativeWindowListener::ButtonClose:
-										Hide(true);
-										return true;
-									case INativeWindowListener::NoDecision:
-										break;
-									case INativeWindowListener::Client:
-										return true;
-									default:
-										break;
+										ShowRestored();
 									}
+									else
+									{
+										ShowMaximized();
+									}
+									return true;
+								case INativeWindowListener::ButtonClose:
+									Hide(true);
+									return true;
+								case INativeWindowListener::NoDecision:
+									
+									break;
+								case INativeWindowListener::Client:
+									return true;
+								default:
+									break;
 								}
 							}
 							break;
@@ -442,8 +455,7 @@ namespace vl {
 				if (!gWin)
 				{
 					if (parentWindow) {
-						//gWin->GetNativeWindow()->set_parent_window()
-						//[gWIn->GetNativeWindow() removeChildWindow:nativeWindow];
+						//parentWindow->GetNativeWindow()->unset_transient_for();
 					}
 				}
 				else
