@@ -16,21 +16,52 @@ namespace vl {
 				static VKEY table[128];
 				if (table[0] != VKEY::KEY_UNKNOWN)
 				{
-					for (vint i = 0; i < 128; i++)
-					{
-						table[i] = VKEY(i);
-					}
+					table[0] = VKEY::KEY_UNKNOWN;
 					for (vint i = 48; i < 58; i++)
 					{
+						//0-9
 						int s = i - 48;
 						table[i] = (VKEY)((int)VKEY::KEY_0 + s);
 					}
 					for (vint i = 65; i <= 90; i++)
 					{
+						//a-zA-Z
 						int s = i - 65;
 						table[i] = (VKEY)((int)VKEY::KEY_A + s);
 						table[i + 32] = (VKEY)((int)VKEY::KEY_A + s);
 					}
+					//!@#$%^&*()-=[]\;',./_+{}|:"<>?
+					table[GDK_KEY_exclam] = VKEY::KEY_1;
+					table[GDK_KEY_at] = VKEY::KEY_2;
+					table[GDK_KEY_numbersign] = VKEY::KEY_3;
+					table[GDK_KEY_dollar] = VKEY::KEY_4;
+					table[GDK_KEY_percent] = VKEY::KEY_5;
+					table[GDK_KEY_asciicircum] = VKEY::KEY_6;
+					table[GDK_KEY_ampersand] = VKEY::KEY_7;
+					table[GDK_KEY_asterisk] = VKEY::KEY_8;
+					table[GDK_KEY_parenleft] = VKEY::KEY_9;
+					table[GDK_KEY_parenright] = VKEY::KEY_0;
+					table[GDK_KEY_minus] = VKEY::KEY_OEM_MINUS;
+					table[GDK_KEY_underscore] = VKEY::KEY_OEM_MINUS;
+					table[GDK_KEY_equal] = VKEY::KEY_OEM_PLUS;
+					table[GDK_KEY_plus] = VKEY::KEY_OEM_PLUS;
+					table[GDK_KEY_bracketleft] = VKEY::KEY_OEM_6;
+					table[GDK_KEY_braceleft] = VKEY::KEY_OEM_6;
+					table[GDK_KEY_bracketright] = VKEY::KEY_OEM_4;
+					table[GDK_KEY_braceright] = VKEY::KEY_OEM_4;
+					table[GDK_KEY_colon] = VKEY::KEY_OEM_1;
+					table[GDK_KEY_semicolon] = VKEY::KEY_OEM_1;
+					table[GDK_KEY_quotedbl] = VKEY::KEY_OEM_7;
+					table[GDK_KEY_quoteleft] = VKEY::KEY_OEM_7;
+					table[GDK_KEY_quoteright] = VKEY::KEY_OEM_7;
+					table[GDK_KEY_period] = VKEY::KEY_OEM_PERIOD;
+					table[GDK_KEY_greater] = VKEY::KEY_OEM_PERIOD;
+					table[GDK_KEY_comma] = VKEY::KEY_OEM_COMMA;
+					table[GDK_KEY_less] = VKEY::KEY_OEM_COMMA;
+					table[GDK_KEY_question] = VKEY::KEY_OEM_2;
+					table[GDK_KEY_slash] = VKEY::KEY_OEM_2;
+					table[GDK_KEY_backslash] = VKEY::KEY_OEM_5;
+					table[GDK_KEY_bar] = VKEY::KEY_OEM_5;
 				}
 				if (keycode <= 128)
 				{
