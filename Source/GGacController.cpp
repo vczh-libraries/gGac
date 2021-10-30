@@ -47,7 +47,6 @@ namespace vl {
 				Glib::RefPtr<Gtk::Application> app;
 				void onActive()
 				{
-					screenService.RefreshScreenInformation();
 				}
 
 			public:
@@ -56,7 +55,7 @@ namespace vl {
 				inputService(&GlobalTimerFunc)
 				{
 					app = Gtk::Application::create("gGac");
-					app->signal_activate().connect(sigc::mem_fun(*this, &GGacController::onActive));
+					screenService.RefreshScreenInformation();
 				}
 
 				~GGacController()

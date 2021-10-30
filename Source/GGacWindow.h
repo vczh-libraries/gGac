@@ -38,6 +38,7 @@ namespace vl {
 				bool                            moving;
 				bool                            opened;
 
+				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
 				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
 				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
