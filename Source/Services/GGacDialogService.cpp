@@ -12,17 +12,24 @@ vl::presentation::gtk::GGacDialogService::ShowMessageBox(vl::presentation::INati
 														 vl::presentation::INativeDialogService::MessageBoxDefaultButton defaultButton,
 														 vl::presentation::INativeDialogService::MessageBoxIcons icon,
 														 vl::presentation::INativeDialogService::MessageBoxModalOptions modal) {
-	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+	static collections::Dictionary<vl::presentation::INativeDialogService::MessageBoxButtonsInput, Gtk::ButtonsType> types;
+	if (types.Count() == 0)
+	{
+		types.Add(vl::presentation::INativeDialogService::DisplayOK, Gtk::BUTTONS_OK);
+		types.Add(vl::presentation::INativeDialogService::DisplayOKCancel, Gtk::BUTTONS_OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayYesNo, Gtk::BUTTONS_YES_NO);
+		types.Add(vl::presentation::INativeDialogService::DisplayYesNoCancel, Gtk::BUTTONS_YES_NO);
+		types.Add(vl::presentation::INativeDialogService::DisplayRetryCancel, Gtk::BUTTONS_OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayAbortRetryIgnore, Gtk::BUTTONS_OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayCancelTryAgainContinue, Gtk::BUTTONS_OK_CANCEL);
+	}
+	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MESSAGE_QUESTION, types.Get(buttons), true);
 	dialog.set_secondary_text(Glib::ustring::format(text.Buffer()));
 	dialog.set_default_response(Gtk::RESPONSE_YES);
-	switch (dialog.run()) {
-	case Gtk::RESPONSE_YES:
+	if (dialog.run() == Gtk::RESPONSE_YES) {
 		return SelectYes;
-	case Gtk::RESPONSE_NO:
-	case Gtk::RESPONSE_NONE:
-	case Gtk::RESPONSE_CLOSE:
-		return SelectNo;
 	}
+	return SelectNo;
 }
 
 bool vl::presentation::gtk::GGacDialogService::ShowColorDialog(vl::presentation::INativeWindow *window,
@@ -49,5 +56,17 @@ bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::
 															  const vl::WString &defaultExtension,
 															  const vl::WString &filter,
 															  vl::presentation::INativeDialogService::FileDialogOptions options) {
-	return false;
+	Gtk::FileChooserDialog dialog(Glib::ustring::format(title.Buffer()), Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
+	//dialog->set_transient_for(dynamic_cast<Gtk::Window*>(window));
+	dialog.set_modal(true);
+
+	if (filter.Length() > 0)
+	{
+		auto filter_text = Gtk::FileFilter::create();
+		filter_text->add_mime_type(Glib::ustring::format(filter.Buffer()));
+		dialog.add_filter(filter_text);
+	}
+	dialog.run();
+	//TODO: finish this
+	return true;
 }
