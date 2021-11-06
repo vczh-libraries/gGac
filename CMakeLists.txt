@@ -11,7 +11,9 @@ pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
 add_library(GacUI
         GacUI/Import/GacUI.cpp
         GacUI/Import/Vlpp.cpp
+        GacUI/Import/Vlpp.Linux.cpp
         GacUI/Import/VlppOS.cpp
+        GacUI/Import/VlppOS.Linux.cpp
         GacUI/Import/VlppRegex.cpp
         GacUI/Import/VlppReflection.cpp
         GacUI/Import/VlppParser.cpp
