@@ -64,9 +64,19 @@ bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::
 	{
 		auto filter_text = Gtk::FileFilter::create();
 		filter_text->add_mime_type(Glib::ustring::format(filter.Buffer()));
-		dialog.add_filter(filter_text);
+		//dialog.add_filter(filter_text);
 	}
-	dialog.run();
-	//TODO: finish this
-	return true;
+	auto filter_any = Gtk::FileFilter::create();
+	filter_any->set_name("Any files");
+	filter_any->add_pattern("*");
+	dialog.add_filter(filter_any);
+
+	dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+	dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+	if (dialog.run() ==  Gtk::RESPONSE_OK)
+	{
+		return true;
+	}
+	return false;
 }
