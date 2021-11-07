@@ -41,14 +41,23 @@ namespace vl {
 				{
 					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
 					nativeWindow->set_decorated(false);
-					signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
+					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
 			}
 
 			GGacWindow::~GGacWindow()
 			{
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Destroying();
+				}
 				nativeWindow->close();
+				blurHandler.disconnect();
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->Destroyed();
+				}
 				delete nativeWindow;
 			}
 
@@ -268,6 +277,45 @@ namespace vl {
 									for (vint i = 0; i < listeners.Count(); i++)
 									{
 										INativeWindowListener::HitTestResult r = listeners[i]->HitTest(NativePoint(info.x, info.y));
+										switch (r)
+										{
+										case vl::presentation::INativeWindowListener::BorderNoSizing:
+											break;
+										case vl::presentation::INativeWindowListener::BorderLeft:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderRight:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderTop:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderBottom:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderLeftTop:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderRightTop:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderLeftBottom:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::BorderRightBottom:
+											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::Icon:
+										case vl::presentation::INativeWindowListener::Title:
+											nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+											break;
+										case vl::presentation::INativeWindowListener::Client:
+											break;
+										case vl::presentation::INativeWindowListener::NoDecision:
+											break;
+										defajult:
+											break;
+										}
 									}
 								}
 							}
