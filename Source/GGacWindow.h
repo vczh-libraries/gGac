@@ -24,6 +24,7 @@ namespace vl {
 				WindowListenerList				listeners;
 				WString							title;
 				WindowMode 						mode;
+				sigc::connection				blurHandler;
 
 				vint                            mouseLastX;
 				vint                            mouseLastY;
