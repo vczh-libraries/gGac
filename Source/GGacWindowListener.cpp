@@ -16,7 +16,7 @@ namespace vl {
 			GGacWindowListener::GGacWindowListener(INativeWindow *_window)
 					:window(_window)
 			{
-				view = MakePtr<GGacView>(_window);
+				view = Ptr(new GGacView(_window));
 				Gtk::Window *gWin = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
 				gWin->add(*view.Obj());
 				view->show_all();

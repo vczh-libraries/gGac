@@ -55,7 +55,7 @@ namespace vl {
 				int n = display->get_n_monitors();
 				for (int i = 0; i < n; i++)
 				{
-					monitors.Add(new GGacScreen(display->get_monitor(i)));
+					monitors.Add(Ptr(new GGacScreen(display->get_monitor(i))));
 				}
 			}
 

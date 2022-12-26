@@ -5,6 +5,9 @@ add_compile_definitions(VCZH_DEBUG_NO_REFLECTION)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
+set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
 
@@ -17,7 +20,8 @@ add_library(GacUI
         GacUI/Import/VlppRegex.cpp
         GacUI/Import/VlppReflection.cpp
         GacUI/Import/VlppParser.cpp
-        GacUI/Import/VlppWorkflowLibrary.cpp
+		GacUI/Import/VlppGlrParser.cpp
+		GacUI/Import/VlppWorkflowLibrary.cpp
         GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
         )
 

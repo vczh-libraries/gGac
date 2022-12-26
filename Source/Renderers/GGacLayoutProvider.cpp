@@ -151,7 +151,7 @@ UniscribeFragment
 				Ptr<UniscribeFragment> UniscribeFragment::Copy(vint start, vint length)
 				{
 					vint end=start+length;
-					Ptr<UniscribeFragment> fragment=new UniscribeFragment(length==0?L"":text.Sub(start, length));
+					Ptr<UniscribeFragment> fragment=Ptr(new UniscribeFragment(length==0?L"":text.Sub(start, length)));
 					fragment->fontStyle=fontStyle;
 					fragment->fontObject=fontObject;
 
@@ -881,7 +881,7 @@ UniscribeLine
 							while (list)
 							{
 								PangoItem* item = static_cast<PangoItem*>(list->data);
-								Ptr<UniscribeItem> scriptItem = new UniscribeItem;
+								Ptr<UniscribeItem> scriptItem = Ptr(new UniscribeItem);
 								scriptItem->startFromLine = item->offset;
 								scriptItem->length = item->length;
 								scriptItem->itemText = lineText.Buffer() + item->offset;
@@ -939,7 +939,7 @@ UniscribeLine
 												{
 													if (elementCurrent == currentStart)
 													{
-														auto run = MakePtr<UniscribeEmbeddedObjectRun>();
+														auto run = Ptr(new UniscribeEmbeddedObjectRun());
 														run->documentFragment = fragment;
 														run->scriptItem = scriptItem.Obj();
 														run->startFromLine = currentStart;
@@ -959,7 +959,7 @@ UniscribeLine
 									if (!skip)
 									{
 										//text
-										Ptr<UniscribeTextRun> run = new UniscribeTextRun;
+										Ptr<UniscribeTextRun> run = Ptr(new UniscribeTextRun);
 										run->pc = pc;
 										run->documentFragment = fragment;
 										run->scriptItem = scriptItem.Obj();
@@ -994,7 +994,7 @@ UniscribeLine
 											vint start=breakings[i];
 											vint length=i==breakings.Count()-1?textRun->length-start:breakings[i+1]-start;
 
-											Ptr<UniscribeTextRun> newRun=new UniscribeTextRun;
+											Ptr<UniscribeTextRun> newRun = Ptr(new UniscribeTextRun);
 											newRun->documentFragment=run->documentFragment;
 											newRun->scriptItem=run->scriptItem;
 											newRun->startFromLine=start+run->startFromLine;
@@ -1165,7 +1165,7 @@ UniscribeLine
 
 								// create a virtual line
 								{
-									Ptr<UniscribeVirtualLine> virtualLine=new UniscribeVirtualLine;
+									Ptr<UniscribeVirtualLine> virtualLine=Ptr(new UniscribeVirtualLine);
 									virtualLine->firstRunIndex=startRun;
 									virtualLine->firstRunBoundsIndex=startRunFragmentCount;
 									virtualLine->lastRunIndex=availableLastRun;
@@ -1312,7 +1312,7 @@ UniscribeParagraph (Initialization)
 							{
 								if (!line)
 								{
-											line=new UniscribeLine;
+											line=Ptr(new UniscribeLine);
 											lines.Add(line);
 										}
 										line->documentFragments.Add(fragment);
@@ -1332,7 +1332,7 @@ UniscribeParagraph (Initialization)
 											}
 											if(!line)
 											{
-												line=new UniscribeLine;
+												line=Ptr(new UniscribeLine);
 												lines.Add(line);
 											}
 
@@ -1672,7 +1672,7 @@ UniscribeParagraph (Formatting)
 						{
 							text+=documentFragments[f1]->text;
 						}
-						Ptr<UniscribeFragment> elementFragment=new UniscribeFragment(text);
+						Ptr<UniscribeFragment> elementFragment=Ptr(new UniscribeFragment(text));
 
 						for(vint i=f1;i<=f2;i++)
 						{
@@ -2456,10 +2456,10 @@ UniscribeParagraph (Caret)
 					,paragraphCr(nullptr)
 					,paragraphCallback(_paragraphCallback)
 					{
-						paragraph=new UniscribeParagraph;
+						paragraph=Ptr(new UniscribeParagraph);
 						paragraph->paragraphText=text;
 
-						Ptr<UniscribeFragment> fragment=new UniscribeFragment(_text);
+						Ptr<UniscribeFragment> fragment=Ptr(new UniscribeFragment(_text));
 						fragment->fontStyle=GetCurrentController()->ResourceService()->GetDefaultFont();
 						paragraph->documentFragments.Add(fragment);
 					}
@@ -2716,7 +2716,7 @@ UniscribeParagraph (Caret)
 
 				Ptr <IGuiGraphicsParagraph> GGacLayoutProvider::CreateParagraph(const WString &text, IGuiGraphicsRenderTarget *renderTarget, IGuiGraphicsParagraphCallback *callback)
 				{
-					return new GGacParagraph(this, text, (IGGacRenderTarget*)renderTarget, callback);
+					return Ptr(new GGacParagraph(this, text, (IGGacRenderTarget*)renderTarget, callback));
 				}
 
 			}
