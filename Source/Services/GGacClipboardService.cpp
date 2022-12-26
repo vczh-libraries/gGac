@@ -70,14 +70,14 @@ namespace vl {
             {
                 if (!reader)
                 {
-                    reader = new GGacClipboardReader(this);
+                    reader = Ptr(new GGacClipboardReader(this));
                 }
                 return reader;
 			}
 
 			Ptr<INativeClipboardWriter> GGacClipboardService::WriteClipboard() 
             {
-                return new GGacClipboardWriter(this);
+                return Ptr(new GGacClipboardWriter(this));
 			}
 
 		}

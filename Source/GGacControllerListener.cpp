@@ -28,7 +28,7 @@ namespace vl {
 
 			void GGacControllerListener::NativeWindowCreated(vl::presentation::INativeWindow *window)
 			{
-				Ptr<GGacWindowListener> listener = MakePtr<GGacWindowListener>(window);
+				Ptr<GGacWindowListener> listener = Ptr(new GGacWindowListener(window));
 				window->InstallListener(listener.Obj());
 				nativeWindowListeners.Add(window, listener);
 			}

@@ -108,7 +108,7 @@ namespace vl {
 					Ptr<GGacImageFrame>& frame = frames[index];
 					if (!frame)
 					{
-						frame = new GGacImageFrame(this, gImage->get_pixbuf());
+						frame = Ptr(new GGacImageFrame(this, gImage->get_pixbuf()));
 					}
 					return frame.Obj();
 				}
@@ -128,8 +128,8 @@ namespace vl {
 
 			Ptr<INativeImage> GGacImageService::CreateImageFromFile(const WString &path)
 			{
-				auto image = MakePtr<Gtk::Image>(Glib::ustring::format(path.Buffer()));
-				return new GGacImage(this, image);
+				auto image = Ptr(new Gtk::Image(Glib::ustring::format(path.Buffer())));
+				return Ptr(new GGacImage(this, image));
 			}
 
 			Ptr<INativeImage> GGacImageService::CreateImageFromMemory(void *buffer, vint length)
@@ -137,8 +137,8 @@ namespace vl {
 				auto loader = Gdk::PixbufLoader::create();
 				loader->write((guint8*)buffer, length/sizeof(guint8));
 				loader->close();
-				auto image = MakePtr<Gtk::Image>(loader->get_pixbuf());
-				return new GGacImage(this, image);
+				auto image = Ptr(new Gtk::Image(loader->get_pixbuf()));
+				return Ptr(new GGacImage(this, image));
 			}
 
 			Ptr<INativeImage> GGacImageService::CreateImageFromStream(stream::IStream &imageStream)

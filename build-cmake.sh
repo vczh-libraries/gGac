@@ -5,4 +5,4 @@ git submodule update
 rm -rf ./out
 mkdir ./out
 cd ./out
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Debug ../

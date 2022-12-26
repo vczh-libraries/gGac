@@ -53,7 +53,7 @@ namespace vl {
 
 					static Ptr<Pango::FontDescription> CreateGGacFont(const FontProperties& font)
 					{
-						auto gFont = MakePtr<Pango::FontDescription>();
+						auto gFont = Ptr(new Pango::FontDescription());
 						//gFont->set_family("STHeiti");
 						gFont->set_size(font.size * PANGO_SCALE);
 						return gFont;
@@ -119,7 +119,7 @@ namespace vl {
 
 					Ptr<text::CharMeasurer> CreateInternal(const FontProperties& font)
 					{
-						return new GGacCharMeasurer(CachedGGacFontAllocator::CreateGGacFont(font));
+						return Ptr(new GGacCharMeasurer(CachedGGacFontAllocator::CreateGGacFont(font)));
 					}
 				};
 
@@ -302,7 +302,7 @@ namespace vl {
 					GGacResourceManager()
 					{
 						g_gGacObjectProvider = new GGacObjectProvider;
-						layoutProvider = MakePtr<GGacLayoutProvider>();
+						layoutProvider = Ptr(new GGacLayoutProvider());
 					}
 					
 					~GGacResourceManager()
@@ -338,9 +338,9 @@ namespace vl {
 
 					void NativeWindowCreated(INativeWindow *window) override
 					{
-						GGacRenderTarget* renderTarget = new GGacRenderTarget(window);
+						auto renderTarget = Ptr(new GGacRenderTarget(window));
 						renderTargets.Add(renderTarget);
-						GetGGacObjectProvider()->SetBindedRenderTarget(window, renderTarget);
+						GetGGacObjectProvider()->SetBindedRenderTarget(window, renderTarget.Obj());
 					}
 
 					void NativeWindowDestroying(INativeWindow *window) override

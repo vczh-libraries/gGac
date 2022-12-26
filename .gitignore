@@ -2,3 +2,7 @@ cmake-build-debug
 out
 .idea
 .vs
+.cache
+.vscode
+build
+*.log
