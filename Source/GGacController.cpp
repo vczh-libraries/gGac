@@ -76,6 +76,7 @@ namespace vl {
 					GGacWindow* window = new GGacWindow(mode);
 					callbackService.InvokeNativeWindowCreated(window);
 					windows.Add(window);
+                    window->SetFocus();
 					return window;
 				}
 

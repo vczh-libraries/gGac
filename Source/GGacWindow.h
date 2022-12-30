@@ -16,9 +16,10 @@ namespace vl {
 
 			class GGacWindow : public Object, public INativeWindow
 			{
-				using WindowListenerList = collections::List<INativeWindowListener*>;
-			protected:
+                using WindowListenerList = collections::List<INativeWindowListener*>;
+            protected:
 				Gtk::Window* 					nativeWindow;
+                GtkIMContext*                   imContext;
 				GGacWindow* 					parentWindow;
 				Interface* 						graphicsHandler;
 				WindowListenerList				listeners;
@@ -41,6 +42,7 @@ namespace vl {
 
 				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
+                gboolean onKeyPress(GdkEventKey* event);
 				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
 				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
 
@@ -51,6 +53,7 @@ namespace vl {
 				void SetGraphicsHandler(Interface* handelr);
 				Interface* GetGraphicsHandler() const;
 				bool HandleEventInternal(GdkEvent* event);
+                void IMCommit(wchar_t str);
 
 				///
 
