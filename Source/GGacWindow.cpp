@@ -15,6 +15,20 @@ namespace vl {
 
 			sigc::signal<void()> signal_blur;
 
+            static void gtk_im_commit_cb(GtkIMContext *context, const gchar *str, GGacWindow *window)
+            {
+                auto code = (wchar_t *) g_convert(str, -1, "wchar_t", "utf-8", NULL, NULL, NULL);
+                vint i = 0;
+                while (wchar_t c = code[i++])
+                {
+                    window->IMCommit(c);
+                }
+            }
+
+            static void gtk_im_preedit_changed_cb(GtkIMContext *context)
+            {
+            }
+
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
 			parentWindow(0),
@@ -30,6 +44,7 @@ namespace vl {
 			opened(false),
 			mouseHoving(false),
 			title(L""),
+            imContext(0),
 			mode(_mode)
 			{
 				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
@@ -44,7 +59,19 @@ namespace vl {
 					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
-			}
+
+                imContext = gtk_im_multicontext_new();
+                if (imContext)
+                {
+                    nativeWindow->signal_key_press_event().connect(sigc::mem_fun(*this, &GGacWindow::onKeyPress));
+                    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(nativeWindow->gobj()));
+                    gtk_im_context_set_client_window(imContext, gdk_window);
+                    g_signal_connect(imContext, "commit", G_CALLBACK(gtk_im_commit_cb), this);
+                    g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
+                    //g_signal_connect(imContext, "retrieve-surrounding", sigc::mem_fun(*this, &GGacWindow::retrieveSurrounding), NULL);
+                    //g_signal_connect(imContext, "delete-surrounding", sigc::mem_fun(*this, &GGacWindow::deleteSurrounding), NULL);
+                }
+            }
 
 			GGacWindow::~GGacWindow()
 			{
@@ -80,9 +107,14 @@ namespace vl {
 				}
 			}
 
-			///
+            gboolean GGacWindow::onKeyPress(GdkEventKey* event)
+            {
+                gtk_im_context_filter_keypress(imContext, event);
+                return FALSE;
+            }
+            ///
 
-			Gtk::Window* GGacWindow::GetNativeWindow() const
+            Gtk::Window* GGacWindow::GetNativeWindow() const
 			{
 				return nativeWindow;
 			}
@@ -388,6 +420,16 @@ namespace vl {
 				return true;
 			}
 
+            void GGacWindow::IMCommit(wchar_t code)
+            {
+                NativeWindowCharInfo charInfo{};
+                charInfo.code = code;
+                for (vint i = 0; i < listeners.Count(); i++)
+                {
+                    listeners[i]->Char(charInfo);
+                }
+            }
+
 			///
 
 			Point GGacWindow::Convert(NativePoint value)
@@ -614,12 +656,13 @@ namespace vl {
 				{
 					nativeWindow->set_visible(false);
 				}
-				opened = false;
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
 					listeners[i]->Closed();
 				}
 				ReleaseCapture();
+                gtk_im_context_focus_out(imContext);
+                opened = false;
 			}
 
 			bool GGacWindow::IsVisible()
@@ -648,6 +691,7 @@ namespace vl {
 			{
 				nativeWindow->set_can_focus(true);
 				nativeWindow->grab_focus();
+                gtk_im_context_focus_in(imContext);
 			}
 
 			bool GGacWindow::IsFocused()
@@ -665,12 +709,12 @@ namespace vl {
 				return nativeWindow->is_active();
 			}
 
-			void GGacWindow::ShowInTaskBar() {
-
+			void GGacWindow::ShowInTaskBar()
+            {
 			}
 
-			void GGacWindow::HideInTaskBar() {
-
+			void GGacWindow::HideInTaskBar()
+            {
 			}
 
 			bool GGacWindow::IsAppearedInTaskBar()
@@ -680,12 +724,10 @@ namespace vl {
 
 			void GGacWindow::EnableActivate()
 			{
-
 			}
 
 			void GGacWindow::DisableActivate()
 			{
-
 			}
 
 			bool GGacWindow::IsEnabledActivate()
