@@ -106,18 +106,18 @@ UniscribeGlyphData
 				{
 					//***************************** Uniscribe Data
 					Array<WORD>						glyphs;
-					Array<Pango::GlyphVisAttr>		glyphVisattrs;
+					Array<PangoGlyphVisAttr>		glyphVisattrs;
 					Array<int>						glyphAdvances;
 					Array<GOFFSET>					glyphOffsets;
 					Array<WORD>						charCluster;
 					ABC								runAbc;
-					Pango::Analysis					sa;
+					PangoAnalysis					sa;
 
 					UniscribeGlyphData();
 
 					void							ClearUniscribeData(vint glyphCount, vint length);
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, Pango::GlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities, double scale);
-					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, Pango::LogAttr* charLogattrs, const wchar_t* runText, vint length);
+					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities, double scale);
+					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
 				};
 
 /***********************************************************************
