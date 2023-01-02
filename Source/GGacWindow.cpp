@@ -29,14 +29,14 @@ namespace vl {
             {
             }
 
-            static gboolean gtk_im_delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_chars, GGacWindow *window)
+            /*static gboolean gtk_im_delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_chars, GGacWindow *window)
             {
                 for (vint i = 0; i < n_chars; i++)
                 {
                     window->IMCommit((wchar_t)VKEY::KEY_BACK);
                 }
                 return true;
-            }
+            }*/
 
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
@@ -102,11 +102,6 @@ namespace vl {
 
 			void GGacWindow::onBlur()
 			{
-				nativeWindow->hide();
-				for (vint i = 0; i < listeners.Count(); i++)
-				{
-					listeners[i]->Closed();
-				}
                 ReleaseCapture();
                 gtk_im_context_focus_out(imContext);
 			}
@@ -118,18 +113,6 @@ namespace vl {
 					listeners[i]->Moved();
 				}
 			}
-
-            gboolean GGacWindow::onKeyPress(GdkEventKey* event)
-            {
-                console::Console::WriteLine(itow(event->keyval));
-                return gtk_im_context_filter_keypress(imContext, event);
-            }
-
-            gboolean GGacWindow::onKeyRelease(GdkEventKey* event)
-            {
-                //console::Console::WriteLine(itow(event->keyval));
-                //return gtk_im_context_filter_keypress(imContext, event);
-            }
             ///
 
             Gtk::Window* GGacWindow::GetNativeWindow() const
@@ -405,17 +388,18 @@ namespace vl {
 					}
 
                     case GDK_FOCUS_CHANGE:
-                        if (event->focus_change.in)
-                        {
-                            SetFocus();
-                        }
-                        else
-                        {
-                            //should unset focus
-                        }
+                        event->focus_change.in ? SetFocus() : onBlur();
+                        break;
 
                     case GDK_KEY_PRESS:
-                        gtk_im_context_filter_keypress(imContext, &event->key);
+                        if (!gtk_im_context_filter_keypress(imContext, &event->key))
+                        {
+                            NativeWindowKeyInfo keyInfo = createKeyInfo(event);
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->KeyDown(keyInfo);
+                            }
+                        }
                         break;
 
 					default:
@@ -658,10 +642,13 @@ namespace vl {
 				}
 				else
 				{
-					nativeWindow->set_visible(false);
+					nativeWindow->hide();
 				}
+                for (vint i = 0; i < listeners.Count(); i++)
+                {
+                    listeners[i]->Closed();
+                }
                 onBlur();
-
                 opened = false;
 			}
 
