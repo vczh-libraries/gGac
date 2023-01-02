@@ -19,9 +19,8 @@ namespace vl {
 				signal_draw().connect(sigc::mem_fun(*this, &GGacView::onDraw));
 				signal_event().connect(sigc::mem_fun(*this, &GGacView::onEvent));
 				add_events( static_cast<Gdk::EventMask>(
-						Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::MOTION_NOTIFY | Gdk::DRAG_MOTION |
-						Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::DOUBLE_BUTTON_PRESS |
-						Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK
+						Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+						Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::DOUBLE_BUTTON_PRESS
 						));
 				set_can_focus(true);
 			}

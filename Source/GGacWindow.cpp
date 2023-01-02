@@ -29,6 +29,15 @@ namespace vl {
             {
             }
 
+            static gboolean gtk_im_delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_chars, GGacWindow *window)
+            {
+                for (vint i = 0; i < n_chars; i++)
+                {
+                    window->IMCommit((wchar_t)VKEY::KEY_BACK);
+                }
+                return true;
+            }
+
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
 			parentWindow(0),
@@ -59,17 +68,18 @@ namespace vl {
 					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
+                nativeWindow->signal_event().connect(sigc::mem_fun(*this, &GGacWindow::HandleEventInternal));
+                nativeWindow->add_events(Gdk::KEY_PRESS_MASK);
 
                 imContext = gtk_im_multicontext_new();
                 if (imContext)
                 {
-                    nativeWindow->signal_key_press_event().connect(sigc::mem_fun(*this, &GGacWindow::onKeyPress));
                     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(nativeWindow->gobj()));
                     gtk_im_context_set_client_window(imContext, gdk_window);
                     g_signal_connect(imContext, "commit", G_CALLBACK(gtk_im_commit_cb), this);
                     g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
                     //g_signal_connect(imContext, "retrieve-surrounding", sigc::mem_fun(*this, &GGacWindow::retrieveSurrounding), NULL);
-                    //g_signal_connect(imContext, "delete-surrounding", sigc::mem_fun(*this, &GGacWindow::deleteSurrounding), NULL);
+                    //g_signal_connect(imContext, "delete-surrounding", G_CALLBACK(gtk_im_delete_surrounding_cb), this);
                 }
             }
 
@@ -97,6 +107,8 @@ namespace vl {
 				{
 					listeners[i]->Closed();
 				}
+                ReleaseCapture();
+                gtk_im_context_focus_out(imContext);
 			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
@@ -109,8 +121,14 @@ namespace vl {
 
             gboolean GGacWindow::onKeyPress(GdkEventKey* event)
             {
-                gtk_im_context_filter_keypress(imContext, event);
-                return FALSE;
+                console::Console::WriteLine(itow(event->keyval));
+                return gtk_im_context_filter_keypress(imContext, event);
+            }
+
+            gboolean GGacWindow::onKeyRelease(GdkEventKey* event)
+            {
+                //console::Console::WriteLine(itow(event->keyval));
+                //return gtk_im_context_filter_keypress(imContext, event);
             }
             ///
 
@@ -386,33 +404,19 @@ namespace vl {
 						break;
 					}
 
-					case GDK_KEY_PRESS:
-					{
-						NativeWindowKeyInfo info = createKeyInfo(event);
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							listeners[i]->KeyDown(info);
-						}
-						NativeWindowCharInfo charInfo{};
-						if (dynamic_cast<GGacInputService *>(GetCurrentController()->InputService())->ConvertToPrintable(charInfo, event))
-						{
-							for (vint i = 0; i < listeners.Count(); i++)
-							{
-								listeners[i]->Char(charInfo);
-							}
-						}
-						break;
-					}
+                    case GDK_FOCUS_CHANGE:
+                        if (event->focus_change.in)
+                        {
+                            SetFocus();
+                        }
+                        else
+                        {
+                            //should unset focus
+                        }
 
-					case GDK_KEY_RELEASE:
-					{
-						NativeWindowKeyInfo info = createKeyInfo(event);
-						for(vint i=0; i<listeners.Count(); ++i)
-						{
-							listeners[i]->KeyUp(info);
-						}
-						break;
-					}
+                    case GDK_KEY_PRESS:
+                        gtk_im_context_filter_keypress(imContext, &event->key);
+                        break;
 
 					default:
 						return false;
@@ -656,12 +660,8 @@ namespace vl {
 				{
 					nativeWindow->set_visible(false);
 				}
-				for (vint i = 0; i < listeners.Count(); i++)
-				{
-					listeners[i]->Closed();
-				}
-				ReleaseCapture();
-                gtk_im_context_focus_out(imContext);
+                onBlur();
+
                 opened = false;
 			}
 
