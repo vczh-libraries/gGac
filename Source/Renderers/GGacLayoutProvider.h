@@ -96,6 +96,7 @@ UniscribeFragment
 					void							DefragmentColors();
 					UniscribeColor					GetCharColor(vint charIndex);
 					Ptr<UniscribeFragment>			Copy(vint start, vint length);
+                    Ptr<Pango::AttrList>            GetAttributes();
 				};
 
 /***********************************************************************
@@ -194,7 +195,6 @@ UniscribeTextRun
 				{
 				public:
 					//***************************** Uniscribe Data
-					Glib::RefPtr<Pango::Context>	pc;
 					void*							scriptCache;
 					vint							advance;
 					UniscribeGlyphData				wholeGlyph;

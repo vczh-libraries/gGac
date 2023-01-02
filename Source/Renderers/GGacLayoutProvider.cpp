@@ -172,12 +172,35 @@ UniscribeFragment
 					return fragment;
 				}
 
+                Ptr<Pango::AttrList> UniscribeFragment::GetAttributes()
+                {
+                    auto attrs = Ptr(new Pango::AttrList);
+                    {
+                        Pango::Attribute attr = Pango::Attribute::create_attr_size(fontStyle.size * PANGO_SCALE);
+                        attrs->insert(attr);
+                    }
+                    {
+                        Pango::Attribute attr = Pango::Attribute::create_attr_font_desc(*fontObject.Obj());
+                        attrs->insert(attr);
+                    }
+                    if (fontStyle.underline)
+                    {
+                        Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::UNDERLINE_SINGLE_LINE);
+                        attrs->insert(attr);
+                    }
+                    if (fontStyle.strikeline)
+                    {
+                        Pango::Attribute attr = Pango::Attribute::create_attr_strikethrough(true);
+                        attrs->insert(attr);
+                    }
+                    return attrs;
+                }
+
 /***********************************************************************
 UniscribeGlyphData
 ***********************************************************************/
 
 				UniscribeGlyphData::UniscribeGlyphData()
-                :sa(0)
 				{
 					ClearUniscribeData(0, 0);
 				}
@@ -725,20 +748,8 @@ UniscribeTextRun
                             {
                                 auto layout = Pango::Layout::create(cr);
                                 layout->set_text(Glib::ustring::format(runText[charIndex]).substr(0, length));
-                                layout->set_font_description(*documentFragment->fontObject.Obj());
+                                layout->set_attributes(*documentFragment->GetAttributes().Obj());
                                 cr->move_to(rect.x, rect.y);
-                                Pango::AttrList attrs;
-                                if (documentFragment->fontStyle.underline)
-                                {
-                                    Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::UNDERLINE_SINGLE_LINE);
-                                    attrs.insert(attr);
-                                }
-                                if (documentFragment->fontStyle.strikeline)
-                                {
-                                    Pango::Attribute attr = Pango::Attribute::create_attr_strikethrough(true);
-                                    attrs.insert(attr);
-                                }
-                                layout->set_attributes(attrs);
                                 layout->show_in_cairo_context(cr);
                             }
 						}
@@ -898,17 +909,14 @@ UniscribeLine
                             {
                                 // itemize a line
                                 auto text = Glib::ustring::format(fragment->text.Buffer());
-                                Pango::AttrList attrs;
-                                Pango::Attribute attr = Pango::Attribute::create_attr_size(fragment->fontStyle.size * PANGO_SCALE);
-                                attrs.insert(attr);
-                                auto list = pc->itemize(text, attrs);
+                                auto list = pc->itemize(text, *fragment->GetAttributes().Obj());
                                 for (auto item : list)
                                 {
                                     Ptr<UniscribeItem> scriptItem = Ptr(new UniscribeItem);
                                     scriptItem->itemText = (wchar_t *)g_convert(text.c_str() + item.get_offset(), item.get_length(), "wchar_t", "utf-8", NULL, NULL, NULL);
                                     scriptItem->startFromLine = offset;
-                                    offset += item.get_num_chars();
                                     scriptItem->length = item.get_num_chars();
+                                    offset += scriptItem->length;
                                     scriptItem->scriptItem = item;
                                     if (!scriptItem->BuildUniscribeData())
                                     {
@@ -986,9 +994,7 @@ UniscribeLine
 									}
 									if (!skip)
 									{
-										//text
 										Ptr<UniscribeTextRun> run = Ptr(new UniscribeTextRun);
-										run->pc = pc;
 										run->documentFragment = fragment;
 										run->scriptItem = scriptItem.Obj();
 										run->startFromLine = currentStart;
