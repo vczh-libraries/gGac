@@ -2666,6 +2666,7 @@ UniscribeParagraph (Caret)
 						caret=_caret;
 						caretColor=_color;
 						caretFrontSide=_frontSide;
+                        //gtk_im_context_set_cursor_location();
 						//caretPen=GetWindowsGDIResourceManager()->CreateGdiPen(caretColor);
 						return true;
 					}
