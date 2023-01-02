@@ -42,8 +42,6 @@ namespace vl {
 
 				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
-                gboolean onKeyPress(GdkEventKey* event);
-                gboolean onKeyRelease(GdkEventKey* event);
 				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
 				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
 
