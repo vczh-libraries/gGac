@@ -116,7 +116,7 @@ UniscribeGlyphData
 					UniscribeGlyphData();
 
 					void							ClearUniscribeData(vint glyphCount, vint length);
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities, double scale);
+					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
 					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
 				};
 
