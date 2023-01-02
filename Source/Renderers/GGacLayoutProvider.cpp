@@ -194,7 +194,7 @@ UniscribeGlyphData
 				}
 
 
-				bool UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities, double scale)
+				bool UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities)
 				{
 					vint glyphCount=glyphs.Count();
 					bool resizeGlyphData=false;
@@ -221,7 +221,8 @@ UniscribeGlyphData
                             for (vint i = 0; i < cache->num_glyphs; i++)
 							{
 								glyphVisattrs[i] = cache->glyphs[i].attr;
-                                charCluster[i] = str.length() - Glib::ustring::format(str.c_str() + cache->log_clusters[i]).length();//cache->log_clusters[i];//$i th character coresponding glyph at n th byte of string
+                                //$i th character coresponding glyph at n th byte of string
+                                charCluster[i] = str.length() - Glib::ustring::format(str.c_str() + cache->log_clusters[i]).length();
 							}
 							break;
 						}
@@ -301,7 +302,7 @@ UniscribeGlyphData
 						for (vint i = 0; i < glyphCount; i++)
 						{
                             auto geometry = cache->glyphs[i].geometry;
-							glyphAdvances[advanceIndex] = geometry.width / PANGO_SCALE * scale;
+							glyphAdvances[advanceIndex] = geometry.width / PANGO_SCALE;
 							totalWidth += glyphAdvances[advanceIndex];
 							advanceIndex++;
 						}
@@ -373,7 +374,6 @@ UniscribeGlyphData
 							{
 								vint glyphLength=i-lastCharIndex;
 								const wchar_t* glyphText = sa.level % 2 == 1 ? runText + length - lastCharIndex - glyphLength : runText + lastCharIndex;
-                                PangoRectangle size;
                                 Cairo::TextExtents extent;
                                 cr->get_text_extents(Glib::ustring::format(glyphText).substr(0, length).c_str(), extent);
 								glyphAdvances[lastGlyphIndex] = extent.width;
@@ -537,15 +537,8 @@ UniscribeTextRun
 				bool UniscribeTextRun::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, List<vint>& breakings)
 				{
 					ClearUniscribeData();
-                    static Cairo::FontExtents extentsOrigin;
-                    if (extentsOrigin.height == 0) {
-                        cr->get_font_extents(extentsOrigin);
-                    }
-                    cr->set_font_size(documentFragment->fontStyle.size);
-                    Cairo::FontExtents extentsScaled;
-                    cr->get_font_extents(extentsScaled);
 					List<bool> breakingAvailabilities;
-					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities, extentsScaled.height/extentsOrigin.height))
+					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities))
 					{
 						goto BUILD_UNISCRIBE_DATA_FAILED;
 					}
@@ -889,42 +882,46 @@ UniscribeLine
 					lineText=L"";
 					ClearUniscribeData();
 					vint current=0;
-					List<vint> fragmentStarts;
+                    vint offset = 0;
+                    List<vint> fragmentStarts;
+                    auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+                    auto cr = Cairo::Context::create(surface);
+                    auto layout = Pango::Layout::create(cr);
+                    Glib::RefPtr<Pango::Context> pc = layout->get_context();
 					for (Ptr<UniscribeFragment> fragment : documentFragments)
 					{
 						fragmentStarts.Add(current);
 						lineText += fragment->text;
 						current += fragment->text.Length();
+                        if (fragment->text != L"")
+                        {
+                            {
+                                // itemize a line
+                                auto text = Glib::ustring::format(fragment->text.Buffer());
+                                Pango::AttrList attrs;
+                                Pango::Attribute attr = Pango::Attribute::create_attr_size(fragment->fontStyle.size * PANGO_SCALE);
+                                attrs.insert(attr);
+                                auto list = pc->itemize(text, attrs);
+                                for (auto item : list)
+                                {
+                                    Ptr<UniscribeItem> scriptItem = Ptr(new UniscribeItem);
+                                    scriptItem->itemText = (wchar_t *)g_convert(text.c_str() + item.get_offset(), item.get_length(), "wchar_t", "utf-8", NULL, NULL, NULL);
+                                    scriptItem->startFromLine = offset;
+                                    offset += item.get_num_chars();
+                                    scriptItem->length = item.get_num_chars();
+                                    scriptItem->scriptItem = item;
+                                    if (!scriptItem->BuildUniscribeData())
+                                    {
+                                        goto BUILD_UNISCRIBE_DATA_FAILED;
+                                    }
+                                    scriptItems.Add(scriptItem);
+                                }
+                            }
+                        }
 					}
 
-					if (lineText!=L"")
+					if (scriptItems.Count() > 0)
 					{
-						auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
-						auto cr = Cairo::Context::create(surface);
-						auto layout = Pango::Layout::create(cr);
-						Glib::RefPtr<Pango::Context> pc = layout->get_context();
-						{
-							// itemize a line
-							auto text = Glib::ustring::format(lineText.Buffer());
-                            // TODO: set text attrs here
-                            Pango::AttrList attrs;
-                            auto list = pc->itemize(text, attrs);
-                            vint offset = 0;
-                            for (auto item : list)
-							{
-								Ptr<UniscribeItem> scriptItem = Ptr(new UniscribeItem);
-                                scriptItem->itemText = (wchar_t *)g_convert(text.c_str() + item.get_offset(), item.get_length(), "wchar_t", "utf-8", NULL, NULL, NULL);
-								scriptItem->startFromLine = offset;
-                                offset += item.get_num_chars();
-								scriptItem->length = item.get_num_chars();
-								scriptItem->scriptItem = item;
-								if (!scriptItem->BuildUniscribeData())
-								{
-									goto BUILD_UNISCRIBE_DATA_FAILED;
-								}
-								scriptItems.Add(scriptItem);
-							}
-						}
 						{
 							// use item and document fragment information to produce runs
 							// one item is constructed by one or more runs
@@ -1434,7 +1431,7 @@ UniscribeParagraph (Initialization)
 					{
 						for (Ptr<UniscribeFragment> fragment : line->documentFragments)
 						{
-							vint size = fragment->fontStyle.size / 3;
+							vint size = fragment->fontStyle.size;
 							if (size > offsetY)
 							{
 								offsetY = size;
