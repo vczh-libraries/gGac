@@ -417,14 +417,6 @@ UniscribeItem
 					charLogattrs.Resize(length + 1);
 					Glib::ustring gstr = Glib::ustring::format(itemText);
 					pango_default_break(gstr.c_str(), gstr.bytes(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
-                    /*console::Console::WriteLine(L"================================= ITEM =================================");
-                    console::Console::WriteLine(L"text:" + WString((wchar_t *)g_convert(gstr.c_str(), -1, "wchar_t", "utf-8", NULL, NULL, NULL)));
-                    for (auto attr : charLogattrs) { console::Console::Write( itow(attr.is_cursor_position) + L" "); }
-                    console::Console::WriteLine(L"");
-                    for (auto attr : charLogattrs) { console::Console::Write( itow(attr.is_line_break) + L" "); }
-                    console::Console::WriteLine(L"");
-                    for (auto attr : charLogattrs) { console::Console::Write( itow(attr.is_word_boundary) + L" "); }
-                    console::Console::WriteLine(L"");*/
                     return true;
 
 					BUILD_UNISCRIBE_DATA_FAILED:
@@ -745,7 +737,7 @@ UniscribeTextRun
                                 Pango::AttrList attrs;
                                 if (documentFragment->fontStyle.underline)
                                 {
-                                    Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::UNDERLINE_LOW);
+                                    Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::UNDERLINE_SINGLE_LINE);
                                     attrs.insert(attr);
                                 }
                                 if (documentFragment->fontStyle.strikeline)
@@ -934,9 +926,6 @@ UniscribeLine
 							}
 						}
 						{
-                            // 1 paragraph => n lines
-                            // 1 line => itemize => n items
-                            // 1 item => n runs
 							// use item and document fragment information to produce runs
 							// one item is constructed by one or more runs
 							// characters in each run contains the same style
@@ -1435,7 +1424,7 @@ UniscribeParagraph (Initialization)
 					{
 						Rect bounds = line->bounds;
 						if (minX > bounds.Left()) minX = bounds.Left();
-						if (minY > bounds.Top()) minX = bounds.Top();
+						if (minY > bounds.Top()) minY = bounds.Top();
 						if (maxX < bounds.Right()) maxX = bounds.Right();
 						if (maxY < bounds.Bottom()) maxY = bounds.Bottom();
 					}
