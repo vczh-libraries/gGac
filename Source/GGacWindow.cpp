@@ -521,9 +521,11 @@ namespace vl {
 
 			void GGacWindow::SetCaretPoint(NativePoint point)
 			{
-			}
+                GdkRectangle imRect = {(int)point.x.value, (int)point.y.value, 1, 1};
+                gtk_im_context_set_cursor_location(imContext, &imRect);
+            }
 
-			INativeWindow *GGacWindow::GetParent()
+            INativeWindow *GGacWindow::GetParent()
 			{
 				return parentWindow;
 			}

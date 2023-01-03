@@ -4,7 +4,6 @@
 
 #include "GGacLayoutProvider.h"
 #include "GGacRenderer.h"
-#include "../GGacWindow.h"
 #include <pangomm/glyphstring.h>
 #include <iostream>
 
@@ -1274,8 +1273,6 @@ UniscribeLine
 					{
 						for (vint i = 0; i < run->fragmentBounds.Count(); i++)
 						{
-                            //Rect bounds = run->fragmentBounds[i].bounds;
-                            //console::Console::WriteLine(itow(i) + L" " + itow(bounds.x1) + L" " + itow(bounds.y1) + L" " + itow(bounds.x2) + L" " + itow(bounds.y2));
 							run->Render(callback, i, offsetX, offsetY, renderBackground);
 						}
 					}
@@ -2703,9 +2700,6 @@ UniscribeParagraph (Caret)
 							paragraphCr->move_to(x, y1);
 							paragraphCr->line_to(x, y2);
 							paragraphCr->stroke();
-                            GtkIMContext *context = static_cast<::vl::presentation::gtk::GGacWindow*>(GetCurrentController()->WindowService()->GetMainWindow())->GetIMContext();
-                            GdkRectangle imRect = {(int)x, (int)y1, 1, (int)(y2 - y1)};
-                            gtk_im_context_set_cursor_location(context, &imRect);
 						}
 					}
 
