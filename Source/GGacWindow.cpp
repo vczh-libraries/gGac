@@ -27,16 +27,13 @@ namespace vl {
 
             static void gtk_im_preedit_changed_cb(GtkIMContext *context)
             {
+                gchar *str;
+                PangoAttrList* list;
+                int pos;
+                gtk_im_context_get_preedit_string(context, &str, &list, &pos);
+                auto text = (wchar_t *) g_convert(str, -1, "wchar_t", "utf-8", NULL, NULL, NULL);
+                console::Console::WriteLine(text);
             }
-
-            /*static gboolean gtk_im_delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_chars, GGacWindow *window)
-            {
-                for (vint i = 0; i < n_chars; i++)
-                {
-                    window->IMCommit((wchar_t)VKEY::KEY_BACK);
-                }
-                return true;
-            }*/
 
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
 			:nativeWindow(0),
@@ -76,10 +73,10 @@ namespace vl {
                 {
                     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(nativeWindow->gobj()));
                     gtk_im_context_set_client_window(imContext, gdk_window);
+                    gtk_im_context_set_use_preedit(imContext, false);
+                    //gtk_im_context_set_cursor_location()
                     g_signal_connect(imContext, "commit", G_CALLBACK(gtk_im_commit_cb), this);
-                    g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
-                    //g_signal_connect(imContext, "retrieve-surrounding", sigc::mem_fun(*this, &GGacWindow::retrieveSurrounding), NULL);
-                    //g_signal_connect(imContext, "delete-surrounding", G_CALLBACK(gtk_im_delete_surrounding_cb), this);
+                    //g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
                 }
             }
 
@@ -240,7 +237,6 @@ namespace vl {
 									Hide(true);
 									return true;
 								case INativeWindowListener::NoDecision:
-									
 									break;
 								case INativeWindowListener::Client:
 									return true;
@@ -346,7 +342,7 @@ namespace vl {
 											break;
 										case vl::presentation::INativeWindowListener::NoDecision:
 											break;
-										defajult:
+										default:
 											break;
 										}
 									}
@@ -416,6 +412,11 @@ namespace vl {
                 {
                     listeners[i]->Char(charInfo);
                 }
+            }
+
+            GtkIMContext* GGacWindow::GetIMContext()
+            {
+                return imContext;
             }
 
 			///

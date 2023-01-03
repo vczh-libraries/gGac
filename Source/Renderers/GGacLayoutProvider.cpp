@@ -4,6 +4,7 @@
 
 #include "GGacLayoutProvider.h"
 #include "GGacRenderer.h"
+#include "../GGacWindow.h"
 #include <pangomm/glyphstring.h>
 #include <iostream>
 
@@ -2666,7 +2667,6 @@ UniscribeParagraph (Caret)
 						caret=_caret;
 						caretColor=_color;
 						caretFrontSide=_frontSide;
-                        //gtk_im_context_set_cursor_location();
 						//caretPen=GetWindowsGDIResourceManager()->CreateGdiPen(caretColor);
 						return true;
 					}
@@ -2703,6 +2703,9 @@ UniscribeParagraph (Caret)
 							paragraphCr->move_to(x, y1);
 							paragraphCr->line_to(x, y2);
 							paragraphCr->stroke();
+                            GtkIMContext *context = static_cast<::vl::presentation::gtk::GGacWindow*>(GetCurrentController()->WindowService()->GetMainWindow())->GetIMContext();
+                            GdkRectangle imRect = {(int)x, (int)y1, 1, (int)(y2 - y1)};
+                            gtk_im_context_set_cursor_location(context, &imRect);
 						}
 					}
 
