@@ -18,11 +18,11 @@ namespace vl {
 			{
 			protected:
 				INativeImage*                                                   image;
-				Glib::RefPtr<Gdk::Pixbuf> 										pixbuf;
+				Glib::RefPtr<Gdk::Paintable> 									pixbuf;
 				collections::Dictionary<void*, Ptr<INativeImageFrameCache>>     caches;
 
 			public:
-				GGacImageFrame(INativeImage* _image, Glib::RefPtr<Gdk::Pixbuf> _pixbuf);
+				GGacImageFrame(INativeImage* _image, Glib::RefPtr<Gdk::Paintable> _pixbuf);
 				virtual ~GGacImageFrame();
 
 				INativeImage*				GetImage() override;
@@ -33,7 +33,7 @@ namespace vl {
 				Ptr<INativeImageFrameCache>	RemoveCache(void* key) override;
 
 				///
-				Glib::RefPtr<Gdk::Pixbuf>	GetPixbuf();
+				Glib::RefPtr<Gdk::Paintable>	GetImageSurface();
 				void						SetSize(vint width, vint height, bool alwaysScaleUp = false);
 			};
 

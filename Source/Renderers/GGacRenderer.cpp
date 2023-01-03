@@ -56,8 +56,8 @@ namespace vl {
 						auto gFont = Ptr(new Pango::FontDescription());
 						gFont->set_family(Glib::ustring::format(font.fontFamily.Buffer()));
 						gFont->set_size(font.size * PANGO_SCALE);
-                        gFont->set_weight(font.bold ? Pango::WEIGHT_BOLD : Pango::WEIGHT_NORMAL);
-                        gFont->set_style(font.italic ? Pango::STYLE_ITALIC : Pango::STYLE_NORMAL);
+                        gFont->set_weight(font.bold ? Pango::Weight::BOLD: Pango::Weight::NORMAL);
+                        gFont->set_style(font.italic ? Pango::Style::ITALIC : Pango::Style::NORMAL);
 						return gFont;
 					}
 
@@ -85,7 +85,7 @@ namespace vl {
 								text::CharMeasurer(font->get_size() / PANGO_SCALE),
 								gFont(font)
 						{
-							auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 12, 12);
+							auto surface = Cairo::ImageSurface::create(Cairo::Surface::Format::ARGB32, 12, 12);
 							auto cr = Cairo::Context::create(surface);
 							layout = Pango::Layout::create(cr);
 						}

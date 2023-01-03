@@ -85,8 +85,8 @@ namespace vl {
 						}
 
 						frame->SetSize(destination.Width(), destination.Height());
-						Glib::RefPtr<Gdk::Pixbuf> pixbuf = frame->GetPixbuf();
-						Gdk::Cairo::set_source_pixbuf(cr, pixbuf, destination.x1, destination.y1);
+						//Glib::RefPtr<Gdk::Pixbuf> pixbuf = frame->GetPixbuf();
+                        //cr->set_source(frame->GetImageSurface(), destination.x1, destination.y1);
 						cr->paint();
 					}
 

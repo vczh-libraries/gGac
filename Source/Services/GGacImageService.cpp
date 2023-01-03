@@ -10,11 +10,10 @@ namespace vl {
 
 		namespace gtk {
 
-			GGacImageFrame::GGacImageFrame(INativeImage* _image, Glib::RefPtr<Gdk::Pixbuf> _pixbuf)
+			GGacImageFrame::GGacImageFrame(INativeImage* _image, Glib::RefPtr<Gdk::Paintable> _pixbuf)
 			:image(_image),
 			pixbuf(_pixbuf)
 			{
-
 			}
 
 			GGacImageFrame::~GGacImageFrame()
@@ -28,7 +27,7 @@ namespace vl {
 
 			Size GGacImageFrame::GetSize()
 			{
-				return pixbuf ? Size(pixbuf->get_width(), pixbuf->get_height())  : Size(0, 0);
+				return pixbuf ? Size(pixbuf->get_intrinsic_width(), pixbuf->get_intrinsic_height())  : Size(0, 0);
 			}
 
 			void GGacImageFrame::SetSize(vint width, vint height, bool alwaysScaleUp)
@@ -38,7 +37,7 @@ namespace vl {
 					Size size = GetSize();
 					width = alwaysScaleUp ? MAX(width, size.x) : MIN(width, size.x);
 					height = alwaysScaleUp ? MAX(height, size.y) : MIN(height, size.y);
-					pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::INTERP_BILINEAR);
+					//pixbuf = pixbuf->scale_simple(width, height, Gdk::InterpType::BILINEAR);
 				}
 			}
 
@@ -72,9 +71,9 @@ namespace vl {
 				return cache;
 			}
 
-			Glib::RefPtr<Gdk::Pixbuf> GGacImageFrame::GetPixbuf()
-			{
-				return pixbuf;
+			Glib::RefPtr<Gdk::Paintable> GGacImageFrame::GetImageSurface()
+            {
+                return pixbuf;
 			}
 
 			///
@@ -108,7 +107,7 @@ namespace vl {
 					Ptr<GGacImageFrame>& frame = frames[index];
 					if (!frame)
 					{
-						frame = Ptr(new GGacImageFrame(this, gImage->get_pixbuf()));
+						frame = Ptr(new GGacImageFrame(this, gImage->get_paintable()));
 					}
 					return frame.Obj();
 				}

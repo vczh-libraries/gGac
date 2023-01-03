@@ -15,20 +15,21 @@ vl::presentation::gtk::GGacDialogService::ShowMessageBox(vl::presentation::INati
 	static collections::Dictionary<vl::presentation::INativeDialogService::MessageBoxButtonsInput, Gtk::ButtonsType> types;
 	if (types.Count() == 0)
 	{
-		types.Add(vl::presentation::INativeDialogService::DisplayOK, Gtk::BUTTONS_OK);
-		types.Add(vl::presentation::INativeDialogService::DisplayOKCancel, Gtk::BUTTONS_OK_CANCEL);
-		types.Add(vl::presentation::INativeDialogService::DisplayYesNo, Gtk::BUTTONS_YES_NO);
-		types.Add(vl::presentation::INativeDialogService::DisplayYesNoCancel, Gtk::BUTTONS_YES_NO);
-		types.Add(vl::presentation::INativeDialogService::DisplayRetryCancel, Gtk::BUTTONS_OK_CANCEL);
-		types.Add(vl::presentation::INativeDialogService::DisplayAbortRetryIgnore, Gtk::BUTTONS_OK_CANCEL);
-		types.Add(vl::presentation::INativeDialogService::DisplayCancelTryAgainContinue, Gtk::BUTTONS_OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayOK, Gtk::ButtonsType::OK);
+		types.Add(vl::presentation::INativeDialogService::DisplayOKCancel, Gtk::ButtonsType::OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayYesNo, Gtk::ButtonsType::YES_NO);
+		types.Add(vl::presentation::INativeDialogService::DisplayYesNoCancel, Gtk::ButtonsType::YES_NO);
+		types.Add(vl::presentation::INativeDialogService::DisplayRetryCancel, Gtk::ButtonsType::OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayAbortRetryIgnore, Gtk::ButtonsType::OK_CANCEL);
+		types.Add(vl::presentation::INativeDialogService::DisplayCancelTryAgainContinue, Gtk::ButtonsType::OK_CANCEL);
 	}
-	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MESSAGE_QUESTION, types.Get(buttons), true);
+	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MessageType::QUESTION, types.Get(buttons), true);
 	dialog.set_secondary_text(Glib::ustring::format(text.Buffer()));
-	dialog.set_default_response(Gtk::RESPONSE_YES);
-	if (dialog.run() == Gtk::RESPONSE_YES) {
+	dialog.set_default_response(Gtk::ResponseType::YES);
+    dialog.show();
+	/*if ( == Gtk::ResponseType::YES) {
 		return SelectYes;
-	}
+	}*/
 	return SelectNo;
 }
 
@@ -56,7 +57,7 @@ bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::
 															  const vl::WString &defaultExtension,
 															  const vl::WString &filter,
 															  vl::presentation::INativeDialogService::FileDialogOptions options) {
-	Gtk::FileChooserDialog dialog(Glib::ustring::format(title.Buffer()), Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
+	Gtk::FileChooserDialog dialog(Glib::ustring::format(title.Buffer()), Gtk::FileChooserDialog::Action::OPEN);
 	//dialog->set_transient_for(dynamic_cast<Gtk::Window*>(window));
 	dialog.set_modal(true);
 
@@ -71,12 +72,12 @@ bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::
 	filter_any->add_pattern("*");
 	dialog.add_filter(filter_any);
 
-	dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-	dialog.add_button("_Open", Gtk::RESPONSE_OK);
+	dialog.add_button("_Cancel", Gtk::ResponseType::CANCEL);
+	dialog.add_button("_Open", Gtk::ResponseType::OK);
 
-	if (dialog.run() ==  Gtk::RESPONSE_OK)
+	/*if (dialog.run() ==  Gtk::RESPONSE_OK)
 	{
 		return true;
-	}
+	}*/
 	return false;
 }

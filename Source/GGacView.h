@@ -29,9 +29,10 @@ namespace vl {
 				Cairo::RefPtr<Cairo::Context> context;
 				bool needRepaint;
 
-				bool onConfigure(GdkEventConfigure* event);
-				bool onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr);
-				bool onEvent(GdkEvent *gdk_event);
+
+				void onResize(int width, int height);
+				void onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr, int width, int height);
+				bool onEvent(Gdk::Event *gdk_event);
 			};
 
 		}

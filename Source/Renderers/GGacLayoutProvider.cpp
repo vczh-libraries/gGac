@@ -185,7 +185,7 @@ UniscribeFragment
                     }
                     if (fontStyle.underline)
                     {
-                        Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::UNDERLINE_SINGLE_LINE);
+                        Pango::Attribute attr = Pango::Attribute::create_attr_underline(Pango::Underline::SINGLE_LINE);
                         attrs->insert(attr);
                     }
                     if (fontStyle.strikeline)
@@ -895,7 +895,7 @@ UniscribeLine
 					vint current=0;
                     vint offset = 0;
                     List<vint> fragmentStarts;
-                    auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+                    auto surface = Cairo::ImageSurface::create(Cairo::Surface::Format::ARGB32, 1, 1);
                     auto cr = Cairo::Context::create(surface);
                     auto layout = Pango::Layout::create(cr);
                     Glib::RefPtr<Pango::Context> pc = layout->get_context();

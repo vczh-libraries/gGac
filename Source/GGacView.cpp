@@ -15,31 +15,38 @@ namespace vl {
 			GGacView::GGacView(INativeWindow* _window)
 			:window(_window)
 			{
-				signal_configure_event().connect(sigc::mem_fun(*this, &GGacView::onConfigure));
-				signal_draw().connect(sigc::mem_fun(*this, &GGacView::onDraw));
-				signal_event().connect(sigc::mem_fun(*this, &GGacView::onEvent));
-				add_events( static_cast<Gdk::EventMask>(
-						Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+				//signal_configure_event().connect(sigc::mem_fun(*this, &GGacView::onConfigure));
+				//signal_draw().connect(sigc::mem_fun(*this, &GGacView::onDraw));
+				//signal_event().connect(sigc::mem_fun(*this, &GGacView::onEvent));
+				/*add_events( static_cast<Gdk::Event>(
+						Gdk::Event::Type::ENTER_NOTIFY | Gdk::Event::Type::LEAVE_NOTIFY |
 						Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::DOUBLE_BUTTON_PRESS
-						));
+						));*/
 				set_can_focus(true);
+                set_draw_func(sigc::mem_fun(*this, &GGacView::onDraw));
+                signal_resize().connect(sigc::mem_fun(*this, &GGacView::onResize));
+
+                //auto controller = gtk_event_controller_key_new();
+                /*GtkWidget *area = gtk_drawing_area_new();
+                gtk_drawing_area_set_content_width(GTK_DRAWING_AREA (area), 100);
+                gtk_drawing_area_set_content_height(GTK_DRAWING_AREA (area), 100);*/
 			}
 
 			GGacView::~GGacView()
 			{
 			}
 
-			bool GGacView::onConfigure(GdkEventConfigure* event)
+			void GGacView::onResize(int width, int height)
 			{
-				int width = MAX(1, this->get_width());
-				int height = MAX(1, this->get_height());
-				surface = this->get_window()->create_similar_surface(static_cast<Cairo::Content>(CAIRO_CONTENT_COLOR), width, height);
-				context = Cairo::Context::create(surface);
-				needRepaint = true;
-				return false;
+                if (!context)
+                {
+                    auto window = static_cast<GGacWindow*>(this->window)->GetNativeWindow();
+                    surface = window->get_surface()->create_similar_surface(Cairo::Content::CONTENT_COLOR, width, height);
+                    context = Cairo::Context::create(surface);
+                }
 			}
 
-			bool GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr)
+			void GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr, int width, int height)
 			{
 				if (needRepaint)
 				{
@@ -48,17 +55,17 @@ namespace vl {
 				}
 				cr->set_source(surface, 0, 0);
 				cr->paint();
-				return true;
 			}
 
-			bool GGacView::onEvent(GdkEvent *gdk_event)
+			bool GGacView::onEvent(Gdk::Event *gdk_event)
 			{
-				return dynamic_cast<GGacWindow *>(window)->HandleEventInternal(gdk_event);
+                return true;
+				//return dynamic_cast<GGacWindow *>(window)->HandleEventInternal(gdk_event);
 			}
 
 			void GGacView::resize(int width, int height)
 			{
-				//this->set_size_request(width, height);
+				this->set_size_request(width, height);
 				needRepaint = true;
 			}
 

@@ -128,17 +128,17 @@ namespace vl {
 				return VKEY::KEY_RCONTROL;
 			}
 
-			bool GGacInputService::ConvertToPrintable(NativeWindowCharInfo &info, GdkEvent *event)
+			bool GGacInputService::ConvertToPrintable(NativeWindowCharInfo &info, Gdk::Event *event)
 			{
-				info.ctrl = event->key.state & GDK_CONTROL_MASK;
-				info.shift = event->key.state & GDK_SHIFT_MASK;
-				info.alt = event->key.state & GDK_MOD1_MASK;
-				info.capslock = event->key.state & GDK_LOCK_MASK;
+				info.ctrl = (bool)(event->get_modifier_state() & Gdk::ModifierType::CONTROL_MASK);
+				info.shift = (bool)(event->get_modifier_state() & Gdk::ModifierType::SHIFT_MASK);
+				info.alt = (bool)(event->get_modifier_state() & Gdk::ModifierType::ALT_MASK);
+				info.capslock = (bool)(event->get_modifier_state() & Gdk::ModifierType::LOCK_MASK);
 
 				if (info.ctrl || info.alt)
 					return false;
 
-				int code = (int)GdkEventKeyCodeToGacKeyCode(event->key.keyval);
+				int code = (int)GdkEventKeyCodeToGacKeyCode(event->get_keyval());
 				if(code >= 256)
 					return false;
 

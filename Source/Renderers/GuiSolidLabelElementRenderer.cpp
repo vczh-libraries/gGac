@@ -72,7 +72,7 @@ namespace vl {
 
 				void GuiSolidLabelElementRenderer::InitializeInternal()
 				{
-					auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
+					auto surface = Cairo::ImageSurface::create(Cairo::Surface::Format::ARGB32, 1, 1);
 					auto cr = Cairo::Context::create(surface);
 					layout = Pango::Layout::create(cr);
 				}

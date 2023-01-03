@@ -42,8 +42,8 @@ namespace vl {
 
 				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
-				NativeWindowMouseInfo createMouseInfo(GdkEvent* event);
-				NativeWindowKeyInfo createKeyInfo(GdkEvent* event);
+				NativeWindowMouseInfo createMouseInfo(const Glib::RefPtr<const Gdk::Event>& event);
+				NativeWindowKeyInfo createKeyInfo(const Glib::RefPtr<const Gdk::Event>& event);
 
 			public:
 				GGacWindow(INativeWindow::WindowMode _mode);
@@ -51,9 +51,8 @@ namespace vl {
 				Gtk::Window* GetNativeWindow() const;
 				void SetGraphicsHandler(Interface* handelr);
 				Interface* GetGraphicsHandler() const;
-				bool HandleEventInternal(GdkEvent* event);
+				bool HandleEventInternal(const Glib::RefPtr<const Gdk::Event>& event);
                 void IMCommit(wchar_t str);
-                GtkIMContext* GetIMContext();
 
 				///
 

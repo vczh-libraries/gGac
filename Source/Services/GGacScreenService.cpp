@@ -19,8 +19,7 @@ namespace vl {
 			NativeRect GGacScreen::GetBounds()
 			{
 				Gdk::Rectangle r;
-				monitor->get_workarea(r);
-				return NativeRect(r.get_x(), r.get_y(), r.get_x() + r.get_width(), r.get_y() + r.get_height());
+				return NativeRect(0, 0, monitor->get_width_mm(), monitor->get_height_mm());
 			}
 
 			NativeRect GGacScreen::GetClientBounds()
@@ -35,7 +34,8 @@ namespace vl {
 
 			bool GGacScreen::IsPrimary()
 			{
-				return monitor->is_primary();
+                return true;
+				//return monitor->is_primary();
 			}
 
 			double GGacScreen::GetScalingX()
@@ -52,11 +52,8 @@ namespace vl {
 			{
 				monitors.Clear();
 				auto display = Gdk::Display::get_default();
-				int n = display->get_n_monitors();
-				for (int i = 0; i < n; i++)
-				{
-					monitors.Add(Ptr(new GGacScreen(display->get_monitor(i))));
-				}
+				auto monitors = display->get_monitors();
+                //monitors.Add(Ptr(new GGacScreen(display->get_monitor(i))));
 			}
 
 			vint GGacScreenService::GetScreenCount()
@@ -71,7 +68,8 @@ namespace vl {
 
 			INativeScreen* GGacScreenService::GetScreen(INativeWindow* window)
 			{
-				auto nativeWindow = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
+                return 0;
+				/*auto nativeWindow = dynamic_cast<GGacWindow*>(window)->GetNativeWindow();
 				if (nativeWindow && nativeWindow->get_window())
 				{
 					int num = nativeWindow->get_screen()->get_monitor_at_window(nativeWindow->get_window());
@@ -80,7 +78,7 @@ namespace vl {
 						return monitors[num].Obj();
 					}
 				}
-				return 0;
+				return 0;*/
 			}
 		}
 	}

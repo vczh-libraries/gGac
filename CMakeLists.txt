@@ -11,7 +11,7 @@ set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
+pkg_check_modules(GTK3 REQUIRED gtkmm-4.0 sigc++-2.0)
 pkg_check_modules(pango REQUIRED pango)
 
 add_library(GacUI

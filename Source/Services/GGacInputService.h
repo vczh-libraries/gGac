@@ -40,7 +40,7 @@ namespace vl {
 				VKEY GetKey(const WString &name) override;
 
 				void InitKeyMapping();
-				bool ConvertToPrintable(NativeWindowCharInfo& info, GdkEvent* event);
+				bool ConvertToPrintable(NativeWindowCharInfo& info, Gdk::Event* event);
 
 			};
 

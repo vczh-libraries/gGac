@@ -60,24 +60,28 @@ namespace vl {
 				}
 				else
 				{
-					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
+					nativeWindow = new Gtk::Window();
 					nativeWindow->set_decorated(false);
 					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
-				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
-                nativeWindow->signal_event().connect(sigc::mem_fun(*this, &GGacWindow::HandleEventInternal));
-                nativeWindow->add_events(Gdk::KEY_PRESS_MASK);
 
+                //nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
+                //nativeWindow->signal_event().connect();
+                //nativeWindow->add_events(Gdk::Event::Type::KEY_PRESS);
+
+                //// clipboard
+                //nativeWindow->get_clipboard()
+
+                //// input method
                 imContext = gtk_im_multicontext_new();
-                if (imContext)
+                /*if (imContext)
                 {
-                    GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(nativeWindow->gobj()));
-                    gtk_im_context_set_client_window(imContext, gdk_window);
+                    gtk_im_context_set_client_widget(imContext, GTK_WIDGET(nativeWindow));
                     gtk_im_context_set_use_preedit(imContext, false);
                     //gtk_im_context_set_cursor_location()
                     g_signal_connect(imContext, "commit", G_CALLBACK(gtk_im_commit_cb), this);
                     //g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
-                }
+                }*/
             }
 
 			GGacWindow::~GGacWindow()
@@ -86,7 +90,7 @@ namespace vl {
 				{
 					listeners[i]->Destroying();
 				}
-				nativeWindow->close();
+				//nativeWindow->close();
 				blurHandler.disconnect();
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
@@ -110,6 +114,7 @@ namespace vl {
 					listeners[i]->Moved();
 				}
 			}
+
             ///
 
             Gtk::Window* GGacWindow::GetNativeWindow() const
@@ -127,49 +132,49 @@ namespace vl {
 				return graphicsHandler;
 			}
 
-			NativeWindowMouseInfo GGacWindow::createMouseInfo(GdkEvent* event)
+			NativeWindowMouseInfo GGacWindow::createMouseInfo(const Glib::RefPtr<const Gdk::Event>& event)
 			{
 				NativeWindowMouseInfo info{};
 
-				info.left = event->button.button == GDK_BUTTON_PRIMARY && event->type == GDK_BUTTON_PRESS;
-				info.right = event->button.button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS;
-				info.middle = event->button.button == GDK_BUTTON_MIDDLE && event->type == GDK_BUTTON_PRESS;
+				info.left = event->get_button() == GDK_BUTTON_PRIMARY && event->get_event_type() == Gdk::Event::Type::BUTTON_PRESS;
+				info.right = event->get_button() == GDK_BUTTON_SECONDARY && event->get_event_type() == Gdk::Event::Type::BUTTON_PRESS;
+				info.middle = event->get_button() == GDK_BUTTON_MIDDLE && event->get_event_type() == Gdk::Event::Type::BUTTON_PRESS;
 
-				info.ctrl = event->key.state & GDK_CONTROL_MASK;
-				info.shift = event->key.state & GDK_SHIFT_MASK;
+				info.ctrl = (bool)(event->get_modifier_state() & Gdk::ModifierType::CONTROL_MASK);
+				info.shift = (bool)(event->get_modifier_state() & Gdk::ModifierType::SHIFT_MASK);
 
-				int width, height;
-				nativeWindow->get_size(width, height);
-				info.x = event->motion.x;
-				info.y = event->motion.y;
+                int width = nativeWindow->get_size(Gtk::Orientation::HORIZONTAL);
+                int height = nativeWindow->get_size(Gtk::Orientation::VERTICAL);
+				//info.x = event->motion.x;
+				//info.y = event->motion.y;
 				info.nonClient = (info.x < 0 || info.y < 0 || info.x > width || info.y > height);
 
 				return info;
 			}
 
-			NativeWindowKeyInfo GGacWindow::createKeyInfo(GdkEvent* event)
+			NativeWindowKeyInfo GGacWindow::createKeyInfo(const Glib::RefPtr<const Gdk::Event>& event)
 			{
 				NativeWindowKeyInfo info{};
 
-				info.ctrl = event->key.state & GDK_CONTROL_MASK;
-				info.shift = event->key.state & GDK_SHIFT_MASK;
-				info.alt = event->key.state & GDK_MOD1_MASK;
-				info.capslock = event->key.state & GDK_LOCK_MASK;
-				info.code = GdkEventKeyCodeToGacKeyCode(event->key.keyval);
+				info.ctrl = (bool)(event->get_modifier_state() & Gdk::ModifierType::CONTROL_MASK);
+				info.shift = (bool)(event->get_modifier_state() & Gdk::ModifierType::SHIFT_MASK);
+				info.alt = (bool)(event->get_modifier_state() & Gdk::ModifierType::ALT_MASK);
+				info.capslock = (bool)(event->get_modifier_state() & Gdk::ModifierType::LOCK_MASK);
+				info.code = GdkEventKeyCodeToGacKeyCode(event->get_keyval());
 
 				return info;
 			}
 
-			bool GGacWindow::HandleEventInternal(GdkEvent* event)
+			bool GGacWindow::HandleEventInternal(const Glib::RefPtr<const Gdk::Event>& event)
 			{
-				switch (event->type)
+				switch (event->get_event_type())
 				{
-					case GDK_BUTTON_PRESS:
+					case Gdk::Event::Type::BUTTON_PRESS:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
-							switch (event->button.button)
+							switch (event->get_button())
 							{
 								case GDK_BUTTON_PRIMARY:
 									listeners[i]->LeftButtonDown(info);
@@ -204,11 +209,11 @@ namespace vl {
 						break;
 					}
 
-					case GDK_BUTTON_RELEASE:
+					case Gdk::Event::Type::BUTTON_RELEASE:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						
-						switch (event->button.button)
+						switch (event->get_button())
 						{
 						case GDK_BUTTON_PRIMARY:
 							for (vint i = 0; i < listeners.Count(); i++)
@@ -263,12 +268,12 @@ namespace vl {
 						break;
 					}
 
-					case GDK_DOUBLE_BUTTON_PRESS:
+					/*case GDK_DOUBLE_BUTTON_PRESS:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
-							switch (event->button.button)
+							switch (event->get_button())
 							{
 								case GDK_BUTTON_PRIMARY:
 									listeners[i]->LeftButtonDoubleClick(info);
@@ -282,10 +287,10 @@ namespace vl {
 							}
 						}
 						break;
-					}
+					}*/
 
-					case GDK_MOTION_NOTIFY:
-					case GDK_DRAG_MOTION:
+					case Gdk::Event::Type::MOTION_NOTIFY:
+					case Gdk::Event::Type::DRAG_MOTION:
 					{
 						NativeWindowMouseInfo info = createMouseInfo(event);
 						info.nonClient = !mouseHoving;
@@ -299,14 +304,14 @@ namespace vl {
 
 						if (customFrameMode)
 						{
-							if (event->type == GDK_MOTION_NOTIFY)
+							if (event->get_event_type() == Gdk::Event::Type::MOTION_NOTIFY)
 							{
 								if (!resizing)
 								{
 									for (vint i = 0; i < listeners.Count(); i++)
 									{
 										INativeWindowListener::HitTestResult r = listeners[i]->HitTest(NativePoint(info.x, info.y));
-										switch (r)
+										/*switch (r)
 										{
 										case vl::presentation::INativeWindowListener::BorderNoSizing:
 											break;
@@ -344,7 +349,7 @@ namespace vl {
 											break;
 										default:
 											break;
-										}
+										}*/
 									}
 								}
 							}
@@ -363,7 +368,7 @@ namespace vl {
 						break;
 					}
 
-					case GDK_ENTER_NOTIFY:
+					case Gdk::Event::Type::ENTER_NOTIFY:
 					{
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
@@ -373,7 +378,7 @@ namespace vl {
 						break;
 					}
 
-					case GDK_LEAVE_NOTIFY:
+					case Gdk::Event::Type::LEAVE_NOTIFY:
 					{
 						for (vint i = 0; i < listeners.Count(); i++)
 						{
@@ -383,19 +388,19 @@ namespace vl {
 						break;
 					}
 
-                    case GDK_FOCUS_CHANGE:
-                        event->focus_change.in ? SetFocus() : onBlur();
+                    case Gdk::Event::Type::FOCUS_CHANGE:
+                        event->get_focus_in() ? SetFocus() : onBlur();
                         break;
 
-                    case GDK_KEY_PRESS:
-                        if (!gtk_im_context_filter_keypress(imContext, &event->key))
+                    case Gdk::Event::Type::KEY_PRESS:
+                        /*if (!gtk_im_context_filter_keypress(imContext, event->gobj()))
                         {
                             NativeWindowKeyInfo keyInfo = createKeyInfo(event);
                             for (vint i = 0; i < listeners.Count(); i++)
                             {
                                 listeners[i]->KeyDown(keyInfo);
                             }
-                        }
+                        }*/
                         break;
 
 					default:
@@ -412,11 +417,6 @@ namespace vl {
                 {
                     listeners[i]->Char(charInfo);
                 }
-            }
-
-            GtkIMContext* GGacWindow::GetIMContext()
-            {
-                return imContext;
             }
 
 			///
@@ -453,10 +453,11 @@ namespace vl {
 
 			NativeRect GGacWindow::GetBounds()
 			{
-				int x, y, width, height;
+                return NativeRect(0, 0, 0, 0);
+				/*int x, y, width, height;
 				nativeWindow->get_position(x, y);
 				nativeWindow->get_size(width, height);
-				return NativeRect(x, y, x + width, y + height);
+				return NativeRect(x, y, x + width, y + height);*/
 			}
 
 			void GGacWindow::SetBounds(const NativeRect &bounds)
@@ -466,14 +467,14 @@ namespace vl {
 				{
 					listeners[i]->Moving(newBounds, true, false);
 				}
-				nativeWindow->move(newBounds.Left().value, newBounds.Top().value);
+				//nativeWindow->move(newBounds.Left().value, newBounds.Top().value);
 				nativeWindow->set_size_request(newBounds.Width().value, newBounds.Height().value);
 			}
 
 			NativeSize GGacWindow::GetClientSize()
 			{
-				int x, y;
-				nativeWindow->get_size(x, y);
+				int x = nativeWindow->get_size(Gtk::Orientation::HORIZONTAL);
+                int y = nativeWindow->get_size(Gtk::Orientation::VERTICAL);
 				return NativeSize(x, y);
 			}
 
@@ -486,8 +487,8 @@ namespace vl {
 			NativeRect GGacWindow::GetClientBoundsInScreen()
 			{
 				auto loc = nativeWindow->get_allocation();
-				if (!nativeWindow->get_screen())
-					loc = nativeWindow->get_allocation();
+				/*if (!nativeWindow->get_screen())
+					loc = nativeWindow->get_allocation();*/
 				/*Gdk::Rectangle contentFrame = [nsWindow convertRectToScreen:[nsWindow.contentView frame]];
 				if(!([nsWindow screen]))
 					contentFrame = [nsWindow frame];*/
@@ -634,7 +635,7 @@ namespace vl {
 
 			void GGacWindow::ShowMinimized()
 			{
-				nativeWindow->iconify();
+				nativeWindow->minimize();
 			}
 
 			void GGacWindow::Hide(bool closeWindow)
@@ -691,7 +692,7 @@ namespace vl {
 
 			void GGacWindow::SetActivate()
 			{
-				nativeWindow->show_all();
+                nativeWindow->show();
 			}
 
 			bool GGacWindow::IsActivated()
