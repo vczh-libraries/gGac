@@ -48,9 +48,10 @@ namespace vl {
 				void onActive()
 				{
                     auto window = static_cast<GGacWindow*>(GetMainWindow());
-                    window->GetNativeWindow()->set_application(app);
+                    app->add_window(*window->GetNativeWindow());
                     window->SetFocus();
-                    window->GetNativeWindow()->get_surface()->signal_event().connect(sigc::mem_fun(*window, &GGacWindow::HandleEventInternal), false);
+                    window->Show();
+                    //window->GetNativeWindow()->get_surface()->signal_event().connect(sigc::mem_fun(*window, &GGacWindow::HandleEventInternal), false);
 					screenService.RefreshScreenInformation();
 				}
 
@@ -61,7 +62,7 @@ namespace vl {
 				:mainWindow(0),
 				inputService(&GlobalTimerFunc)
 				{
-					app = Gtk::Application::create("net.gaclib.gGac");
+                    app = Gtk::Application::create("net.gaclib.gGac");
                     app->signal_startup().connect(sigc::mem_fun(*this, &GGacController::onActive));
 				}
 
@@ -104,9 +105,8 @@ namespace vl {
 
 				void Run(INativeWindow* window)
 				{
-					mainWindow = window;
-					mainWindow->Show();
-					app->run();
+                    mainWindow = window;
+                    app->run();
 				}
 
 				INativeWindow* GetWindow(NativePoint location)

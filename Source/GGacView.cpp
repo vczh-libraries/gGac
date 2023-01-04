@@ -38,12 +38,11 @@ namespace vl {
 
 			void GGacView::onResize(int width, int height)
 			{
-                if (!context)
-                {
-                    auto window = static_cast<GGacWindow*>(this->window)->GetNativeWindow();
-                    surface = window->get_surface()->create_similar_surface(Cairo::Content::CONTENT_COLOR, width, height);
-                    context = Cairo::Context::create(surface);
-                }
+                auto window = static_cast<GGacWindow*>(this->window);
+                surface = window->GetNativeWindow()->get_surface()->create_similar_surface(Cairo::Content::CONTENT_COLOR, width, height);
+                context = Cairo::Context::create(surface);
+                window->RedrawContent();
+                needRepaint = true;
 			}
 
 			void GGacView::onDraw(const ::Cairo::RefPtr<::Cairo::Context> &cr, int width, int height)
@@ -66,7 +65,7 @@ namespace vl {
 			void GGacView::resize(int width, int height)
 			{
 				this->set_size_request(width, height);
-				needRepaint = true;
+                needRepaint = true;
 			}
 
 			Cairo::RefPtr<::Cairo::Context> GGacView::GetGGacContext()

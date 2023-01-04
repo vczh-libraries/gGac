@@ -837,6 +837,10 @@ namespace vl {
 
 			void GGacWindow::RedrawContent()
 			{
+                for (vint i = 0; i < listeners.Count(); i++)
+                {
+                    listeners[i]->Moved();
+                }
 			}
 		}
 
