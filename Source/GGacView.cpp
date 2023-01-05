@@ -58,7 +58,6 @@ namespace vl {
 
 			void GGacView::resize(int width, int height)
 			{
-				//this->set_size_request(width, height);
 				needRepaint = true;
 			}
 

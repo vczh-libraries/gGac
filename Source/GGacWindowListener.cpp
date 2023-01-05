@@ -51,49 +51,48 @@ namespace vl {
 				rendering = false;
 			}
 
-			bool GGacWindowListener::RetrieveAndResetMovedWhileRendering()
-			{
-				bool result = movedWhileRendering;
-				movedWhileRendering = false;
-				return result;
-			}
+            bool GGacWindowListener::RetrieveAndResetMovedWhileRendering()
+            {
+                bool result = movedWhileRendering;
+                movedWhileRendering = false;
+                return result;
+            }
 
-			Ptr<GGacView> GGacWindowListener::GetGGacView() const
-			{
-				return view;
-			}
+            Ptr<GGacView> GGacWindowListener::GetGGacView() const
+            {
+                return view;
+            }
 
-			void GGacWindowListener::RecreateRenderTarget()
-			{
-				RebuildLayer(window->GetClientSize());
-			}
+            void GGacWindowListener::RecreateRenderTarget()
+            {
+                RebuildLayer(window->GetClientSize());
+            }
 
-			void GGacWindowListener::Moved()
-			{
-				if (rendering)
-				{
-					movedWhileRendering = true;
-				}
-				else
-				{
-					RebuildLayer(window->GetClientSize());
-				}
-			}
+            void GGacWindowListener::Moved()
+            {
+                if (rendering)
+                {
+                    movedWhileRendering = true;
+                }
+                else
+                {
+                    RebuildLayer(window->GetClientSize());
+                }
+            }
 
-			void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
-			{
+            void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
+            {
+            }
 
-			}
+            INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location)
+            {
+            }
 
-			/*INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location) {
-				return INativeWindowListener::HitTest(location);
-			}
+            void GGacWindowListener::Moving(NativeRect& bounds, bool fixSizeOnly, bool draggingBorder)
+            {
+            }
 
-			void GGacWindowListener::Moving(NativeRect &bounds, bool fixSizeOnly) {
-				INativeWindowListener::Moving(bounds, fixSizeOnly);
-			}
-
-			void GGacWindowListener::DpiChanged() {
+			/*void GGacWindowListener::DpiChanged() {
 				INativeWindowListener::DpiChanged();
 			}
 
