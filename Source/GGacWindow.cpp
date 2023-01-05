@@ -167,7 +167,8 @@ namespace vl {
 
 			bool GGacWindow::HandleEventInternal(const Glib::RefPtr<const Gdk::Event>& event)
 			{
-				switch (event->get_event_type())
+                auto type = event->get_event_type();
+				switch (type)
 				{
 					case Gdk::Event::Type::BUTTON_PRESS:
 					{
@@ -839,7 +840,7 @@ namespace vl {
 			{
                 for (vint i = 0; i < listeners.Count(); i++)
                 {
-                    listeners[i]->Moved();
+                    listeners[i]->Paint();
                 }
 			}
 		}
