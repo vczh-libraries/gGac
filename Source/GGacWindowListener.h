@@ -38,13 +38,10 @@ namespace vl {
 				///
 				void Moved() override;
 				void LeftButtonUp(const NativeWindowMouseInfo &info) override;
+				HitTestResult HitTest(NativePoint location) override;
+                void Moving(NativeRect& bounds, bool fixSizeOnly, bool draggingBorder) override;
 
-				/*HitTestResult HitTest(NativePoint location) override;
-
-				void Moving(NativeRect &bounds, bool fixSizeOnly) override;
-
-
-				void DpiChanged() override;
+				/*void DpiChanged() override;
 
 				void Enabled() override;
 

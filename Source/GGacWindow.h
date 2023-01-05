@@ -53,7 +53,6 @@ namespace vl {
 				Interface* GetGraphicsHandler() const;
 				bool HandleEventInternal(GdkEvent* event);
                 void IMCommit(wchar_t str);
-                GtkIMContext* GetIMContext();
 
 				///
 

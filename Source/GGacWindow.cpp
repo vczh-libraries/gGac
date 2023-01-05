@@ -55,13 +55,11 @@ namespace vl {
 			{
 				if (mode == INativeWindow::WindowMode::Normal || mode == INativeWindow::WindowMode::Popup)
 				{
-					nativeWindow = new Gtk::Window();
-					//nativeWindow->set_decorated(false);
+                    nativeWindow = new Gtk::Window();
 				}
 				else
 				{
-					nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
-					nativeWindow->set_decorated(false);
+                    nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
 					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
@@ -74,7 +72,6 @@ namespace vl {
                     GdkWindow *gdk_window = gtk_widget_get_window(GTK_WIDGET(nativeWindow->gobj()));
                     gtk_im_context_set_client_window(imContext, gdk_window);
                     gtk_im_context_set_use_preedit(imContext, false);
-                    //gtk_im_context_set_cursor_location()
                     g_signal_connect(imContext, "commit", G_CALLBACK(gtk_im_commit_cb), this);
                     //g_signal_connect(imContext, "preedit-changed", G_CALLBACK(gtk_im_preedit_changed_cb), NULL);
                 }
@@ -414,11 +411,6 @@ namespace vl {
                 }
             }
 
-            GtkIMContext* GGacWindow::GetIMContext()
-            {
-                return imContext;
-            }
-
 			///
 
 			Point GGacWindow::Convert(NativePoint value)
@@ -485,13 +477,10 @@ namespace vl {
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
 			{
-				auto loc = nativeWindow->get_allocation();
-				if (!nativeWindow->get_screen())
-					loc = nativeWindow->get_allocation();
-				/*Gdk::Rectangle contentFrame = [nsWindow convertRectToScreen:[nsWindow.contentView frame]];
-				if(!([nsWindow screen]))
-					contentFrame = [nsWindow frame];*/
-				return NativeRect(loc.get_x(), loc.get_y(), loc.get_x() + loc.get_width(), loc.get_y() + loc.get_height());
+                int x, y, width, height;
+                nativeWindow->get_position(x, y);
+                nativeWindow->get_size(width, height);
+                return NativeRect(x, y, width, height);
 			}
 
 			WString GGacWindow::GetTitle()
