@@ -300,6 +300,7 @@ namespace vl {
 							{
 								if (!resizing)
 								{
+                                    break;
 									for (vint i = 0; i < listeners.Count(); i++)
 									{
 										INativeWindowListener::HitTestResult r = listeners[i]->HitTest(NativePoint(info.x, info.y));
