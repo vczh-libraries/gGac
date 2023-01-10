@@ -14,9 +14,9 @@ typedef unsigned char BYTE;
 typedef unsigned short WORD;
 
 typedef struct _ABC {
-	int  abcA;
-	unsigned int abcB; //width of glyphs
-	int  abcC;
+	double abcA;
+	double abcB; //width of glyphs
+	double abcC;
 } ABC;
 
 typedef struct _GOFFSET {
@@ -196,7 +196,7 @@ UniscribeTextRun
 				public:
 					//***************************** Uniscribe Data
 					PangoGlyphString*               scriptCache;
-					vint							advance;
+					double                          advance;
 					UniscribeGlyphData				wholeGlyph;
 					bool							needFontFallback;
 

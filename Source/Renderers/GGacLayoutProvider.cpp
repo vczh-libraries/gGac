@@ -232,7 +232,7 @@ UniscribeGlyphData
 						{
 							glyphs.Resize(glyphCount);
 							glyphVisattrs.Resize(glyphCount);
-							charCluster.Resize(length + 1);
+							charCluster.Resize(length);
 						}
 
 						while(true)
@@ -327,12 +327,16 @@ UniscribeGlyphData
 						}
 
 						int totalWidth = 0;
-						for (vint i = 0, j = 0; i < glyphCount; i++)
+						for (vint i = 0, j = 0; i < glyphCount;)
 						{
                             auto geometry = cache->glyphs[i].geometry;
+                            //TODO: store width as double
                             glyphAdvances[j] = round((double)geometry.width / PANGO_SCALE);
 							totalWidth += glyphAdvances[j];
-                            j += abs(charCluster[i+1] - charCluster[i]);
+                            if (++i < glyphCount)
+                            {
+                                j += abs(charCluster[i] - charCluster[i-1]);
+                            }
 						}
 						runAbc.abcA = 0;
 						runAbc.abcB = totalWidth;
