@@ -3,6 +3,7 @@
 //
 
 #include "GGacClipboardService.h"
+#include <gtkmm/clipboard.h>
 
 namespace vl {
 
@@ -38,12 +39,14 @@ namespace vl {
 
             bool GGacClipboardReader::ContainsText() 
             {
-                return false;
+                return true;
             }
 
             WString GGacClipboardReader::GetText() 
             {
-                return vl::WString();
+                auto clipboard = Gtk::Clipboard::get();
+                auto text = clipboard->wait_for_text();
+                return WString((wchar_t *) g_convert(text.c_str(), -1, "wchar_t", "utf-8", NULL, NULL, NULL));
             }
 
             bool GGacClipboardReader::ContainsDocument() 

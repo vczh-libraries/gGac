@@ -210,7 +210,6 @@ UniscribeGlyphData
 					glyphs.Resize(glyphCount);
 					glyphVisattrs.Resize(glyphCount);
 					glyphAdvances.Resize(glyphCount);
-					glyphOffsets.Resize(glyphCount);
 					charCluster.Resize(length);
 					memset(&runAbc, 0, sizeof(runAbc));
 					memset(&sa, 0, sizeof(sa));
@@ -233,21 +232,24 @@ UniscribeGlyphData
 						{
 							glyphs.Resize(glyphCount);
 							glyphVisattrs.Resize(glyphCount);
-							charCluster.Resize(length);
+							charCluster.Resize(length + 1);
 						}
 
 						while(true)
 						{
-                            auto str = Glib::ustring::format(runText).substr(0, length);
-                            pango_shape(str.c_str(), str.bytes(), &sa, cache);
+                            auto text = Glib::ustring::format(runText).substr(0, length);
+                            cache = scriptItem.shape(text).gobj_copy();
                             glyphCount = cache->num_glyphs;
-                            for (vint i = 0; i < cache->num_glyphs; i++)
+                            for (vint i = 0; i < glyphCount; i++)
 							{
 								glyphVisattrs[i] = cache->glyphs[i].attr;
-                                //$i th character coresponding glyph at n th byte of string
-                                charCluster[i] = str.length() - Glib::ustring::format(str.c_str() + cache->log_clusters[i]).length();
+                                charCluster[i] = text.length() - Glib::ustring::format(text.c_str() + cache->log_clusters[i]).length();
 							}
-							break;
+                            for (vint i = glyphCount; i < length; i++)
+                            {
+                                charCluster[i] = 0;
+                            }
+                            break;
 						}
 						if(resizeGlyphData)
 						{
@@ -317,17 +319,20 @@ UniscribeGlyphData
 						// generate place information
 						if(resizeGlyphData)
 						{
-							glyphAdvances.Resize(glyphCount);
-							glyphOffsets.Resize(glyphCount);
+							glyphAdvances.Resize(MAX(glyphCount, length));
+                            for (vint i = 0; i < glyphAdvances.Count(); i++)
+                            {
+                                glyphAdvances[i] = 0;
+                            }
 						}
 
-						int totalWidth = 0, advanceIndex = 0;
-						for (vint i = 0; i < glyphCount; i++)
+						int totalWidth = 0;
+						for (vint i = 0, j = 0; i < glyphCount; i++)
 						{
                             auto geometry = cache->glyphs[i].geometry;
-							glyphAdvances[advanceIndex] = geometry.width / PANGO_SCALE;
-							totalWidth += glyphAdvances[advanceIndex];
-							advanceIndex++;
+                            glyphAdvances[j] = round((double)geometry.width / PANGO_SCALE);
+							totalWidth += glyphAdvances[j];
+                            j += abs(charCluster[i+1] - charCluster[i]);
 						}
 						runAbc.abcA = 0;
 						runAbc.abcB = totalWidth;
@@ -339,7 +344,7 @@ UniscribeGlyphData
 					return false;
 				}
 
-				void UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length)
+				/*void UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length)
 				{
 					vint glyphCount=0;
 					for(vint i=0;i<length;i++)
@@ -355,7 +360,6 @@ UniscribeGlyphData
 					memset(&glyphs[0], 0, sizeof(glyphs[0])*glyphs.Count());
 					memset(&glyphVisattrs[0], 0, sizeof(glyphVisattrs[0])*glyphVisattrs.Count());
 					memset(&glyphAdvances[0], 0, sizeof(glyphAdvances[0])*glyphAdvances.Count());
-					memset(&glyphOffsets[0], 0, sizeof(glyphOffsets[0])*glyphOffsets.Count());
 					memset(&charCluster[0], 0, sizeof(charCluster[0])*charCluster.Count());
 
 					for(vint i=0;i<glyphCount;i++)
@@ -410,7 +414,7 @@ UniscribeGlyphData
 					{
 						runAbc.abcB+=glyphAdvances[i];
 					}
-				}
+				}*/
 
 /***********************************************************************
 UniscribeItem
@@ -438,7 +442,7 @@ UniscribeItem
 				{
 					// generate break information
 					charLogattrs.Resize(length + 1);
-					Glib::ustring gstr = Glib::ustring::format(itemText);
+					Glib::ustring gstr = Glib::ustring::format(itemText).substr(0, length);
 					pango_default_break(gstr.c_str(), gstr.bytes(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
                     return true;
 
@@ -490,7 +494,7 @@ UniscribeTextRun
 				{
 					if (scriptCache)
 					{
-						pango_glyph_string_free(static_cast<PangoGlyphString*>(scriptCache));
+						pango_glyph_string_free(scriptCache);
 						scriptCache = 0;
 					}
 					else
@@ -561,17 +565,17 @@ UniscribeTextRun
 				{
 					ClearUniscribeData();
 					List<bool> breakingAvailabilities;
-					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, static_cast<PangoGlyphString*>(scriptCache), runText, length, breakings, breakingAvailabilities))
+					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, scriptCache, runText, length, breakings, breakingAvailabilities))
 					{
 						goto BUILD_UNISCRIBE_DATA_FAILED;
 					}
 
-					if(breakings.Count()==1 && !breakingAvailabilities[0])
+					/*if(breakings.Count()==1 && !breakingAvailabilities[0])
 					{
 						PangoLogAttr* charLogattrs=&scriptItem->charLogattrs[0]+startFromLine-scriptItem->startFromLine;
 						wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, charLogattrs, runText, length);
 						needFontFallback=true;
-					}
+					}*/
 					advance = wholeGlyph.runAbc.abcA+wholeGlyph.runAbc.abcB+wholeGlyph.runAbc.abcC;
 
 					return true;
@@ -620,7 +624,7 @@ UniscribeTextRun
 					charAdvances=0;
 					for(vint i=tempStart;i<=length;)
 					{
-						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_mandatory_break)
+						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_line_break)
 						{
 							if(width<=maxWidth || (firstRun && charLength==0))
 							{
@@ -674,89 +678,95 @@ UniscribeTextRun
 					}
 				}
 
-				void UniscribeTextRun::Render(IRendererCallback* callback, vint fragmentBoundsIndex, vint offsetX, vint offsetY, bool renderBackground)
-				{
-					auto cr = callback->GetGGacContext();
-					RunFragmentBounds& fragment=fragmentBounds[fragmentBoundsIndex];
-					if(fragment.length==0) return;
+				void UniscribeTextRun::Render(IRendererCallback* callback, vint fragmentBoundsIndex, vint offsetX, vint offsetY, bool renderBackground) {
+                    auto cr = callback->GetGGacContext();
+                    RunFragmentBounds &fragment = fragmentBounds[fragmentBoundsIndex];
+                    if (fragment.length == 0) return;
 
-					vint startFromFragmentBounds=0;
-					vint accumulatedWidth=0;
-					while(startFromFragmentBounds<fragment.length)
-					{
-						vint charIndex=fragment.startFromRun+startFromFragmentBounds;
-						vint charLength=0;
-						vint cluster=0;
-						vint nextCluster=0;
-						SearchSingleGlyphCluster(charIndex, charLength, cluster, nextCluster);
+                    vint startFromFragmentBounds = 0;
+                    vint accumulatedWidth = 0;
 
-						vint clusterStart=0;
-						vint clusterCount=0;
-						if (scriptItem->IsRightToLeft())
-						{
-							clusterStart = nextCluster + 1;
-							clusterCount = cluster - nextCluster;
-						}
-						else
-						{
-							clusterStart = cluster;
-							clusterCount = nextCluster - cluster;
-						}
+                    while (startFromFragmentBounds < fragment.length) {
+                        vint charIndex = fragment.startFromRun + startFromFragmentBounds;
+                        vint charLength = 0;
+                        vint cluster = 0;
+                        vint nextCluster = 0;
+                        SearchSingleGlyphCluster(charIndex, charLength, cluster, nextCluster);
 
-						vint clusterWidth=0;
-						for(vint i=0;i<clusterCount;i++)
-						{
-							clusterWidth+=wholeGlyph.glyphAdvances[i+clusterStart];
-						}
+                        vint clusterStart = 0;
+                        vint clusterCount = 0;
+                        if (scriptItem->IsRightToLeft()) {
+                            clusterStart = nextCluster + 1;
+                            clusterCount = cluster - nextCluster;
+                        } else {
+                            clusterStart = cluster;
+                            clusterCount = nextCluster - cluster;
+                        }
 
-						vint x=0;
-						if(scriptItem->IsRightToLeft())
-						{
-							x=fragment.bounds.x2-accumulatedWidth-clusterWidth;
-						}
-						else
-						{
-							x=fragment.bounds.x1+accumulatedWidth;
-						}
-						Cairo::Rectangle rect;
-						rect.x=(int)(x+offsetX);
-						rect.y=(int)(fragment.bounds.y1+offsetY);
-                        rect.width=(int)(clusterWidth);
-						rect.height=(int)(fragment.bounds.Height()*1.5);
+                        vint clusterWidth = 0;
+                        for (vint i = 0; i < clusterCount; i++) {
+                            clusterWidth += wholeGlyph.glyphAdvances[i + clusterStart];
+                        }
 
-						UniscribeColor color=documentFragment->GetCharColor(charIndex+startFromFragment);
-						if(renderBackground)
-						{
-							Color backgroundColor=color.backgroundColor;
-                            if(backgroundColor.a>0)
-							{
-								cr->set_source_rgba(backgroundColor.r / 255.f, backgroundColor.g / 255.f, backgroundColor.b / 255.f, backgroundColor.a / 255.f);
-								cr->rectangle(rect.x, rect.y, rect.width, rect.height);
-								cr->fill();
-							}
-						}
-						else
-						{
-							//render in cairo context
-							Color fontColor=color.fontColor;
-							cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
-                            if (needFontFallback)
-                            {
+                        vint x = 0;
+                        if (scriptItem->IsRightToLeft()) {
+                            x = fragment.bounds.x2 - accumulatedWidth - clusterWidth;
+                        } else {
+                            x = fragment.bounds.x1 + accumulatedWidth;
+                        }
+                        Cairo::Rectangle rect;
+                        rect.x = (int) (x + offsetX);
+                        rect.y = (int) (fragment.bounds.y1 + offsetY);
+                        rect.width = (int) (clusterWidth);
+                        rect.height = (int) (fragment.bounds.Height() * 1.5);
+
+                        UniscribeColor color = documentFragment->GetCharColor(charIndex + startFromFragment);
+                        if (renderBackground) {
+                            Color backgroundColor = color.backgroundColor;
+                            if (backgroundColor.a > 0) {
+                                cr->set_source_rgba(backgroundColor.r / 255.f, backgroundColor.g / 255.f,
+                                                    backgroundColor.b / 255.f, backgroundColor.a / 255.f);
+                                cr->rectangle(rect.x, rect.y, rect.width, rect.height);
+                                cr->fill();
+                            }
+                        } else {
+                            //render in cairo context
+                            Color fontColor = color.fontColor;
+                            if (needFontFallback) {
                                 //cr->show_text();
-                            }
-                            else
-                            {
-                                auto layout = Pango::Layout::create(cr);
-                                layout->set_text(Glib::ustring::format(runText[charIndex]).substr(0, length));
-                                layout->set_attributes(*documentFragment->GetAttributes().Obj());
+                            } else {
                                 cr->move_to(rect.x, rect.y);
-                                layout->show_in_cairo_context(cr);
-                            }
-						}
+                                if (
+                                        (!scriptItem->IsRightToLeft() && startFromFragmentBounds == 0) ||
+                                        (scriptItem->IsRightToLeft() && startFromFragmentBounds + charLength >= fragment.length)
+                                    )
+                                {
+                                    cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
+                                    //auto text = Glib::ustring::format(runText+charIndex).substr(0, charLength);
+                                    auto text = Glib::ustring::format(runText).substr(0, length);
+                                    auto layout = Pango::Layout::create(cr);
+                                    layout->set_text(text);
+                                    layout->set_attributes(*documentFragment->GetAttributes().Obj());
+                                    layout->show_in_cairo_context(cr);
+                                }
 
-						startFromFragmentBounds+=charLength;
-						accumulatedWidth += clusterWidth;
-					}
+                                //TODO: use cairo show_text_glyphs to draw each char
+                                /*cr->select_font_face(documentFragment->fontObject->get_family(), Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
+                                auto text = Glib::ustring::format(runText).substr(0, length);
+                                std::vector<Cairo::Glyph> glyphs;
+                                std::vector<Cairo::TextCluster> clusters;
+                                for (vint i = 0; i < length; i++)
+                                {
+                                    glyphs.push_back({scriptCache->glyphs[i].glyph, rect.x, rect.y + 10});
+                                    clusters.push_back({1, 1});
+                                }
+                                cr->show_text_glyphs(text, glyphs, clusters, Cairo::TEXT_CLUSTER_FLAG_BACKWARD);*/
+                            }
+                        }
+
+                        startFromFragmentBounds += charLength;
+                        accumulatedWidth += clusterWidth;
+                    }
 				}
 
 /***********************************************************************

@@ -108,7 +108,7 @@ UniscribeGlyphData
 					//***************************** Uniscribe Data
 					Array<WORD>						glyphs;
 					Array<PangoGlyphVisAttr>		glyphVisattrs;
-					Array<int>						glyphAdvances;
+					Array<double>					glyphAdvances;
 					Array<GOFFSET>					glyphOffsets;
 					Array<WORD>						charCluster;
 					ABC								runAbc;
@@ -195,7 +195,7 @@ UniscribeTextRun
 				{
 				public:
 					//***************************** Uniscribe Data
-					void*							scriptCache;
+					PangoGlyphString*               scriptCache;
 					vint							advance;
 					UniscribeGlyphData				wholeGlyph;
 					bool							needFontFallback;
