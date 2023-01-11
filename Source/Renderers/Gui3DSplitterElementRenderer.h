@@ -18,7 +18,10 @@ namespace vl {
 				class Gui3DSplitterElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
 				DEFINE_ELEMENT_RENDERER(Gui3DSplitterElement, Gui3DSplitterElementRenderer, Color)
-				};
+                protected:
+                    Color					oldColor1;
+                    Color					oldColor2;
+                };
 
 			}
 
