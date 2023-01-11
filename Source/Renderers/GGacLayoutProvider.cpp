@@ -249,7 +249,7 @@ UniscribeGlyphData
 							{
 								glyphVisattrs[i] = cache->glyphs[i].attr;
 							}
-                            for (vint i = 0, j = 0; i < length; i++)
+                            /*for (vint i = 0, j = 0; i < length; i++)
                             {
                                 if (sa.level % 2 == 0)
                                 {
@@ -265,6 +265,28 @@ UniscribeGlyphData
                                     if (cache->log_clusters[j] < text.substr(0, length - i).bytes())
                                     {
                                         j++;
+                                    }
+                                }
+                            }*/
+                            if (sa.level % 2 == 0)
+                            {
+                                for (vint i = 0, j = 0; i < length; i++)
+                                {
+                                    if (text.substr(0, i).bytes() > cache->log_clusters[j])
+                                    {
+                                        j++;
+                                    }
+                                    charCluster[i] = j;
+                                }
+                            }
+                            else
+                            {
+                                for (vint i = length - 1, j = glyphCount - 1; i >= 0; i--)
+                                {
+                                    charCluster[i] = glyphCount - 1 - j;
+                                    if (text.substr(0, i).bytes() <= cache->log_clusters[glyphCount -1 - j])
+                                    {
+                                        j--;
                                     }
                                 }
                             }
@@ -640,7 +662,7 @@ UniscribeTextRun
 					charAdvances=0;
 					for(vint i=tempStart;i<=length;)
 					{
-						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_line_break)
+						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_mandatory_break)
 						{
 							if(width<=maxWidth || (firstRun && charLength==0))
 							{
