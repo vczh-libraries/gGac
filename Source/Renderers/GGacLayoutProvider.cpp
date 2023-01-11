@@ -237,20 +237,40 @@ UniscribeGlyphData
 
 						while(true)
 						{
+                            /**
+                             * example flflflfl has 4 glyphs
+                             * each cluster is composite of f & l
+                             * charCluster should be 00112233
+                             */
                             auto text = Glib::ustring::format(runText).substr(0, length);
                             cache = scriptItem.shape(text).gobj_copy();
                             glyphCount = cache->num_glyphs;
                             for (vint i = 0; i < glyphCount; i++)
 							{
 								glyphVisattrs[i] = cache->glyphs[i].attr;
-                                charCluster[i] = text.length() - Glib::ustring::format(text.c_str() + cache->log_clusters[i]).length();
 							}
-                            for (vint i = glyphCount; i < length; i++)
+                            for (vint i = 0, j = 0; i < length; i++)
                             {
-                                charCluster[i] = 0;
+                                if (sa.level % 2 == 0)
+                                {
+                                    if (text.substr(0, i).bytes() > cache->log_clusters[j])
+                                    {
+                                        j++;
+                                    }
+                                    charCluster[i] = j;
+                                }
+                                else
+                                {
+                                    charCluster[length - i - 1] = j;
+                                    if (cache->log_clusters[j] < text.substr(0, length - i).bytes())
+                                    {
+                                        j++;
+                                    }
+                                }
                             }
                             break;
 						}
+
 						if(resizeGlyphData)
 						{
 							glyphs.Resize(glyphCount);
@@ -282,7 +302,7 @@ UniscribeGlyphData
 								glyphCount=charCluster[nextCharIndex]-glyphIndex;
 							}
 
-							if(scriptItem.get_analysis().get_level() % 2 == 1)
+							if(sa.level % 2 == 1)
 							{
 								glyphCount=-glyphCount;
 								glyphIndex-=glyphCount-1;
@@ -319,31 +339,23 @@ UniscribeGlyphData
 						// generate place information
 						if(resizeGlyphData)
 						{
-							glyphAdvances.Resize(MAX(glyphCount, length));
-                            for (vint i = 0; i < glyphAdvances.Count(); i++)
-                            {
-                                glyphAdvances[i] = 0;
-                            }
+                            glyphAdvances.Resize(glyphCount);
 						}
 
-						int totalWidth = 0;
-						for (vint i = 0, j = 0; i < glyphCount;)
+						double totalWidth = 0;
+                        for (vint i = 0; i < glyphCount; i++)
 						{
                             auto geometry = cache->glyphs[i].geometry;
-                            //TODO: store width as double
-                            glyphAdvances[j] = round((double)geometry.width / PANGO_SCALE);
-							totalWidth += glyphAdvances[j];
-                            if (++i < glyphCount)
-                            {
-                                j += abs(charCluster[i] - charCluster[i-1]);
-                            }
+                            glyphAdvances[i] = round((double)geometry.width / PANGO_SCALE);
+                            totalWidth += glyphAdvances[i];
 						}
+
 						runAbc.abcA = 0;
 						runAbc.abcB = totalWidth;
 						runAbc.abcC = 0;
 					}
 
-					return true;
+                    return true;
 					BUILD_UNISCRIBE_DATA_FAILED:
 					return false;
 				}
@@ -593,7 +605,7 @@ UniscribeTextRun
 					vint cluster=0;
 					vint nextCluster=0;
 					SearchGlyphCluster(charStart, charLength, cluster, nextCluster);
-					vint width=0;
+                    double width=0;
 					if(scriptItem->IsRightToLeft())
 					{
 						for(vint i=cluster;i>nextCluster;i--)
@@ -608,7 +620,7 @@ UniscribeTextRun
 							width+=wholeGlyph.glyphAdvances[i];
 						}
 					}
-					return width;
+					return round(width);
 				}
 
 				vint UniscribeTextRun::SumHeight()
@@ -623,7 +635,7 @@ UniscribeTextRun
 
 				void UniscribeTextRun::SearchForLineBreak(vint tempStart, vint maxWidth, bool firstRun, vint& charLength, vint& charAdvances)
 				{
-					vint width=0;
+					double width=0;
 					charLength=0;
 					charAdvances=0;
 					for(vint i=tempStart;i<=length;)
@@ -633,7 +645,7 @@ UniscribeTextRun
 							if(width<=maxWidth || (firstRun && charLength==0))
 							{
 								charLength=i-tempStart;
-								charAdvances=width;
+								charAdvances=round(width);
 							}
 							else
 							{
@@ -707,7 +719,7 @@ UniscribeTextRun
                             clusterCount = nextCluster - cluster;
                         }
 
-                        vint clusterWidth = 0;
+                        double clusterWidth = 0;
                         for (vint i = 0; i < clusterCount; i++) {
                             clusterWidth += wholeGlyph.glyphAdvances[i + clusterStart];
                         }
