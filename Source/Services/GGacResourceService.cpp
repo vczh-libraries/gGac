@@ -13,7 +13,7 @@ namespace vl {
 			GGacResourceService::GGacResourceService()
 			{
 				defaultFont.fontFamily = L"Segoe UI";
-				defaultFont.size = 12;
+				defaultFont.size = 11;
 				defaultFont.italic = false;
 				defaultFont.bold = false;
 				defaultFont.underline = false;

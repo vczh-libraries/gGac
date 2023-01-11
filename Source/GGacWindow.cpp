@@ -60,6 +60,7 @@ namespace vl {
 				else
 				{
                     nativeWindow = new Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
+                    nativeWindow->set_default_size(0, 0);
 					blurHandler = signal_blur.connect(sigc::mem_fun(*this, &GGacWindow::onBlur));
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
@@ -96,8 +97,7 @@ namespace vl {
 
 			void GGacWindow::onBlur()
 			{
-                ReleaseCapture();
-                gtk_im_context_focus_out(imContext);
+                Hide(false);
 			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
@@ -177,15 +177,14 @@ namespace vl {
 										auto control = listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
 										switch(control)
 										{
-											case INativeWindowListener::NoDecision:
-												if (mode == INativeWindow::WindowMode::Normal)
-												{
-													signal_blur.emit();
-												}
-												break;
 											case INativeWindowListener::Client:
 												return true;
+                                            case INativeWindowListener::NoDecision:
 											default:
+                                                if (mode == INativeWindow::WindowMode::Normal)
+                                                {
+                                                    signal_blur.emit();
+                                                }
 												break;
 										}
 									}
@@ -382,7 +381,15 @@ namespace vl {
 					}
 
                     case GDK_FOCUS_CHANGE:
-                        event->focus_change.in ? SetFocus() : onBlur();
+                        if (event->focus_change.in)
+                        {
+                            SetFocus();
+                        }
+                        /*else
+                        {
+                            ReleaseCapture();
+                            gtk_im_context_focus_out(imContext);
+                        }*/
                         break;
 
                     case GDK_KEY_PRESS:
@@ -641,11 +648,12 @@ namespace vl {
                 {
                     listeners[i]->Closed();
                 }
-                onBlur();
+                ReleaseCapture();
+                gtk_im_context_focus_out(imContext);
                 opened = false;
-			}
+            }
 
-			bool GGacWindow::IsVisible()
+            bool GGacWindow::IsVisible()
 			{
 				return nativeWindow->is_visible();
 			}
