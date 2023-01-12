@@ -134,11 +134,20 @@ namespace vl {
 
 			Ptr<INativeImage> GGacImageService::CreateImageFromMemory(void *buffer, vint length)
 			{
-				auto loader = Gdk::PixbufLoader::create();
-				loader->write((guint8*)buffer, length/sizeof(guint8));
-				loader->close();
-				auto image = Ptr(new Gtk::Image(loader->get_pixbuf()));
-				return Ptr(new GGacImage(this, image));
+                if (length > 0)
+                {
+                    auto loader = Gdk::PixbufLoader::create();
+                    //loader->set_data()
+                    loader->write((guint8*)buffer, length/sizeof(guint8));
+                    loader->close();
+                    auto image = Ptr(new Gtk::Image(loader->get_pixbuf()));
+                    return Ptr(new GGacImage(this, image));
+                }
+                else
+                {
+                    auto image = Ptr(new Gtk::Image(Glib::RefPtr<Gdk::Pixbuf>((Gdk::Pixbuf*)buffer)));
+                    return Ptr(new GGacImage(this, image));
+                }
 			}
 
 			Ptr<INativeImage> GGacImageService::CreateImageFromStream(stream::IStream &imageStream)

@@ -3,6 +3,7 @@
 //
 
 #include "GGacClipboardService.h"
+#include "GGacImageService.h"
 #include <gtkmm/clipboard.h>
 
 namespace vl {
@@ -17,29 +18,35 @@ namespace vl {
 
             void GGacClipboardWriter::SetText(const WString& value) 
             {
+                auto clipboard = Gtk::Clipboard::get();
+                clipboard->set_text(Glib::ustring::format(value.Buffer()));
             }
 
             void GGacClipboardWriter::SetDocument(Ptr<DocumentModel> value) 
             {
+                auto clipboard = Gtk::Clipboard::get();
+                clipboard->set_text(Glib::ustring::format(value->GetText(true).Buffer()));
             }
 
             void GGacClipboardWriter::SetImage(Ptr<INativeImage> value) 
             {
+                auto clipboard = Gtk::Clipboard::get();
+                //clipboard->set_image();
             }
 
             bool GGacClipboardWriter::Submit() 
             {
-                return false;
             }
 
             ////
-            GGacClipboardReader::GGacClipboardReader(GGacClipboardService* _service) 
+            GGacClipboardReader::GGacClipboardReader(GGacClipboardService* _service)
             {
             }
 
             bool GGacClipboardReader::ContainsText() 
             {
-                return true;
+                auto clipboard = Gtk::Clipboard::get();
+                return clipboard->wait_is_text_available();
             }
 
             WString GGacClipboardReader::GetText() 
@@ -61,12 +68,15 @@ namespace vl {
 
             bool GGacClipboardReader::ContainsImage() 
             {
-                return false;
+                auto clipboard = Gtk::Clipboard::get();
+                return clipboard->wait_is_image_available();
             }
 
             Ptr<INativeImage> GGacClipboardReader::GetImage() 
             {
-                return Ptr<INativeImage>();
+                auto clipboard = Gtk::Clipboard::get();
+                auto image = clipboard->wait_for_image();
+                return Ptr(new GGacImage(GetCurrentController()->ImageService(), Ptr(new Gtk::Image(image))));
             }
 
 			Ptr<INativeClipboardReader> GGacClipboardService::ReadClipboard() 
