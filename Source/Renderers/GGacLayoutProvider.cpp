@@ -759,7 +759,7 @@ UniscribeTextRun
                                     (scriptItem->IsRightToLeft() && startFromFragmentBounds + charLength >= fragment.length)
                                     )
                                 {
-                                    auto text = Glib::ustring::format(runText + (!scriptItem->IsRightToLeft() ? charIndex : fragment.startFromRun)).substr(0, length);
+                                    auto text = Glib::ustring::format(runText ).substr((!scriptItem->IsRightToLeft() ? charIndex : fragment.startFromRun), fragment.length);
                                     cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
                                     auto layout = Pango::Layout::create(cr);
                                     layout->set_text(text);
