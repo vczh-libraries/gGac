@@ -249,25 +249,6 @@ UniscribeGlyphData
 							{
 								glyphVisattrs[i] = cache->glyphs[i].attr;
 							}
-                            /*for (vint i = 0, j = 0; i < length; i++)
-                            {
-                                if (sa.level % 2 == 0)
-                                {
-                                    if (text.substr(0, i).bytes() > cache->log_clusters[j])
-                                    {
-                                        j++;
-                                    }
-                                    charCluster[i] = j;
-                                }
-                                else
-                                {
-                                    charCluster[length - i - 1] = j;
-                                    if (cache->log_clusters[j] < text.substr(0, length - i).bytes())
-                                    {
-                                        j++;
-                                    }
-                                }
-                            }*/
                             if (sa.level % 2 == 0)
                             {
                                 for (vint i = 0, j = 0; i < length; i++)
@@ -662,7 +643,7 @@ UniscribeTextRun
 					charAdvances=0;
 					for(vint i=tempStart;i<=length;)
 					{
-						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_mandatory_break)
+						if(i==length || scriptItem->charLogattrs[i+(startFromLine-scriptItem->startFromLine)].is_char_break)
 						{
 							if(width<=maxWidth || (firstRun && charLength==0))
 							{
@@ -774,14 +755,12 @@ UniscribeTextRun
                                 //cr->show_text();
                             } else {
                                 cr->move_to(rect.x, rect.y);
-                                if (
-                                        (!scriptItem->IsRightToLeft() && startFromFragmentBounds == 0) ||
-                                        (scriptItem->IsRightToLeft() && startFromFragmentBounds + charLength >= fragment.length)
+                                if ((!scriptItem->IsRightToLeft() && startFromFragmentBounds == 0) ||
+                                    (scriptItem->IsRightToLeft() && startFromFragmentBounds + charLength >= fragment.length)
                                     )
                                 {
+                                    auto text = Glib::ustring::format(runText + (!scriptItem->IsRightToLeft() ? charIndex : fragment.startFromRun)).substr(0, length);
                                     cr->set_source_rgba(fontColor.r / 255.f, fontColor.g / 255.f, fontColor.b / 255.f, fontColor.a / 255.f);
-                                    //auto text = Glib::ustring::format(runText+charIndex).substr(0, charLength);
-                                    auto text = Glib::ustring::format(runText).substr(0, length);
                                     auto layout = Pango::Layout::create(cr);
                                     layout->set_text(text);
                                     layout->set_attributes(*documentFragment->GetAttributes().Obj());
