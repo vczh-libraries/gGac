@@ -54,7 +54,18 @@ bool vl::presentation::gtk::GGacDialogService::ShowFontDialog(vl::presentation::
 															  vl::presentation::FontProperties &selectionFont,
 															  vl::presentation::Color &selectionColor, bool selected,
 															  bool showEffect, bool forceFontExist) {
-	return false;
+    Gtk::FontChooserDialog dialog;
+    dialog.set_modal(true);
+    if (dialog.run() == Gtk::RESPONSE_OK)
+    {
+        auto font = dialog.get_font_desc();
+        selectionFont.fontFamily = (wchar_t *) g_convert(font.get_family().c_str(), -1, "wchar_t", "utf-8", NULL, NULL, NULL);
+        selectionFont.size = font.get_size() / PANGO_SCALE;
+        selectionFont.bold = (font.get_weight() == Pango::WEIGHT_BOLD);
+        selectionFont.italic = (font.get_style() != Pango::STYLE_NORMAL);
+        return true;
+    }
+    return false;
 }
 
 bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::INativeWindow *window,
