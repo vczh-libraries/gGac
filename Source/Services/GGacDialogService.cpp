@@ -36,7 +36,18 @@ bool vl::presentation::gtk::GGacDialogService::ShowColorDialog(vl::presentation:
 															   vl::presentation::Color &selection, bool selected,
 															   vl::presentation::INativeDialogService::ColorDialogCustomColorOptions customColorOptions,
 															   vl::presentation::Color *customColors) {
-	return false;
+    Gtk::ColorChooserDialog dialog;
+    dialog.set_modal(true);
+    if (dialog.run() ==  Gtk::RESPONSE_OK)
+    {
+        Gdk::RGBA rgba = dialog.get_rgba();
+        selection.r = rgba.get_red_u();
+        selection.g = rgba.get_green_u();
+        selection.b = rgba.get_blue_u();
+        selection.a = rgba.get_alpha_u();
+        return true;
+    }
+    return false;
 }
 
 bool vl::presentation::gtk::GGacDialogService::ShowFontDialog(vl::presentation::INativeWindow *window,
