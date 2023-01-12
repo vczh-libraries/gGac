@@ -74,8 +74,32 @@ namespace vl {
 
 			Glib::RefPtr<Gdk::Pixbuf> GGacImageFrame::GetPixbuf()
 			{
+                if (!enabled)
+                {
+                    int w = pixbuf->get_width();
+                    int h = pixbuf->get_height();
+                    auto greyPixbuf = pixbuf->copy();
+                    guint8* pixels = greyPixbuf->get_pixels();
+                    if (pixbuf->get_n_channels() == 4) {
+                        for (int y = 0; y < h; y++) {
+                            for (int x = 0; x < w; x++) {
+                                int i = y*pixbuf->get_rowstride() + x*4;
+                                guint8 grey = (pixels[i]+pixels[i+1]+pixels[i+2])/6+pixels[i+3]/3;
+                                pixels[i] = grey;
+                                pixels[i+1] = grey;
+                                pixels[i+2] = grey;
+                            }
+                        }
+                    }
+                    return greyPixbuf;
+                }
 				return pixbuf;
 			}
+
+            void GGacImageFrame::SetEnabled(bool _enabled)
+            {
+                enabled = _enabled;
+            }
 
 			///
 

@@ -17,6 +17,7 @@ namespace vl {
 			class GGacImageFrame: public Object, public INativeImageFrame
 			{
 			protected:
+                bool                                                            enabled;
 				INativeImage*                                                   image;
 				Glib::RefPtr<Gdk::Pixbuf> 										pixbuf;
 				collections::Dictionary<void*, Ptr<INativeImageFrameCache>>     caches;
@@ -35,6 +36,7 @@ namespace vl {
 				///
 				Glib::RefPtr<Gdk::Pixbuf>	GetPixbuf();
 				void						SetSize(vint width, vint height, bool alwaysScaleUp = false);
+                void                        SetEnabled(bool _enabled);
 			};
 
 			class GGacImage : public Object, public INativeImage
