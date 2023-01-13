@@ -1,5 +1,5 @@
 #include "GGacRenderer.h"
-#include <Skins/DarkSkin/DarkSkin.h>
+#include "Skin/Theme.h"
 
 using namespace vl;
 using namespace vl::presentation::controls;
@@ -15,7 +15,7 @@ public:
 
 	void Load()override
 	{
-		RegisterTheme(Ptr(new darkskin::Theme()));
+		RegisterTheme(Ptr(new gtkskin::Theme()));
 	}
 
 	void Unload()override
