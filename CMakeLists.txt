@@ -26,7 +26,7 @@ add_library(GacUI
 		GacUI/Import/VlppGlrParser.cpp
 		GacUI/Import/VlppWorkflowLibrary.cpp
         GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
-        )
+        Source/Skin/Theme.cpp Source/Skin/Theme.h)
 
 add_library(gGac
         Source/Services/GGacCallbackService.cpp
