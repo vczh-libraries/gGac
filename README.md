@@ -14,7 +14,7 @@ using gtkmm/cairomm/pangomm
 * use ```console::Console::WriteLine(L"xxx")``` to log anything interesting to console output, remember to set LC_ALL to your native lanaguage.
 
 ## Current Progress:
-* Finalizing
+* prereleasing
 
 ## Known Issues/Limiations:
 * AsyncService::Semaphore::WaitForTime
