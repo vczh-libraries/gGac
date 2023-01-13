@@ -26,5 +26,6 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 
 int main(int argc, char **argv)
 {
+    std::locale::global(std::locale("zh_CN.UTF-8"));
     return vl::presentation::elements::gtk::SetupGGacRenderer();
 }
