@@ -58,11 +58,10 @@ add_library(gGac
         Source/GGacControllerListener.cpp
         Source/GGacView.cpp
 		Source/Skin/Theme.cpp
-		Source/Skin/Theme.h
 		)
-target_link_libraries(gGac ${GTK3_LIBRARIES})
+target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
 
-include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import Source Source/Renderers Source/Services)
+include_directories(GacUI/Import Source Source/Renderers Source/Services ${GTK3_INCLUDE_DIRS})
 list(APPEND FC_DEP_LIBS GacUI gGac)
 
 add_subdirectory(Tests/GacUI_HelloWorlds/Cpp)

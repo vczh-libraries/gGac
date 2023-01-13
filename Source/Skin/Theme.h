@@ -5,7 +5,7 @@
 #ifndef GGAC_THEME_H
 #define GGAC_THEME_H
 
-#include <Skins/DarkSkin/DarkSkin.h>
+#include "Skins/DarkSkin/DarkSkin.h"
 
 namespace gtkskin
 {
@@ -43,6 +43,7 @@ namespace gtkskin
     {
     public:
         Theme();
+        ~Theme();
     };
 }
 

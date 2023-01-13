@@ -77,4 +77,8 @@ namespace gtkskin
     {
         (::vl::__vwsn::This(this->__vwsn_precompile_0)->Window = vl::Func(Theme_Initialize(this)));
     }
+
+    Theme::~Theme()
+    {
+    }
 }
