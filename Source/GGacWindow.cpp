@@ -42,6 +42,7 @@ namespace vl {
 			mouseLastY(0),
 			mouseDownX(0),
 			mouseDownY(0),
+            scrollDelta(0),
 			supressingAlt(false),
 			enabled(false),
 			capturing(false),
@@ -127,13 +128,59 @@ namespace vl {
 			NativeWindowMouseInfo GGacWindow::createMouseInfo(GdkEvent* event)
 			{
 				NativeWindowMouseInfo info{};
+                info.ctrl = event->key.state & GDK_CONTROL_MASK;
+                info.shift = event->key.state & GDK_SHIFT_MASK;
 
-				info.left = event->button.button == GDK_BUTTON_PRIMARY && event->type == GDK_BUTTON_PRESS;
-				info.right = event->button.button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS;
-				info.middle = event->button.button == GDK_BUTTON_MIDDLE && event->type == GDK_BUTTON_PRESS;
-
-				info.ctrl = event->key.state & GDK_CONTROL_MASK;
-				info.shift = event->key.state & GDK_SHIFT_MASK;
+                switch (event->type)
+                {
+                    case GDK_BUTTON_PRESS:
+                        info.left = event->button.button == GDK_BUTTON_PRIMARY;
+                        info.right = event->button.button == GDK_BUTTON_SECONDARY;
+                        info.middle = event->button.button == GDK_BUTTON_MIDDLE;
+                        break;
+                    case GDK_SCROLL:
+                        double x, y;
+                        if (!event->scroll.is_stop)
+                        {
+                            if (event->scroll.direction == GDK_SCROLL_SMOOTH)
+                            {
+                                gdk_event_get_scroll_deltas(event, &x, &y);
+                                info.wheel = event->scroll.direction == GDK_SCROLL_DOWN || event->scroll.direction == GDK_SCROLL_UP ? y : x;
+                            }
+                            else
+                            {
+                                if (scrollDelta <= 1)
+                                {
+                                    scrollDelta = 1000.;
+                                }
+                                else
+                                {
+                                    scrollDelta = MAX(0, scrollDelta - 20);
+                                }
+                                vint scroll = MAX(20, pow(1.3, scrollDelta/49));
+                                switch (event->scroll.direction)
+                                {
+                                    case GDK_SCROLL_UP:
+                                        info.wheel = scroll;
+                                        break;
+                                    case GDK_SCROLL_DOWN:
+                                        info.wheel = -scroll;
+                                        break;
+                                    case GDK_SCROLL_LEFT:
+                                        info.wheel = scroll;
+                                        break;
+                                    case GDK_SCROLL_RIGHT:
+                                        info.wheel = -scroll;
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            scrollDelta = 0;
+                        }
+                        break;
+                }
 
 				int width, height;
 				nativeWindow->get_size(width, height);
@@ -159,126 +206,127 @@ namespace vl {
 
 			bool GGacWindow::HandleEventInternal(GdkEvent* event)
 			{
-				switch (event->type)
-				{
-					case GDK_BUTTON_PRESS:
-					{
-						NativeWindowMouseInfo info = createMouseInfo(event);
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							switch (event->button.button)
-							{
-								case GDK_BUTTON_PRIMARY:
-									listeners[i]->LeftButtonDown(info);
-									mouseDownX = info.x.value;
-									mouseDownY = info.y.value;
-									if (customFrameMode)
-									{
-										auto control = listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
-										switch(control)
-										{
-											case INativeWindowListener::Client:
-												return true;
+				switch (event->type) {
+                    case GDK_BUTTON_PRESS: {
+                        NativeWindowMouseInfo info = createMouseInfo(event);
+                        for (vint i = 0; i < listeners.Count(); i++) {
+                            switch (event->button.button) {
+                                case GDK_BUTTON_PRIMARY:
+                                    listeners[i]->LeftButtonDown(info);
+                                    mouseDownX = info.x.value;
+                                    mouseDownY = info.y.value;
+                                    if (customFrameMode) {
+                                        auto control = listeners[i]->HitTest(NativePoint(mouseDownX, mouseDownY));
+                                        switch (control) {
+                                            case INativeWindowListener::Client:
+                                                return true;
                                             case INativeWindowListener::NoDecision:
-											default:
-                                                if (mode == INativeWindow::WindowMode::Normal)
-                                                {
+                                            default:
+                                                if (mode == INativeWindow::WindowMode::Normal) {
                                                     signal_blur.emit();
                                                 }
-												break;
-										}
-									}
-									break;
-								case GDK_BUTTON_SECONDARY:
-									listeners[i]->RightButtonDown(info);
-									break;
-								case GDK_BUTTON_MIDDLE:
-									listeners[i]->MiddleButtonDown(info);
-									break;
-							}
-						}
-						break;
-					}
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case GDK_BUTTON_SECONDARY:
+                                    listeners[i]->RightButtonDown(info);
+                                    break;
+                                case GDK_BUTTON_MIDDLE:
+                                    listeners[i]->MiddleButtonDown(info);
+                                    break;
+                            }
+                        }
+                        break;
+                    }
 
-					case GDK_BUTTON_RELEASE:
-					{
-						NativeWindowMouseInfo info = createMouseInfo(event);
-						
-						switch (event->button.button)
-						{
-						case GDK_BUTTON_PRIMARY:
-							for (vint i = 0; i < listeners.Count(); i++)
-							{
-								listeners[i]->LeftButtonUp(info);
-							}
-							for (vint i = 0; i < listeners.Count(); i++)
-							{
-								auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
-								switch (control)
-								{
-								case INativeWindowListener::ButtonMinimum:
-									ShowMinimized();
-									return true;
-								case INativeWindowListener::ButtonMaximum:
-									if (GetSizeState() == INativeWindow::Maximized)
-									{
-										ShowRestored();
-									}
-									else
-									{
-										ShowMaximized();
-									}
-									return true;
-								case INativeWindowListener::ButtonClose:
-									Hide(true);
-									return true;
-								case INativeWindowListener::NoDecision:
-									break;
-								case INativeWindowListener::Client:
-									return true;
-								default:
-									break;
-								}
-							}
-							break;
+                    case GDK_BUTTON_RELEASE: {
+                        NativeWindowMouseInfo info = createMouseInfo(event);
 
-						case GDK_BUTTON_SECONDARY:
-							for (vint i = 0; i < listeners.Count(); i++)
-							{
-								listeners[i]->RightButtonUp(info);
-							}
-							break;
+                        switch (event->button.button) {
+                            case GDK_BUTTON_PRIMARY:
+                                for (vint i = 0; i < listeners.Count(); i++) {
+                                    listeners[i]->LeftButtonUp(info);
+                                }
+                                for (vint i = 0; i < listeners.Count(); i++) {
+                                    auto control = listeners[i]->HitTest(NativePoint(info.x, info.y));
+                                    switch (control) {
+                                        case INativeWindowListener::ButtonMinimum:
+                                            ShowMinimized();
+                                            return true;
+                                        case INativeWindowListener::ButtonMaximum:
+                                            if (GetSizeState() == INativeWindow::Maximized) {
+                                                ShowRestored();
+                                            } else {
+                                                ShowMaximized();
+                                            }
+                                            return true;
+                                        case INativeWindowListener::ButtonClose:
+                                            Hide(true);
+                                            return true;
+                                        case INativeWindowListener::NoDecision:
+                                            break;
+                                        case INativeWindowListener::Client:
+                                            return true;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
 
-						case GDK_BUTTON_MIDDLE:
-							for (vint i = 0; i < listeners.Count(); i++)
-							{
-								listeners[i]->MiddleButtonUp(info);
-							}
-							break;
-						}
-						break;
-					}
+                            case GDK_BUTTON_SECONDARY:
+                                for (vint i = 0; i < listeners.Count(); i++) {
+                                    listeners[i]->RightButtonUp(info);
+                                }
+                                break;
 
-					case GDK_DOUBLE_BUTTON_PRESS:
-					{
-						NativeWindowMouseInfo info = createMouseInfo(event);
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							switch (event->button.button)
-							{
-								case GDK_BUTTON_PRIMARY:
-									listeners[i]->LeftButtonDoubleClick(info);
-									break;
-								case GDK_BUTTON_SECONDARY:
-									listeners[i]->RightButtonDoubleClick(info);
-									break;
-								case GDK_BUTTON_MIDDLE:
-									listeners[i]->MiddleButtonDoubleClick(info);
-									break;
-							}
-						}
-						break;
-					}
+                            case GDK_BUTTON_MIDDLE:
+                                for (vint i = 0; i < listeners.Count(); i++) {
+                                    listeners[i]->MiddleButtonUp(info);
+                                }
+                                break;
+                        }
+                        break;
+                    }
+
+                    case GDK_DOUBLE_BUTTON_PRESS: {
+                        NativeWindowMouseInfo info = createMouseInfo(event);
+                        for (vint i = 0; i < listeners.Count(); i++) {
+                            switch (event->button.button) {
+                                case GDK_BUTTON_PRIMARY:
+                                    listeners[i]->LeftButtonDoubleClick(info);
+                                    break;
+                                case GDK_BUTTON_SECONDARY:
+                                    listeners[i]->RightButtonDoubleClick(info);
+                                    break;
+                                case GDK_BUTTON_MIDDLE:
+                                    listeners[i]->MiddleButtonDoubleClick(info);
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+
+                    case GDK_SCROLL:
+                    {
+                        NativeWindowMouseInfo info = createMouseInfo(event);
+                        if (event->scroll.direction == GDK_SCROLL_UP || event->scroll.direction == GDK_SCROLL_DOWN)
+                        {
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->VerticalWheel(info);
+                            }
+                        }
+                        else
+                        {
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->HorizontalWheel(info);
+                            }
+                        }
+
+                        break;
+                    }
 
 					case GDK_MOTION_NOTIFY:
 					case GDK_DRAG_MOTION:
