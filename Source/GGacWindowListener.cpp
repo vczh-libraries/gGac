@@ -84,7 +84,7 @@ namespace vl {
             {
             }
 
-            INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location)
+            /*INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location)
             {
             }
 
