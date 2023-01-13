@@ -33,5 +33,6 @@ using gtkmm/cairomm/pangomm
 <img name="table" src="https://user-images.githubusercontent.com/1700820/212236583-2d756491-fc7f-4466-817d-f26bf0b76b45.png" width="200px">
 <img name="addressbook" src="https://user-images.githubusercontent.com/1700820/212237492-a7daccdf-7f71-4bc7-b770-860c81642136.gif" width="200px">
 <img name="animation" src="https://user-images.githubusercontent.com/1700820/212237823-75ba77e7-b3f1-4e6c-9c97-e49ec5c18531.gif" width="200px">
+<img name="editor" src="https://user-images.githubusercontent.com/1700820/212239463-45d09368-188c-4eca-8a84-2188bb2eaf1f.gif" width="200px">
 
 
