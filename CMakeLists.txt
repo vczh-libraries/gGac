@@ -26,7 +26,7 @@ add_library(GacUI
 		GacUI/Import/VlppGlrParser.cpp
 		GacUI/Import/VlppWorkflowLibrary.cpp
         GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
-        Source/Skin/Theme.cpp Source/Skin/Theme.h)
+		)
 
 add_library(gGac
         Source/Services/GGacCallbackService.cpp
@@ -51,13 +51,15 @@ add_library(gGac
         Source/Renderers/GuiInnerShadowElementRenderer.cpp
         Source/Renderers/GGacLayoutProvider.cpp
         Source/Renderers/GuiGGacElementRenderer.cpp
-	Source/GGacController.cpp
+		Source/GGacController.cpp
         Source/GGacWindow.cpp
         Source/GGacWindowListener.cpp
         Source/GGacHelper.cpp
         Source/GGacControllerListener.cpp
         Source/GGacView.cpp
-        )
+		Source/Skin/Theme.cpp
+		Source/Skin/Theme.h
+		)
 target_link_libraries(gGac ${GTK3_LIBRARIES})
 
 include_directories(${GTK3_INCLUDE_DIRS} GacUI/Import Source Source/Renderers Source/Services)
