@@ -20,8 +20,9 @@ using gtkmm/cairomm/pangomm
 * Code is compiled under VCZH_DEBUG_NO_REFLECTION, if u need Reflection, remember to remove VCZH_DEBUG_NO_REFLECTION in CMakeLists.txt and add all of Reflection cpp files.
 
 ## Roadmap
-* Replace gtk by wayland
-** replace all gtk control including all dialog/window/pixbuf etc. by GacUI native control
-** replace all screen relative things by wayland
-** replace all gdk event by wayland
+- Replace gtk by wayland
+  - replace all gtk control including all dialog/window/pixbuf etc. by GacUI native control
+  - replace all screen relative things by wayland
+  - replace all gdk event by wayland
+- Add vulkan renderer
 
