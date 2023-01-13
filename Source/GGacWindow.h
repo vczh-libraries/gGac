@@ -31,6 +31,7 @@ namespace vl {
 				vint                            mouseLastY;
 				vint                            mouseDownX;
 				vint                            mouseDownY;
+                double                          scrollDelta;
 				bool 							mouseHoving;
 				bool                            customFrameMode;
 				bool                            supressingAlt;
