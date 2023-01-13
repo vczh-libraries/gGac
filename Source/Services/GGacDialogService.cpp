@@ -78,26 +78,39 @@ bool vl::presentation::gtk::GGacDialogService::ShowFileDialog(vl::presentation::
 															  const vl::WString &defaultExtension,
 															  const vl::WString &filter,
 															  vl::presentation::INativeDialogService::FileDialogOptions options) {
-	Gtk::FileChooserDialog dialog(Glib::ustring::format(title.Buffer()), Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
-	//dialog->set_transient_for(dynamic_cast<Gtk::Window*>(window));
+	Gtk::FileChooserDialog dialog(Glib::ustring::format(title.Buffer()),
+                                   dialogType == FileDialogTypes::FileDialogSave || dialogType == FileDialogTypes::FileDialogSavePreview ?
+                                  Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE :
+                                  Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
 	dialog.set_modal(true);
 
 	if (filter.Length() > 0)
 	{
-		auto filter_text = Gtk::FileFilter::create();
-		filter_text->add_mime_type(Glib::ustring::format(filter.Buffer()));
-		//dialog.add_filter(filter_text);
+		auto filterPattern= Gtk::FileFilter::create();
+        auto name= Glib::ustring::format(filter.Left(filter.IndexOf(L'|')).Buffer());
+        filterPattern->set_name(name);
+        auto pattern = Glib::ustring::format(filter.Right(filter.IndexOf(L'|')).Buffer());
+        filterPattern->add_pattern(pattern);
+        dialog.add_filter(filterPattern);
 	}
-	auto filter_any = Gtk::FileFilter::create();
-	filter_any->set_name("Any files");
-	filter_any->add_pattern("*");
-	dialog.add_filter(filter_any);
+    else
+    {
+        auto filterAny = Gtk::FileFilter::create();
+        filterAny ->set_name("Any files");
+        filterAny->add_pattern("*");
+        dialog.add_filter(filterAny);
+    }
 
 	dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 	dialog.add_button("_Open", Gtk::RESPONSE_OK);
 
 	if (dialog.run() ==  Gtk::RESPONSE_OK)
 	{
+        auto files = dialog.get_files();
+        for (auto file : files)
+        {
+            selectionFileNames.Add((wchar_t *) g_convert(file->get_path().c_str(), -1, "wchar_t", "utf-8", NULL, NULL, NULL));
+        }
 		return true;
 	}
 	return false;
