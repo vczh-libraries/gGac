@@ -4,7 +4,8 @@ split paragraph into lines by \r\n
 split line into items (itemize text)
 each item is constructed by one or more runs
 build each run by getting glyph and cluster data from corresponding item shape
-```glyphString = item->shape(runText)```
+
+``` glyphString = item->shape(runText) ```
 
 example
    text: flflflfl
