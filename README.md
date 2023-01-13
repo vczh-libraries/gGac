@@ -6,11 +6,12 @@ using gtkmm/cairomm/pangomm
 
 **Read the [LICENSE](https://github.com/vczh-libraries/gGac/blob/master/LICENSE.md) first.**
 
-## Building this repo
+## Building & Debug this repo
 
 * need to have `build-essential`, `cmake`, `gtkmm-3.0`
 * run `build.sh` from the root folder
 * go to each test app folder and `make`
+* use ```console::Console::WriteLine(L"xxx")``` to log anything interesting to console output, remember to set LC_ALL to your native lanaguage.
 
 ## Current Progress:
 * Finalizing
