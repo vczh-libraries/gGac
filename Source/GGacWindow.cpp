@@ -324,111 +324,126 @@ namespace vl {
                                 listeners[i]->HorizontalWheel(info);
                             }
                         }
-
                         break;
                     }
 
-					case GDK_MOTION_NOTIFY:
-					case GDK_DRAG_MOTION:
-					{
-						NativeWindowMouseInfo info = createMouseInfo(event);
-						info.nonClient = !mouseHoving;
+                    case GDK_MOTION_NOTIFY:
+                    case GDK_DRAG_MOTION:
+                    {
+                        NativeWindowMouseInfo info = createMouseInfo(event);
+                        info.nonClient = !mouseHoving;
 
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							listeners[i]->MouseMoving(info);
-						}
-						mouseLastX = info.x.value;
-						mouseLastY = info.y.value;
+                        for (vint i = 0; i < listeners.Count(); i++)
+                        {
+                            listeners[i]->MouseMoving(info);
+                        }
+                        mouseLastX = info.x.value;
+                        mouseLastY = info.y.value;
 
-						if (customFrameMode)
-						{
-							if (event->type == GDK_MOTION_NOTIFY)
-							{
-								if (!resizing)
-								{
+                        if (customFrameMode)
+                        {
+                            if (event->type == GDK_MOTION_NOTIFY)
+                            {
+                                if (!resizing)
+                                {
                                     break;
-									for (vint i = 0; i < listeners.Count(); i++)
-									{
-										INativeWindowListener::HitTestResult r = listeners[i]->HitTest(NativePoint(info.x, info.y));
-										switch (r)
-										{
-										case vl::presentation::INativeWindowListener::BorderNoSizing:
-											break;
-										case vl::presentation::INativeWindowListener::BorderLeft:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderRight:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderTop:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderBottom:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderLeftTop:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderRightTop:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderLeftBottom:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_EAST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::BorderRightBottom:
-											nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_WEST, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::Icon:
-										case vl::presentation::INativeWindowListener::Title:
-											nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-											break;
-										case vl::presentation::INativeWindowListener::Client:
-											break;
-										case vl::presentation::INativeWindowListener::NoDecision:
-											break;
-										default:
-											break;
-										}
-									}
-								}
-							}
+                                    for (vint i = 0; i < listeners.Count(); i++) {
+                                        INativeWindowListener::HitTestResult r = listeners[i]->HitTest(
+                                                NativePoint(info.x, info.y));
+                                        switch (r) {
+                                            case vl::presentation::INativeWindowListener::BorderNoSizing:
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderLeft:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_EAST, 1,
+                                                                                mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderRight:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_WEST, 1,
+                                                                                mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderTop:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH, 1,
+                                                                                mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderBottom:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH, 1,
+                                                                                mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderLeftTop:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_EAST,
+                                                                                1, mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderRightTop:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_NORTH_WEST,
+                                                                                1, mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderLeftBottom:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_EAST,
+                                                                                1, mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::BorderRightBottom:
+                                                nativeWindow->begin_resize_drag(Gdk::WindowEdge::WINDOW_EDGE_SOUTH_WEST,
+                                                                                1, mouseLastX, mouseLastY,
+                                                                                gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::Icon:
+                                            case vl::presentation::INativeWindowListener::Title:
+                                                nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY,
+                                                                              gtk_get_current_event_time());
+                                                break;
+                                            case vl::presentation::INativeWindowListener::Client:
+                                                break;
+                                            case vl::presentation::INativeWindowListener::NoDecision:
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
 
-							/*if(event.type == NSEventTypeLeftMouseDragged ||
-							   event.type == NSEventTypeMouseMoved)
-							{
-								if(resizing)
-									ResizingDragged();
+                            /*if(event.type == NSEventTypeLeftMouseDragged ||
+                               event.type == NSEventTypeMouseMoved)
+                            {
+                                if(resizing)
+                                    ResizingDragged();
 
-								if(moving)
-									MovingDragged();
-							}*/
-						}
+                                if(moving)
+                                    MovingDragged();
+                            }*/
+                        }
+                        break;
+                    }
 
-						break;
-					}
+                    case GDK_ENTER_NOTIFY:
+                    {
+                        for (vint i = 0; i < listeners.Count(); i++)
+                        {
+                            listeners[i]->MouseEntered();
+                        }
+                        mouseHoving = true;
+                        break;
+                    }
 
-					case GDK_ENTER_NOTIFY:
-					{
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							listeners[i]->MouseEntered();
-						}
-						mouseHoving = true;
-						break;
-					}
-
-					case GDK_LEAVE_NOTIFY:
-					{
-						for (vint i = 0; i < listeners.Count(); i++)
-						{
-							listeners[i]->MouseLeaved();
-						}
-						mouseHoving = false;
-						break;
-					}
+                    case GDK_LEAVE_NOTIFY:
+                    {
+                        for (vint i = 0; i < listeners.Count(); i++)
+                        {
+                            listeners[i]->MouseLeaved();
+                        }
+                        mouseHoving = false;
+                        break;
+                    }
 
                     case GDK_FOCUS_CHANGE:
+                    {
                         if (event->focus_change.in)
                         {
                             SetFocus();
@@ -439,8 +454,10 @@ namespace vl {
                             gtk_im_context_focus_out(imContext);
                         }*/
                         break;
+                    }
 
                     case GDK_KEY_PRESS:
+                    {
                         if (!gtk_im_context_filter_keypress(imContext, &event->key))
                         {
                             NativeWindowKeyInfo keyInfo = createKeyInfo(event);
@@ -450,6 +467,17 @@ namespace vl {
                             }
                         }
                         break;
+                    }
+
+                    case GDK_KEY_RELEASE:
+                    {
+                        NativeWindowKeyInfo keyInfo = createKeyInfo(event);
+                        for (vint i = 0; i < listeners.Count(); i++)
+                        {
+                            listeners[i]->KeyUp(keyInfo);
+                        }
+                        break;
+                    }
 
 					default:
 						return false;
