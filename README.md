@@ -8,9 +8,19 @@ using gtkmm/cairomm/pangomm
 
 ## Building & Debug this repo
 
-* need to have `build-essential`, `cmake`, `gtkmm-3.0`
-* run `build.sh` from the root folder
-* go to each test app folder and `make`
+* need to have `build-essential`, `cmake`, `gtkmm-3.0`, `sigc++-2.0`
+* build gGac using `CMakeLists.txt` in root directory 
+  * mkdir build
+  * cd build
+  * cmake ..
+  * make -j16
+  * sudo make install
+* build Tests using `CMakeLists.txt` in Tests directory
+  * mkdir -p Tests/build
+  * cd Tests/build
+  * export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+  * cmake ../ 
+  * make -j16
 * use ```console::Console::WriteLine(L"xxx")``` to log anything interesting to console output, remember to set LC_ALL to your native lanaguage.
 
 ## Current Progress:
