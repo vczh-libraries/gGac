@@ -141,6 +141,10 @@ namespace vl {
 
 			void GGacImage::SaveToStream(stream::IStream &imageStream, INativeImage::FormatType formatType)
 			{
+                gchar *buffer;
+                gsize len;
+                gImage->get_pixbuf()->save_to_buffer(buffer, len);
+                imageStream.Write(buffer, len);
 			}
 
 			INativeImageService* GGacImage::GetImageService()
