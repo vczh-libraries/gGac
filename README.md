@@ -22,7 +22,7 @@ using gtkmm/cairomm/pangomm
 
 ## Roadmap
 - Replace gtk by wayland
-  - replace all gtk control including all dialog/window/pixbuf etc. by GacUI native control
+  - replace all gtk control including all dialog/window/pixbuf etc. by GacUI native control and wayland surface
   - replace all screen relative things by wayland
   - replace all gdk event by wayland
   - gtk4 branch is abandoned, since it remove eventbox and drop a lot work to X/Wayland. i.e. gtk4 is something same as gGac
