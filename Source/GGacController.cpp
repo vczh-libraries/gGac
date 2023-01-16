@@ -56,9 +56,12 @@ namespace vl {
 				{
 					app = Gtk::Application::create("gGac");
 					screenService.RefreshScreenInformation();
+
+                    auto clipboard = Gtk::Clipboard::get();
+                    clipboard->signal_owner_change().connect(sigc::mem_fun(*this, &GGacController::HandleEventInternal));
 				}
 
-				~GGacController()
+                ~GGacController()
 				{
 					inputService.StopTimer();
 				}
@@ -68,6 +71,11 @@ namespace vl {
 					asyncService.ExecuteAsyncTasks();
 					callbackService.InvokeGlobalTimer();
 				}
+
+                void HandleEventInternal(GdkEventOwnerChange* event)
+                {
+                    callbackService.InvokeClipboardUpdated();
+                }
 
 				//========================================[INativeWindowService]========================================
 
