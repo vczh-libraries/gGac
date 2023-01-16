@@ -4,8 +4,6 @@
 
 #include "GGacInputService.h"
 #include "../GGacHelper.h"
-#include <gtkmm.h>
-
 
 namespace vl {
 

@@ -26,16 +26,20 @@ namespace vl {
             {
                 auto clipboard = Gtk::Clipboard::get();
                 clipboard->set_text(Glib::ustring::format(value->GetText(true).Buffer()));
+                //TODO: set image
             }
 
             void GGacClipboardWriter::SetImage(Ptr<INativeImage> value) 
             {
+                /*
                 auto clipboard = Gtk::Clipboard::get();
-                //clipboard->set_image();
+                clipboard->set_image(static_cast<GGacImageFrame *>(static_cast<GGacImage *>(value.Obj())->GetFrame(0))->GetPixbuf());
+                 */
             }
 
             bool GGacClipboardWriter::Submit() 
             {
+                return true;
             }
 
             ////
