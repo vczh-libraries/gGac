@@ -1,5 +1,5 @@
-#include "GGacRenderer.h"
-#include "Skin/Theme.h"
+#include "gGac/GGacRenderer.h"
+#include "gGac/Theme.h"
 
 using namespace vl;
 using namespace vl::presentation::controls;

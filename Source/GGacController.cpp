@@ -12,8 +12,8 @@
 #include "Services/GGacInputService.h"
 #include "Services/GGacResourceService.h"
 #include "Services/GGacScreenService.h"
+#include "GacUI.h"
 #include <gtkmm.h>
-#include <GacUI.h>
 
 using namespace vl::presentation;
 using namespace vl::presentation::gtk;
