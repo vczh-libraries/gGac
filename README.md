@@ -24,7 +24,8 @@ using gtkmm/cairomm/pangomm
 * use ```console::Console::WriteLine(L"xxx")``` to log anything interesting to console output, remember to set LC_ALL to your native lanaguage.
 
 ## Current Progress:
-* prereleasing
+* 1.2.0.0 prereleasing
+* waiting for remove webdings in darkskin
 
 ## Known Issues/Limiations:
 * AsyncService::Semaphore::WaitForTime
