@@ -253,7 +253,21 @@ namespace vl {
 					{
 						return view->GetGGacContext();
 					}
-				};
+
+                    bool IsInHostedRendering() override
+                    {
+                        return false;
+                    }
+
+                    void StartHostedRendering() override
+                    {
+                    }
+
+                    RenderTargetFailure StopHostedRendering() override
+                    {
+                        return None;
+                    }
+                };
 
 				///
 
