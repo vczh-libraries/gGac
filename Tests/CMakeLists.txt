@@ -8,6 +8,10 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
 pkg_check_modules(gGac REQUIRED gGac GacUI)
 
+set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
+
 include_directories(./ ${gGac_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS})
 list(APPEND FC_DEP_LIBS GacUI gGac)
 
