@@ -1,8 +1,8 @@
 #include "gGac/GGacRenderer.h"
-#include "gGac/Theme.h"
+#include "Skins/DarkSkin/DarkSkin.h"
 
 using namespace vl;
-using namespace vl::presentation::controls;
+using namespace vl::presentation;
 
 class DefaultSkinPlugin : public Object, public IGuiPlugin
 {
@@ -15,7 +15,7 @@ public:
 
 	void Load()override
 	{
-		RegisterTheme(Ptr(new gtkskin::Theme()));
+		RegisterTheme(Ptr(new darkskin::Theme()));
 	}
 
 	void Unload()override

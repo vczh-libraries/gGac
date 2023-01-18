@@ -2,13 +2,15 @@ cmake_minimum_required(VERSION 3.24)
 project(gGac)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 add_compile_definitions(VCZH_DEBUG_NO_REFLECTION)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
-    add_library(GacUI SHARED
+    add_library(GacUI
             ../GacUI/Import/GacUI.cpp
             ../GacUI/Import/Vlpp.cpp
             ../GacUI/Import/Vlpp.Linux.cpp
@@ -22,7 +24,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
             )
 
-    add_library(gGac SHARED
+    add_library(gGac
             ../Source/Services/GGacCallbackService.cpp
             ../Source/Services/GGacInputService.cpp
             ../Source/Services/GGacAsyncService.cpp
@@ -56,12 +58,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
     list(APPEND gGac_INCLUDE_DIRS ../GacUI/Import ../Source ../Source/Renderers ../Source/Services)
     list(APPEND gGac_LIBRARIES GacUI gGac)
+    #list(APPEND FC_DEP_LIBS GacUI gGac)
 else()
     pkg_check_modules(gGac REQUIRED gGac GacUI)
 endif()
-
-set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 
 include_directories(./ ${gGac_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS})
 

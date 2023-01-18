@@ -81,7 +81,7 @@ namespace vl {
 
 				WString GetTitle() override;
 
-				void SetTitle(WString title) override;
+                void SetTitle(const WString &title) override;
 
 				INativeCursor *GetWindowCursor() override;
 
@@ -130,10 +130,6 @@ namespace vl {
 				void Disable() override;
 
 				bool IsEnabled() override;
-
-				void SetFocus() override;
-
-				bool IsFocused() override;
 
 				void SetActivate() override;
 
@@ -193,7 +189,13 @@ namespace vl {
 
 				void RedrawContent() override;
 
-			public:
+                bool IsActivelyRefreshing() override;
+
+                NativeSize GetRenderingOffset() override;
+
+                bool IsRenderingAsActivated() override;
+
+            public:
 
 			};
 
