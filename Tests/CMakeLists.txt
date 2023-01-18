@@ -13,7 +13,6 @@ set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 
 include_directories(./ ${gGac_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS})
-list(APPEND FC_DEP_LIBS GacUI gGac)
 
 add_subdirectory(GacUI_HelloWorlds/Cpp)
 add_subdirectory(GacUI_HelloWorlds/CppXml)

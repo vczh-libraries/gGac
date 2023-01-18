@@ -19,7 +19,7 @@ function create-tutorial() {
     echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/UI/Source/DemoPartialClasses.cpp" >> CMakeLists.txt
     echo "    ../../../GacUI/Tutorial/$CATEGORY/$APP/Main.cpp" >> CMakeLists.txt
     echo "    ../../App.cpp)" >> CMakeLists.txt
-    echo "target_link_libraries ($APP \${FC_DEP_LIBS})" >> CMakeLists.txt
+    echo "target_link_libraries ($APP \${gGac_LIBRARIES})" >> CMakeLists.txt
     cd ..
     cd ..
     cd ..

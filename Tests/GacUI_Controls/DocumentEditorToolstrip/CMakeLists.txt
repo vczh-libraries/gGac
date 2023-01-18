@@ -6,4 +6,4 @@ add_executable(DocumentEditorToolstrip
     ../../../GacUI/Tutorial/GacUI_Controls/DocumentEditorToolstrip/Main.cpp
     ../../App.cpp)
 include_directories(../../../GacUI/Tutorial/GacUI_Controls/DocumentEditor/UI/Source)
-target_link_libraries (DocumentEditorToolstrip ${FC_DEP_LIBS})
+target_link_libraries (DocumentEditorToolstrip ${gGac_LIBRARIES})
