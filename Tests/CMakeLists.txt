@@ -6,9 +6,60 @@ add_compile_definitions(VCZH_DEBUG_NO_REFLECTION)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
-pkg_check_modules(gGac REQUIRED gGac GacUI)
 
-set(CMAKE_BUILD_TYPE RELEASE)
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    add_library(GacUI SHARED
+            ../GacUI/Import/GacUI.cpp
+            ../GacUI/Import/Vlpp.cpp
+            ../GacUI/Import/Vlpp.Linux.cpp
+            ../GacUI/Import/VlppOS.cpp
+            ../GacUI/Import/VlppOS.Linux.cpp
+            ../GacUI/Import/VlppRegex.cpp
+            ../GacUI/Import/VlppReflection.cpp
+            ../GacUI/Import/VlppParser.cpp
+            ../GacUI/Import/VlppGlrParser.cpp
+            ../GacUI/Import/VlppWorkflowLibrary.cpp
+            ../GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
+            )
+
+    add_library(gGac SHARED
+            ../Source/Services/GGacCallbackService.cpp
+            ../Source/Services/GGacInputService.cpp
+            ../Source/Services/GGacAsyncService.cpp
+            ../Source/Services/GGacImageService.cpp
+            ../Source/Services/GGacDialogService.cpp
+            ../Source/Services/GGacResourceService.cpp
+            ../Source/Services/GGacScreenService.cpp
+            ../Source/Services/GGacClipboardService.cpp
+            ../Source/Renderers/GuiSolidBorderElementRenderer.cpp
+            ../Source/Renderers/GGacRenderer.cpp
+            ../Source/Renderers/Gui3DBorderElementRenderer.cpp
+            ../Source/Renderers/GuiSoldBackgroundElementRenderer.cpp
+            ../Source/Renderers/GuiSolidLabelElementRenderer.cpp
+            ../Source/Renderers/Gui3DSplitterElementRenderer.cpp
+            ../Source/Renderers/GuiGradientBackgroundElementRenderer.cpp
+            ../Source/Renderers/GuiImageFrameElementRenderer.cpp
+            ../Source/Renderers/GuiPolygonElementRenderer.cpp
+            ../Source/Renderers/GuiFocusRectangleElementRenderer.cpp
+            ../Source/Renderers/GuiColorizedTextElementRenderer.cpp
+            ../Source/Renderers/GuiInnerShadowElementRenderer.cpp
+            ../Source/Renderers/GGacLayoutProvider.cpp
+            ../Source/Renderers/GuiGGacElementRenderer.cpp
+            ../Source/GGacController.cpp
+            ../Source/GGacWindow.cpp
+            ../Source/GGacWindowListener.cpp
+            ../Source/GGacHelper.cpp
+            ../Source/GGacControllerListener.cpp
+            ../Source/GGacView.cpp
+            ../Source/Skin/Theme.cpp
+            )
+    target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
+    list(APPEND gGac_INCLUDE_DIRS ../GacUI/Import ../Source ../Source/Renderers ../Source/Services)
+    list(APPEND gGac_LIBRARIES GacUI gGac)
+else()
+    pkg_check_modules(gGac REQUIRED gGac GacUI)
+endif()
+
 set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG -gdwarf-4")
 
