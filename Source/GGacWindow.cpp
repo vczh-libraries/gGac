@@ -556,7 +556,7 @@ namespace vl {
 			void GGacWindow::SetClientSize(NativeSize size)
 			{
 				if (size.x.value > 0 && size.y.value > 0)
-					nativeWindow->set_size_request(size.x.value, size.y.value);
+					nativeWindow->set_default_size(size.x.value, size.y.value);
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
