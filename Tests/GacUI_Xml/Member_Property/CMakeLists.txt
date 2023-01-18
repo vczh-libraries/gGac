@@ -3,4 +3,4 @@ add_executable(Member_Property
     ../../../GacUI/Tutorial/GacUI_Xml/Member_Property/UI/Source/DemoPartialClasses.cpp
     ../../../GacUI/Tutorial/GacUI_Xml/Member_Property/Main.cpp
     ../../App.cpp)
-target_link_libraries (Member_Property ${FC_DEP_LIBS})
+target_link_libraries (Member_Property ${gGac_LIBRARIES})

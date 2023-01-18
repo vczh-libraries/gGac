@@ -6,4 +6,4 @@ add_executable(DocumentEditorRibbon
 		../../../GacUI/Tutorial/GacUI_Controls/DocumentEditorRibbon/Main.cpp
 		../../App.cpp)
 include_directories(../../../GacUI/Tutorial/GacUI_Controls/DocumentEditor/UI/Source)
-target_link_libraries (DocumentEditorRibbon ${FC_DEP_LIBS})
+target_link_libraries (DocumentEditorRibbon ${gGac_LIBRARIES})

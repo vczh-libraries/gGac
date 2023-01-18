@@ -3,4 +3,4 @@ add_executable(DataGrid
     ../../../GacUI/Tutorial/GacUI_Controls/DataGrid/UI/Source/DemoPartialClasses.cpp
     ../../../GacUI/Tutorial/GacUI_Controls/DataGrid/Main.cpp
     ../../App.cpp)
-target_link_libraries (DataGrid ${FC_DEP_LIBS})
+target_link_libraries (DataGrid ${gGac_LIBRARIES})

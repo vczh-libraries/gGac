@@ -6,4 +6,4 @@ add_executable(TextEditor
     ../../../GacUI/Tutorial/GacUI_Controls/TextEditor/UI/Source/MainWindow.cpp
     ../../../GacUI/Tutorial/GacUI_Controls/TextEditor/Main.cpp
     ../../App.cpp)
-target_link_libraries (TextEditor ${FC_DEP_LIBS})
+target_link_libraries (TextEditor ${gGac_LIBRARIES})
