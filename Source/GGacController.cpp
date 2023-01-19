@@ -54,7 +54,7 @@ namespace vl {
 				:mainWindow(0),
 				inputService(&GlobalTimerFunc)
 				{
-					app = Gtk::Application::create("gGac");
+					app = Gtk::Application::create();
 					screenService.RefreshScreenInformation();
 
                     auto clipboard = Gtk::Clipboard::get();
@@ -84,7 +84,6 @@ namespace vl {
 					GGacWindow* window = new GGacWindow(mode);
 					callbackService.InvokeNativeWindowCreated(window);
 					windows.Add(window);
-                    //window->SetFocus();
 					return window;
 				}
 

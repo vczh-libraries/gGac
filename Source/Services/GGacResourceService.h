@@ -6,6 +6,7 @@
 #define GGAC_GGACRESOURCESERVICE_H
 
 #include "GacUI.h"
+#include "GGacCursor.h"
 #include <gdk/gdk.h>
 
 namespace vl {
@@ -13,17 +14,6 @@ namespace vl {
 	namespace presentation {
 
 		namespace gtk {
-
-			class GGacCursor : public INativeCursor
-			{
-			protected:
-				GdkCursor*          cursor;
-				bool                isSystemCursor;
-				SystemCursorType    systemCursorType;
-			public:
-				bool IsSystemCursor() override;
-				SystemCursorType GetSystemCursorType() override;
-			};
 
 			class GGacResourceService : public Object, public INativeResourceService
 			{
