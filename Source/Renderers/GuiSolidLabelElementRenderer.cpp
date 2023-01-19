@@ -63,8 +63,7 @@ namespace vl {
 					if (oldFont != font)
 					{
 						oldFont = font;
-						IGGacResourceManager* rm = GetGGacResourceManager();
-						auto gFont = rm->CreateGGacFont(font);
+						auto gFont = GetGGacResourceManager()->CreateGGacFont(font);
 						layout->set_font_description(*gFont.Obj());
 					}
 					UpdateMinSize();
