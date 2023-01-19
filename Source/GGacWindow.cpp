@@ -210,10 +210,6 @@ namespace vl {
                 info.middle = middle;
                 info.right = right;
 
-				int width, height;
-				nativeWindow->get_size(width, height);
-				info.nonClient = (info.x < 0 || info.y < 0 || info.x > width || info.y > height);
-
 				return info;
 			}
 
