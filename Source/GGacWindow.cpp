@@ -59,6 +59,7 @@ namespace vl {
             maximizedBox(true),
             topMost(false),
 			title(L""),
+            minSize(-1, -1),
             imContext(0),
 			mode(_mode)
 			{
@@ -569,7 +570,23 @@ namespace vl {
 			void GGacWindow::SetClientSize(NativeSize size)
 			{
 				if (size.x.value > 0 && size.y.value > 0)
-					nativeWindow->set_default_size(size.x.value, size.y.value);
+                {
+                    nativeWindow->set_default_size(size.x.value, size.y.value);
+                    if (minSize.x < 0 || minSize.y < 0)
+                    {
+                        int width, height;
+                        nativeWindow->get_size(width, height);
+                        if (width < size.x.value)
+                        {
+                            minSize.x = size.x.value;
+                        }
+                        if (height < size.y.value)
+                        {
+                            minSize.y = size.y.value;
+                        }
+                        nativeWindow->set_size_request(minSize.x, minSize.y);
+                    }
+                }
 			}
 
 			NativeRect GGacWindow::GetClientBoundsInScreen()
@@ -665,7 +682,14 @@ namespace vl {
 
 			NativeMargin GGacWindow::GetCustomFramePadding()
 			{
-				return vl::presentation::NativeMargin(1, 1, 1, 1);
+                if (GetSizeBox() || GetTitleBar())
+                {
+                    return NativeMargin(5, 5, 5, 5);
+                }
+                else
+                {
+                    return NativeMargin(0, 0, 0, 0);
+                }
 			}
 
 			Ptr<GuiImageData> GGacWindow::GetIcon()
@@ -733,17 +757,18 @@ namespace vl {
 
 			void GGacWindow::Hide(bool closeWindow)
 			{
-				if (closeWindow)
-				{
-					nativeWindow->close();
-				}
-				else
-				{
-					nativeWindow->hide();
-				}
+                closeWindow ? nativeWindow->close() : nativeWindow->hide();
+                bool cancel = false;
                 for (vint i = 0; i < listeners.Count(); i++)
                 {
-                    listeners[i]->Closed();
+                    listeners[i]->BeforeClosing(cancel);
+                }
+                if (!cancel)
+                {
+                    for (vint i = 0; i < listeners.Count(); i++)
+                    {
+                        listeners[i]->AfterClosing();
+                    }
                 }
                 ReleaseCapture();
                 gtk_im_context_focus_out(imContext);
