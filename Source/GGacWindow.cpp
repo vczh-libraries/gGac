@@ -354,6 +354,7 @@ namespace vl {
                             {
                                 for (vint i = 0; i < listeners.Count(); i++) {
                                     INativeWindowListener::HitTestResult r = PerformHitTest(From(listeners), NativePoint(info.x, info.y));
+                                    //INativeCursor* cursor = GetCursorFromHitTest(r, GetCurrentController()->ResourceService());
                                     vint edge = -1;
                                     switch (r) {
                                         case vl::presentation::INativeWindowListener::BorderLeft:
