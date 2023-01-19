@@ -35,7 +35,6 @@ namespace vl {
                 if (!cursor)
                 {
                     Gdk::CursorType type = Gdk::CursorType::ARROW;
-                    vl::console::Console::WriteLine(vl::itow(type));
                     switch (systemCursorType)
                     {
                         case SizeAll:

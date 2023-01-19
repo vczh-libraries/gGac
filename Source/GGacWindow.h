@@ -28,6 +28,7 @@ namespace vl {
 				WString							title;
 				WindowMode 						mode;
 				sigc::connection				blurHandler;
+                Size                            minSize;
 
 				vint                            mouseLastX;
 				vint                            mouseLastY;
