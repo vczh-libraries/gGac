@@ -6,6 +6,7 @@
 #define GGAC_GGACWINDOW_H
 
 #include "GacUI.h"
+#include "GGacCursor.h"
 #include <gtkmm.h>
 
 namespace vl {
@@ -14,13 +15,14 @@ namespace vl {
 
 		namespace gtk {
 
-			class GGacWindow : public Object, public INativeWindow
+            class GGacWindow : public Object, public INativeWindow
 			{
                 using WindowListenerList = collections::List<INativeWindowListener*>;
             protected:
 				Gtk::Window* 					nativeWindow;
                 GtkIMContext*                   imContext;
 				GGacWindow* 					parentWindow;
+				GGacCursor* 					cursor;
 				Interface* 						graphicsHandler;
 				WindowListenerList				listeners;
 				WString							title;
@@ -40,6 +42,13 @@ namespace vl {
 				bool                            resizing;
 				bool                            moving;
 				bool                            opened;
+				bool 							border;
+				bool 							sizeBox;
+				bool							topMost;
+				bool							titleBar;
+				bool							iconVisible;
+				bool 							maximizedBox;
+				bool 							minimizedBox;
 
 				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
@@ -179,7 +188,7 @@ namespace vl {
 
 				bool GetTopMost() override;
 
-				void SetTopMost(bool topmost) override;
+				void SetTopMost(bool topMost) override;
 
 				void SupressAlt() override;
 

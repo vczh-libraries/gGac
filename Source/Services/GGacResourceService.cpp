@@ -12,6 +12,11 @@ namespace vl {
 
 			GGacResourceService::GGacResourceService()
 			{
+                systemCursors.Resize(INativeCursor::SystemCursorCount);
+                for(vint i=0;i<systemCursors.Count();i++)
+                {
+                    systemCursors[i]=Ptr(new GGacCursor((INativeCursor::SystemCursorType)i));
+                }
 				defaultFont.fontFamily = L"Segoe UI";
 				defaultFont.size = 11;
 				defaultFont.italic = false;
@@ -28,17 +33,20 @@ namespace vl {
 
 			INativeCursor* GGacResourceService::GetSystemCursor(vl::presentation::INativeCursor::SystemCursorType type)
 			{
-				return nullptr;
+                vint index=(vint)type;
+                if(0<=index && index<systemCursors.Count())
+                {
+                    return systemCursors[index].Obj();
+                }
+                else
+                {
+                    return 0;
+                }
 			}
 
 			INativeCursor* GGacResourceService::GetDefaultSystemCursor()
 			{
-				return nullptr;
-			}
-
-			bool GGacCursor::IsSystemCursor()
-			{
-				return true;
+                return GetSystemCursor(INativeCursor::Arrow);
 			}
 
 			FontProperties GGacResourceService::GetDefaultFont()
@@ -54,10 +62,4 @@ namespace vl {
 		}
 
 	}
-}
-
-
-
-vl::presentation::INativeCursor::SystemCursorType vl::presentation::gtk::GGacCursor::GetSystemCursorType() {
-	return Hand;
 }
