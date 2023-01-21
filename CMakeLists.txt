@@ -37,7 +37,7 @@ add_library(gGac SHARED
 		Source/Renderers/GuiSolidBorderElementRenderer.cpp
 		Source/Renderers/GGacRenderer.cpp
 		Source/Renderers/Gui3DBorderElementRenderer.cpp
-		Source/Renderers/GuiSoldBackgroundElementRenderer.cpp
+        Source/Renderers/GuiSolidBackgroundElementRenderer.cpp
 		Source/Renderers/GuiSolidLabelElementRenderer.cpp
 		Source/Renderers/Gui3DSplitterElementRenderer.cpp
 		Source/Renderers/GuiGradientBackgroundElementRenderer.cpp

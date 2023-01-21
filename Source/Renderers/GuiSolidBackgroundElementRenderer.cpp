@@ -2,7 +2,7 @@
 // Created by css on 6/27/21.
 //
 
-#include "GuiSoldBackgroundElementRenderer.h"
+#include "GuiSolidBackgroundElementRenderer.h"
 
 namespace vl {
 
@@ -12,7 +12,7 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(GuiSolidBackgroundElementRenderer)
+                IMPLEMENT_ELEMENT_RENDERER(GuiSolidBackgroundElementRenderer)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();
@@ -23,7 +23,7 @@ namespace vl {
 						case ElementShapeType::RoundRect:
 						case ElementShapeType::Rectangle:
 							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
-							cr->fill();
+                            cr->fill();
 							break;
 
 						case ElementShapeType::Ellipse:
@@ -31,6 +31,7 @@ namespace vl {
 							cr->fill();
 							break;
 					}
+
 				}
 
 			}

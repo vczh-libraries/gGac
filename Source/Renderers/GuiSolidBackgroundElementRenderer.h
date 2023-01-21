@@ -2,8 +2,8 @@
 // Created by css on 6/27/21.
 //
 
-#ifndef GGAC_GUISOLDBACKGROUNDELEMENTRENDERER_H
-#define GGAC_GUISOLDBACKGROUNDELEMENTRENDERER_H
+#ifndef GGAC_GUISOLIDBACKGROUNDELEMENTRENDERER_H
+#define GGAC_GUISOLIDBACKGROUNDELEMENTRENDERER_H
 
 #include "GGacRenderer.h"
 
@@ -18,6 +18,7 @@ namespace vl {
 				class GuiSolidBackgroundElementRenderer : public Object, public IGuiGraphicsRenderer
 				{
 				DEFINE_ELEMENT_RENDERER(GuiSolidBackgroundElement, GuiSolidBackgroundElementRenderer, Color)
+
 				};
 
 			}
@@ -28,4 +29,4 @@ namespace vl {
 
 }
 
-#endif //GGAC_GUISOLDBACKGROUNDELEMENTRENDERER_H
+#endif //GGAC_GUISOLIDBACKGROUNDELEMENTRENDERER_H
