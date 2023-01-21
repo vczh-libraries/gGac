@@ -34,6 +34,7 @@ namespace vl {
 				vint                            mouseLastY;
 				vint                            mouseDownX;
 				vint                            mouseDownY;
+                vint                            edge;
                 double                          scrollDelta;
 				bool 							mouseHoving;
 				bool                            customFrameMode;
@@ -50,6 +51,7 @@ namespace vl {
 				bool							iconVisible;
 				bool 							maximizedBox;
 				bool 							minimizedBox;
+                bool                            keepPopup;
 
 				void onBlur();
 				void onSizeChanged(const Gdk::Rectangle& rect);
