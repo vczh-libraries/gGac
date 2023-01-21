@@ -24,7 +24,6 @@ namespace vl {
 
 			GGacWindowListener::~GGacWindowListener()
 			{
-
 			}
 
 			void GGacWindowListener::ResizeRenderTarget()
@@ -80,11 +79,11 @@ namespace vl {
                 }
             }
 
-            void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
+            /*void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
             {
             }
 
-            /*INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location)
+            INativeWindowListener::HitTestResult GGacWindowListener::HitTest(NativePoint location)
             {
             }
 
@@ -92,7 +91,7 @@ namespace vl {
             {
             }
 
-			/*void GGacWindowListener::DpiChanged() {
+			void GGacWindowListener::DpiChanged() {
 				INativeWindowListener::DpiChanged();
 			}
 

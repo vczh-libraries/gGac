@@ -132,7 +132,7 @@ UniscribeItem
 					Pango::Item						scriptItem;
 					vint							startFromLine;
 					vint							length;
-					const wchar_t*					itemText;
+					WString					        itemText;
 					Array<PangoLogAttr>				charLogattrs;
 
 					UniscribeItem();
