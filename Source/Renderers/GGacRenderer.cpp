@@ -413,7 +413,7 @@ namespace vl {
 
 				///
 
-				int SetupGGacRenderer()
+				int SetupGtkRenderer()
 				{
 					INativeController *controller = CreateGGacController();
 					SetCurrentController(controller);
