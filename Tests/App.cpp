@@ -27,5 +27,5 @@ GUI_REGISTER_PLUGIN(DefaultSkinPlugin)
 int main(int argc, char **argv)
 {
     std::locale::global(std::locale(""));
-    return vl::presentation::elements::gtk::SetupGGacRenderer();
+    return vl::presentation::elements::gtk::SetupGtkRenderer();
 }

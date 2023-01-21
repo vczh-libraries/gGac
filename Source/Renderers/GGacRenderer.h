@@ -108,7 +108,7 @@ namespace vl {
 				inline Cairo::RefPtr<Cairo::Context>	GetCurrentGGacContextFromRenderTarget() {
 					return (Cairo::RefPtr<Cairo::Context>)(GetCurrentRenderTarget()->GetGGacContext());
 				}
-				extern int								SetupGGacRenderer();
+				extern int								SetupGtkRenderer();
 
 			}
 
