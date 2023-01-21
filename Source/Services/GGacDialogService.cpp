@@ -26,10 +26,18 @@ vl::presentation::gtk::GGacDialogService::ShowMessageBox(vl::presentation::INati
 	Gtk::MessageDialog dialog(Glib::ustring::format(title.Buffer()), false, Gtk::MESSAGE_QUESTION, types.Get(buttons), true);
 	dialog.set_secondary_text(Glib::ustring::format(text.Buffer()));
 	dialog.set_default_response(Gtk::RESPONSE_YES);
-	if (dialog.run() == Gtk::RESPONSE_YES) {
-		return SelectYes;
-	}
-	return SelectNo;
+    switch (dialog.run())
+    {
+        case Gtk::RESPONSE_YES:
+            return SelectYes;
+        case Gtk::RESPONSE_NO:
+            return SelectNo;
+        case Gtk::RESPONSE_OK:
+            return SelectOK;
+        case Gtk::RESPONSE_CANCEL:
+            return SelectCancel;
+    }
+    return SelectNo;
 }
 
 bool vl::presentation::gtk::GGacDialogService::ShowColorDialog(vl::presentation::INativeWindow *window,
