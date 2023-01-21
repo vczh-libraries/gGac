@@ -43,6 +43,7 @@ namespace vl {
 			mouseDownX(0),
 			mouseDownY(0),
             scrollDelta(0),
+            edge(-1),
 			supressingAlt(false),
 			enabled(true),
 			capturing(false),
@@ -58,6 +59,7 @@ namespace vl {
             minimizedBox(true),
             maximizedBox(true),
             topMost(false),
+            keepPopup(false),
 			title(L""),
             minSize(-1, -1),
             imContext(0),
@@ -108,7 +110,11 @@ namespace vl {
 
 			void GGacWindow::onBlur()
 			{
-                Hide(false);
+                if (!mouseHoving && !keepPopup)
+                {
+                    Hide(false);
+                }
+                keepPopup = false;
 			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
@@ -231,14 +237,32 @@ namespace vl {
                 NativeWindowMouseInfo info = createMouseInfo(event);
                 switch (event->type)
                 {
-                    case GDK_BUTTON_PRESS: {
+                    case GDK_BUTTON_PRESS:
+                    {
                         mouseDownX = info.x.value;
                         mouseDownY = info.y.value;
+                        if (mode == Menu || mode == Tooltip)
+                        {
+                            auto window = this;
+                            while (auto parent = window->GetParent())
+                            {
+                                window = static_cast<GGacWindow*>(parent);
+                                window->keepPopup = true;
+                            }
+                        }
                         for (vint i = 0; i < listeners.Count(); i++)
                         {
                             switch (event->button.button) {
                                 case GDK_BUTTON_PRIMARY:
                                     listeners[i]->LeftButtonDown(info);
+                                    if (edge > 0)
+                                    {
+                                        nativeWindow->begin_resize_drag((Gdk::WindowEdge)edge, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+                                    }
+                                    else if (edge == -2)
+                                    {
+                                        nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+                                    }
                                     break;
                                 case GDK_BUTTON_SECONDARY:
                                     listeners[i]->RightButtonDown(info);
@@ -253,9 +277,9 @@ namespace vl {
 
                     case GDK_BUTTON_RELEASE:
                     {
+                        signal_blur.emit();
                         switch (event->button.button) {
                             case GDK_BUTTON_PRIMARY:
-                                signal_blur.emit();
                                 for (vint i = 0; i < listeners.Count(); i++) {
                                     listeners[i]->LeftButtonUp(info);
                                 }
@@ -339,7 +363,6 @@ namespace vl {
 
                     case GDK_MOTION_NOTIFY:
                     {
-                        info.nonClient = !mouseHoving;
                         mouseLastX = event->motion.x_root;
                         mouseLastY = event->motion.y_root;
 
@@ -350,85 +373,48 @@ namespace vl {
 
                         if (customFrameMode)
                         {
-                            if (event->type == GDK_MOTION_NOTIFY)
-                            {
-                                for (vint i = 0; i < listeners.Count(); i++) {
-                                    INativeWindowListener::HitTestResult r = PerformHitTest(From(listeners), NativePoint(info.x, info.y));
-                                    //INativeCursor* cursor = GetCursorFromHitTest(r, GetCurrentController()->ResourceService());
-                                    vint edge = -1;
-                                    switch (r) {
-                                        case vl::presentation::INativeWindowListener::BorderLeft:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_WEST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::LEFT_SIDE));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderRight:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_EAST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::RIGHT_SIDE));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderTop:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::TOP_SIDE));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderBottom:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::BOTTOM_SIDE));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderLeftTop:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH_WEST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::TOP_LEFT_CORNER));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderRightTop:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH_EAST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::TOP_RIGHT_CORNER));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderLeftBottom:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH_WEST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::BOTTOM_LEFT_CORNER));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderRightBottom:
-                                            edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH_EAST;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::BOTTOM_RIGHT_CORNER));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::Icon:
-                                        case vl::presentation::INativeWindowListener::Title:
-                                            edge = -2;
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::ARROW));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::BorderNoSizing:
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::ARROW));
-                                            break;
-                                        case vl::presentation::INativeWindowListener::Client:
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::ARROW));
-                                            break;
-                                        default:
-                                            nativeWindow->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CursorType::ARROW));
-                                            break;
-                                    }
+                            for (vint i = 0; i < listeners.Count(); i++) {
+                                INativeWindowListener::HitTestResult r = PerformHitTest(From(listeners), NativePoint(info.x, info.y));
+                                switch (r) {
+                                    case vl::presentation::INativeWindowListener::BorderLeft:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_WEST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderRight:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_EAST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderTop:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderBottom:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderLeftTop:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH_WEST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderRightTop:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_NORTH_EAST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderLeftBottom:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH_WEST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::BorderRightBottom:
+                                        edge = Gdk::WindowEdge::WINDOW_EDGE_SOUTH_EAST;
+                                        break;
+                                    case vl::presentation::INativeWindowListener::Icon:
+                                    case vl::presentation::INativeWindowListener::Title:
+                                        edge = -2;
+                                        break;
+                                    default:
+                                        edge = -1;
+                                        break;
+                                }
 
-                                    if (info.left)
-                                    {
-                                        if (edge > 0)
-                                        {
-                                            nativeWindow->begin_resize_drag((Gdk::WindowEdge)edge, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-                                        }
-                                        else if (edge == -2)
-                                        {
-                                            nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY, gtk_get_current_event_time());
-                                        }
-                                    }
-
+                                INativeCursor* cursor = GetCursorFromHitTest(r, GetCurrentController()->ResourceService());
+                                if (cursor != nullptr)
+                                {
+                                    SetWindowCursor(cursor);
                                 }
                             }
-
-                            /*if(event.type == NSEventTypeLeftMouseDragged ||
-                               event.type == NSEventTypeMouseMoved)
-                            {
-                                if(resizing)
-                                    ResizingDragged();
-
-                                if(moving)
-                                    MovingDragged();
-                            }*/
                         }
                         break;
                     }
@@ -611,7 +597,7 @@ namespace vl {
 
 			void GGacWindow::SetWindowCursor(INativeCursor *_cursor)
 			{
-                GGacCursor* newCursor=dynamic_cast<GGacCursor*>(_cursor);
+                GGacCursor* newCursor = static_cast<GGacCursor*>(_cursor);
                 if(newCursor && cursor!=newCursor)
                 {
                     cursor=newCursor;
@@ -640,19 +626,17 @@ namespace vl {
 
 			void GGacWindow::SetParent(INativeWindow *parent)
 			{
-				GGacWindow* gWin = dynamic_cast<GGacWindow*>(parent);
+				GGacWindow* gWin = static_cast<GGacWindow*>(parent);
 				if (!gWin)
 				{
-					if (parentWindow) {
-						//parentWindow->GetNativeWindow()->unset_transient_for();
+					if (parentWindow)
+                    {
+						parentWindow->GetNativeWindow()->unset_transient_for();
 					}
 				}
 				else
 				{
-					if (!parentWindow)
-					{
-						nativeWindow->set_transient_for(*gWin->GetNativeWindow());
-					}
+                    nativeWindow->set_transient_for(*gWin->GetNativeWindow());
 				}
 				parentWindow = gWin;
 			}
