@@ -442,7 +442,7 @@ UniscribeItem
 				UniscribeItem::UniscribeItem()
 				:startFromLine(0)
 				,length(0)
-				,itemText(0)
+				,itemText(L"")
                 ,scriptItem(0)
 				{
 				}
@@ -453,7 +453,7 @@ UniscribeItem
 
 				void UniscribeItem::ClearUniscribeData()
 				{
-					//pango_item_free(&scriptItem);
+					pango_item_free(scriptItem.gobj());
 					charLogattrs.Resize(0);
 				}
 
@@ -461,8 +461,8 @@ UniscribeItem
 				{
 					// generate break information
 					charLogattrs.Resize(length + 1);
-					Glib::ustring gstr = Glib::ustring::format(itemText).substr(0, length);
-					pango_default_break(gstr.c_str(), gstr.bytes(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
+                    auto astr = wtoa(itemText);
+					pango_default_break(astr.Buffer(), astr.Length(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
                     return true;
 
 					BUILD_UNISCRIBE_DATA_FAILED:

@@ -64,6 +64,7 @@ namespace vl {
                 ~GGacController()
 				{
 					inputService.StopTimer();
+                    app->quit();
 				}
 
 				void InvokeGlobalTimer()

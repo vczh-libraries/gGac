@@ -7,7 +7,7 @@
 #include "GuiSolidBorderElementRenderer.h"
 #include "Gui3DBorderElementRenderer.h"
 #include "Gui3DSplitterElementRenderer.h"
-#include "GuiSoldBackgroundElementRenderer.h"
+#include "GuiSolidBackgroundElementRenderer.h"
 #include "GuiSolidLabelElementRenderer.h"
 #include "GuiGradientBackgroundElementRenderer.h"
 #include "GuiImageFrameElementRenderer.h"
