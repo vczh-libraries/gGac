@@ -54,7 +54,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../Source/GGacControllerListener.cpp
             ../Source/GGacView.cpp
             ../Source/Skin/Theme.cpp
-            ../Source/GGacCursor.cpp ../Source/GGacCursor.h)
+            ../Source/GGacCursor.cpp
+            )
     target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
     list(APPEND gGac_INCLUDE_DIRS ../GacUI/Import ../Source ../Source/Renderers ../Source/Services)
     list(APPEND gGac_LIBRARIES GacUI gGac)

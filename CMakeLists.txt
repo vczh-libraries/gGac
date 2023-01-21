@@ -55,6 +55,7 @@ add_library(gGac SHARED
 		Source/GGacControllerListener.cpp
 		Source/GGacView.cpp
 		Source/Skin/Theme.cpp
+		Source/GGacCursor.cpp
 		)
 target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
 include_directories(GacUI/Import Source Source/Renderers Source/Services ${GTK3_INCLUDE_DIRS})
