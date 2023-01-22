@@ -110,11 +110,11 @@ namespace vl {
 
 			void GGacWindow::onBlur()
 			{
-                if (!mouseHoving && !keepPopup)
+                /*if (!mouseHoving && !keepPopup)
                 {
                     Hide(false);
                 }
-                keepPopup = false;
+                keepPopup = false;*/
 			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
@@ -272,8 +272,8 @@ namespace vl {
                                     break;
                             }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_BUTTON_RELEASE:
                     {
@@ -321,8 +321,8 @@ namespace vl {
                                 }
                                 break;
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_DOUBLE_BUTTON_PRESS:
                     {
@@ -339,8 +339,8 @@ namespace vl {
                                     break;
                             }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_SCROLL:
                     {
@@ -358,8 +358,8 @@ namespace vl {
                                 listeners[i]->HorizontalWheel(info);
                             }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_MOTION_NOTIFY:
                     {
@@ -416,8 +416,8 @@ namespace vl {
                                 }
                             }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_ENTER_NOTIFY:
                     {
@@ -426,8 +426,8 @@ namespace vl {
                             listeners[i]->MouseEntered();
                         }
                         mouseHoving = true;
-                        break;
                     }
+                    break;
 
                     case GDK_LEAVE_NOTIFY:
                     {
@@ -436,22 +436,31 @@ namespace vl {
                             listeners[i]->MouseLeaved();
                         }
                         mouseHoving = false;
-                        break;
                     }
+                    break;
 
                     case GDK_FOCUS_CHANGE:
                     {
                         if (event->focus_change.in)
                         {
                             gtk_im_context_focus_in(imContext);
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->GotFocus();
+                                listeners[i]->RenderingAsActivated();
+                            }
                         }
                         else
                         {
-                            ReleaseCapture();
                             gtk_im_context_focus_out(imContext);
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->RenderingAsDeactivated();
+                                listeners[i]->LostFocus();
+                            }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_KEY_PRESS:
                     {
@@ -463,8 +472,8 @@ namespace vl {
                                 listeners[i]->KeyDown(keyInfo);
                             }
                         }
-                        break;
                     }
+                    break;
 
                     case GDK_KEY_RELEASE:
                     {
@@ -473,8 +482,44 @@ namespace vl {
                         {
                             listeners[i]->KeyUp(keyInfo);
                         }
-                        break;
                     }
+                    break;
+
+                    case GDK_VISIBILITY_NOTIFY:
+                    {
+                        if (event->visibility.state == GDK_VISIBILITY_FULLY_OBSCURED)
+                        {
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->Closed();
+                            }
+                        }
+                        else
+                        {
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->Opened();
+                            }
+                        }
+                    }
+                    break;
+
+                    case GDK_DELETE:
+                    {
+                        bool cancel = false;
+                        for (vint i = 0; i < listeners.Count(); i++)
+                        {
+                            listeners[i]->BeforeClosing(cancel);
+                        }
+                        if (!cancel)
+                        {
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->AfterClosing();
+                            }
+                        }
+                    }
+                    break;
 
 					default:
 						return false;
@@ -680,7 +725,6 @@ namespace vl {
 
 			void GGacWindow::SetIcon(Ptr<GuiImageData> icon)
 			{
-
 			}
 
 			INativeWindow::WindowSizeState GGacWindow::GetSizeState()
@@ -690,33 +734,16 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-				nativeWindow->set_visible(true);
-				if (!opened)
-				{
-					for (vint i = 0; i < listeners.Count(); i++)
-					{
-						listeners[i]->Opened();
-					}
-					opened = true;
-				}
+                nativeWindow->set_visible(true);
 			}
 
 			void GGacWindow::ShowDeactivated()
 			{
-				nativeWindow->set_visible(true);
-				if (!opened)
-				{
-					for (vint i = 0; i < listeners.Count(); i++)
-					{
-						listeners[i]->Opened();
-					}
-					opened = true;
-				}
+                nativeWindow->set_visible(true);
 			}
 
 			void GGacWindow::ShowRestored()
 			{
-
 			}
 
 			void GGacWindow::ShowMaximized()
@@ -738,22 +765,14 @@ namespace vl {
 
 			void GGacWindow::Hide(bool closeWindow)
 			{
-                closeWindow ? nativeWindow->close() : nativeWindow->hide();
-                bool cancel = false;
-                for (vint i = 0; i < listeners.Count(); i++)
+                if (closeWindow)
                 {
-                    listeners[i]->BeforeClosing(cancel);
+                    nativeWindow->close();
                 }
-                if (!cancel)
+                else
                 {
-                    for (vint i = 0; i < listeners.Count(); i++)
-                    {
-                        listeners[i]->AfterClosing();
-                    }
+                    nativeWindow->set_visible(false);
                 }
-                ReleaseCapture();
-                gtk_im_context_focus_out(imContext);
-                opened = false;
             }
 
             bool GGacWindow::IsVisible()
@@ -763,13 +782,11 @@ namespace vl {
 
 			void GGacWindow::Enable()
 			{
-				nativeWindow->set_focus_visible(true);
 				enabled = true;
 			}
 
 			void GGacWindow::Disable()
 			{
-				nativeWindow->set_focus_visible(false);
 				enabled = false;
 			}
 
@@ -780,9 +797,7 @@ namespace vl {
 
 			void GGacWindow::SetActivate()
 			{
-				nativeWindow->show_all();
-                nativeWindow->set_can_focus(true);
-                nativeWindow->grab_focus();
+                nativeWindow->show_all();
 			}
 
 			bool GGacWindow::IsActivated()
