@@ -110,11 +110,11 @@ namespace vl {
 
 			void GGacWindow::onBlur()
 			{
-                /*if (!mouseHoving && !keepPopup)
+                if (!mouseHoving && !keepPopup)
                 {
                     Hide(false);
                 }
-                keepPopup = false;*/
+                keepPopup = false;
 			}
 
 			void GGacWindow::onSizeChanged(const Gdk::Rectangle& rect)
@@ -517,6 +517,7 @@ namespace vl {
                             {
                                 listeners[i]->AfterClosing();
                             }
+                            return false;
                         }
                     }
                     break;
