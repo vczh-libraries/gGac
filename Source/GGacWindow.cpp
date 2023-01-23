@@ -485,14 +485,15 @@ namespace vl {
                     }
                     break;
 
-                    case GDK_VISIBILITY_NOTIFY:
+                    case GDK_WINDOW_STATE:
                     {
-                        if (event->visibility.state == GDK_VISIBILITY_FULLY_OBSCURED)
+                        if (event->window_state.new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
                         {
                             for (vint i = 0; i < listeners.Count(); i++)
                             {
                                 listeners[i]->Closed();
                             }
+                            ReleaseCapture();
                         }
                         else
                         {
@@ -500,6 +501,7 @@ namespace vl {
                             {
                                 listeners[i]->Opened();
                             }
+                            RequireCapture();
                         }
                     }
                     break;
