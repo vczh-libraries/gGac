@@ -503,6 +503,7 @@ namespace vl {
                             }
                             RequireCapture();
                         }
+                        return false;
                     }
                     break;
 
@@ -602,7 +603,6 @@ namespace vl {
 			{
 				if (size.x.value > 0 && size.y.value > 0)
                 {
-                    nativeWindow->set_default_size(size.x.value, size.y.value);
                     if (minSize.x < 0 || minSize.y < 0)
                     {
                         int width, height;
@@ -617,6 +617,7 @@ namespace vl {
                         }
                         nativeWindow->set_size_request(minSize.x, minSize.y);
                     }
+                    nativeWindow->set_default_size(size.x.value, size.y.value);
                 }
 			}
 
@@ -732,7 +733,20 @@ namespace vl {
 
 			INativeWindow::WindowSizeState GGacWindow::GetSizeState()
 			{
-				return Restored;
+                auto window = nativeWindow->get_window();
+                if (window)
+                {
+                    switch(window->get_state())
+                    {
+                        case Gdk::WINDOW_STATE_MAXIMIZED:
+                            return Maximized;
+                        case Gdk::WINDOW_STATE_ICONIFIED:
+                            return Minimized;
+                        default:
+                            return Restored;
+                    }
+                }
+                return Restored;
 			}
 
 			void GGacWindow::Show()
@@ -747,6 +761,7 @@ namespace vl {
 
 			void GGacWindow::ShowRestored()
 			{
+                nativeWindow->unmaximize();
 			}
 
 			void GGacWindow::ShowMaximized()
