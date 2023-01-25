@@ -1,6 +1,5 @@
 #include "gGac/GGacRenderer.h"
 #include "Skins/DarkSkin/DarkSkin.h"
-#include <fontconfig/fontconfig.h>
 
 using namespace vl;
 using namespace vl::presentation;
