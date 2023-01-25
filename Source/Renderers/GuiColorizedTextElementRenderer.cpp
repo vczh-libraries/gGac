@@ -44,9 +44,7 @@ namespace vl {
 					{
 						cr->save();
 
-						/*wchar_t passwordChar = element->GetPasswordChar();
-						//NSString* nsPassWordChar = WStringToNSString(&passwordChar, 1);*/
-
+						wchar_t passwordChar = element->GetPasswordChar();
 						Point viewPosition = element->GetViewPosition();
 						Rect viewBounds(viewPosition, bounds.GetSize());
 						vint startRow = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x1, viewBounds.y1)).row;
@@ -115,7 +113,7 @@ namespace vl {
 									Glib::RefPtr<Pango::Layout> layout;
 									layout = Pango::Layout::create(cr);
 									layout->set_font_description(*gFont.Obj());
-									layout->set_text(Glib::ustring::format(line.text[column]));
+                                    layout->set_text(Glib::ustring::format(passwordChar ? passwordChar : line.text[column]));
 									cr->move_to(tx, ty);
 									layout->show_in_cairo_context(cr);
 								}
