@@ -212,12 +212,12 @@ UniscribeGlyphData
 					glyphAdvances.Resize(glyphCount);
 					charCluster.Resize(length);
 					memset(&runAbc, 0, sizeof(runAbc));
-					memset(&sa, 0, sizeof(sa));
 				}
 
 
-				bool UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities)
+				bool UniscribeGlyphData::BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities)
 				{
+                    PangoGlyphString *cache;
 					vint glyphCount=glyphs.Count();
 					bool resizeGlyphData=false;
 					if(glyphCount==0)
@@ -225,7 +225,7 @@ UniscribeGlyphData
 						glyphCount=(vint)(1.5*length+16);
 						resizeGlyphData=true;
 					}
-					sa = *scriptItem.get_analysis().gobj();
+					auto sa = *scriptItem.get_analysis().gobj();
 					{
 						// generate shape information
 						if(resizeGlyphData)
@@ -235,44 +235,41 @@ UniscribeGlyphData
 							charCluster.Resize(length);
 						}
 
-						while(true)
-						{
-                            /**
-                             * example flflflfl has 4 glyphs
-                             * each cluster is composite of f & l
-                             * charCluster should be 00112233
-                             */
-                            auto text = Glib::ustring::format(runText).substr(0, length);
-                            cache = scriptItem.shape(text).gobj_copy();
-                            glyphCount = cache->num_glyphs;
-                            for (vint i = 0; i < glyphCount; i++)
-							{
-								glyphVisattrs[i] = cache->glyphs[i].attr;
-							}
-                            if (sa.level % 2 == 0)
+                        /**
+                         * example flflflfl has 4 glyphs
+                         * each cluster is composite of f & l
+                         * charCluster should be 00112233
+                         */
+                        auto text = Glib::ustring::format(runText).substr(0, length);
+                        cache = scriptItem.shape(text).gobj_copy();
+                        glyphCount = cache->num_glyphs;
+                        for (vint i = 0; i < glyphCount; i++)
+                        {
+                            glyphs[i] = cache->glyphs[i].glyph;
+                            glyphVisattrs[i] = cache->glyphs[i].attr;
+                        }
+                        if (sa.level % 2 == 0)
+                        {
+                            for (vint i = 0, j = 0; i < length; i++)
                             {
-                                for (vint i = 0, j = 0; i < length; i++)
+                                if (text.substr(0, i).bytes() > cache->log_clusters[j])
                                 {
-                                    if (text.substr(0, i).bytes() > cache->log_clusters[j])
-                                    {
-                                        j++;
-                                    }
-                                    charCluster[i] = j;
+                                    j++;
+                                }
+                                charCluster[i] = j;
+                            }
+                        }
+                        else
+                        {
+                            for (vint i = length - 1, j = glyphCount - 1; i >= 0; i--)
+                            {
+                                charCluster[i] = glyphCount - 1 - j;
+                                if (text.substr(0, i).bytes() <= cache->log_clusters[glyphCount -1 - j])
+                                {
+                                    j--;
                                 }
                             }
-                            else
-                            {
-                                for (vint i = length - 1, j = glyphCount - 1; i >= 0; i--)
-                                {
-                                    charCluster[i] = glyphCount - 1 - j;
-                                    if (text.substr(0, i).bytes() <= cache->log_clusters[glyphCount -1 - j])
-                                    {
-                                        j--;
-                                    }
-                                }
-                            }
-                            break;
-						}
+                        }
 
 						if(resizeGlyphData)
 						{
@@ -358,6 +355,7 @@ UniscribeGlyphData
 						runAbc.abcC = 0;
 					}
 
+                    pango_glyph_string_free(cache);
                     return true;
 					BUILD_UNISCRIBE_DATA_FAILED:
 					return false;
@@ -461,8 +459,8 @@ UniscribeItem
 				{
 					// generate break information
 					charLogattrs.Resize(length + 1);
-                    auto astr = wtoa(itemText);
-					pango_default_break(astr.Buffer(), astr.Length(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
+                    Glib::ustring gstr = Glib::ustring::format(itemText.Buffer()).substr(0, length);
+					pango_default_break(gstr.c_str(), gstr.bytes(), scriptItem.get_analysis().gobj(), &charLogattrs[0], length);
                     return true;
 
 					BUILD_UNISCRIBE_DATA_FAILED:
@@ -498,8 +496,7 @@ UniscribeTextRun
 ***********************************************************************/
 
 				UniscribeTextRun::UniscribeTextRun()
-						:scriptCache()
-						,advance(0)
+						:advance(0)
 						,needFontFallback(false)
 				{
 				}
@@ -511,15 +508,6 @@ UniscribeTextRun
 
 				void UniscribeTextRun::ClearUniscribeData()
 				{
-					if (scriptCache)
-					{
-						pango_glyph_string_free(scriptCache);
-						scriptCache = 0;
-					}
-					else
-					{
-						scriptCache = pango_glyph_string_new();
-					}
 					advance=0;
 					needFontFallback=false;
 					wholeGlyph.ClearUniscribeData(0, 0);
@@ -584,7 +572,7 @@ UniscribeTextRun
 				{
 					ClearUniscribeData();
 					List<bool> breakingAvailabilities;
-					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, scriptCache, runText, length, breakings, breakingAvailabilities))
+					if(!wholeGlyph.BuildUniscribeData(cr, scriptItem->scriptItem, runText, length, breakings, breakingAvailabilities))
 					{
 						goto BUILD_UNISCRIBE_DATA_FAILED;
 					}
@@ -940,7 +928,7 @@ UniscribeLine
                                 for (auto item : list)
                                 {
                                     Ptr<UniscribeItem> scriptItem = Ptr(new UniscribeItem);
-                                    scriptItem->itemText = (wchar_t *)g_convert(text.c_str() + item.get_offset(), item.get_length(), "wchar_t", "utf-8", NULL, NULL, NULL);
+                                    scriptItem->itemText = u8tow((char8_t*)text.c_str() + item.get_offset());//item.get_length()
                                     scriptItem->startFromLine = offset;
                                     scriptItem->length = item.get_num_chars();
                                     offset += scriptItem->length;
