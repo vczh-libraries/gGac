@@ -18,16 +18,31 @@ namespace vl {
 					Color c = element->GetColor();
 					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
 
-					switch(element->GetShape().shapeType)
-					{
-						case ElementShapeType::RoundRect:
+                    auto shape = element->GetShape();
+					switch(shape.shapeType) {
+                        case ElementShapeType::RoundRect:
+                        {
+                            double degrees = M_PI / 180.0;
+                            double l = MAX(shape.radiusX, shape.radiusY);
+                            double s = MIN(shape.radiusX, shape.radiusY);
+                            cr->scale(1, s/l);
+                            cr->begin_new_sub_path();
+                            cr->arc(bounds.x1 + shape.radiusX + 0.5, bounds.y1 + shape.radiusY, l, 180 * degrees, 270 * degrees);
+                            cr->arc(bounds.x2 - shape.radiusX - 0.5, bounds.y1 + shape.radiusY, l, -90 * degrees, 0 * degrees);
+                            cr->arc(bounds.x2 - shape.radiusX - 0.5, bounds.y2 - shape.radiusY, l, 0 * degrees, 90 * degrees);
+                            cr->arc(bounds.x1 + shape.radiusX + 0.5, bounds.y2 - shape.radiusY, l, 90 * degrees, 180 * degrees);
+                            cr->close_path();
+                            cr->fill();
+                        }
+                        break;
+
 						case ElementShapeType::Rectangle:
 							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
                             cr->fill();
 							break;
 
 						case ElementShapeType::Ellipse:
-							cr->arc(bounds.x1 + bounds.Width() / 2, bounds.y1 + bounds.Width() / 2, bounds.Width() / 2, -3.1415926, 3.1415926);
+							cr->arc(bounds.x1 + bounds.Width() / 2, bounds.y1 + bounds.Width() / 2, bounds.Width() / 2, -M_PI, M_PI);
 							cr->fill();
 							break;
 					}
