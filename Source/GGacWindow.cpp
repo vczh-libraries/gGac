@@ -17,11 +17,10 @@ namespace vl {
 
             static void gtk_im_commit_cb(GtkIMContext *context, const gchar *str, GGacWindow *window)
             {
-                auto code = (wchar_t *) g_convert(str, -1, "wchar_t", "utf-8", NULL, NULL, NULL);
-                vint i = 0;
-                while (wchar_t c = code[i++])
+                auto code = u8tow((char8_t *)str);
+                for (vint i = 0; i < code.Length(); i++)
                 {
-                    window->IMCommit(c);
+                    window->IMCommit(code[i]);
                 }
             }
 
@@ -31,7 +30,7 @@ namespace vl {
                 PangoAttrList* list;
                 int pos;
                 gtk_im_context_get_preedit_string(context, &str, &list, &pos);
-                auto text = (wchar_t *) g_convert(str, -1, "wchar_t", "utf-8", NULL, NULL, NULL);
+                auto text = u8tow((char8_t *)str);
                 console::Console::WriteLine(text);
             }
 

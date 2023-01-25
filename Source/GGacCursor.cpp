@@ -31,8 +31,8 @@ namespace vl {
 
             Glib::RefPtr<Gdk::Cursor> GGacCursor::GetCursor()
             {
-                //if (!cursor)
-                //{
+                if (!cursor)
+                {
                     Gdk::CursorType type = Gdk::CursorType::ARROW;
                     switch (systemCursorType)
                     {
@@ -44,7 +44,7 @@ namespace vl {
                             type = Gdk::CursorType::SIZING;
                     }
                     cursor = Gdk::Cursor::create(type);
-                //}
+                }
                 return cursor;
             }
 

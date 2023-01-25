@@ -106,18 +106,16 @@ UniscribeGlyphData
 				struct UniscribeGlyphData
 				{
 					//***************************** Uniscribe Data
-					Array<WORD>						glyphs;
-					Array<PangoGlyphVisAttr>		glyphVisattrs;
-					Array<double>					glyphAdvances;
-					Array<GOFFSET>					glyphOffsets;
-					Array<WORD>						charCluster;
+					Array<WORD>						glyphs; //index in font of each glyph
+					Array<PangoGlyphVisAttr>		glyphVisattrs; //cluster begin & color of each glyph
+					Array<double>					glyphAdvances; //width of each glyph
+					Array<WORD>						charCluster; //glyph of each utf8 char: flflflfl => 00112233
 					ABC								runAbc;
-					PangoAnalysis					sa;
 
 					UniscribeGlyphData();
 
 					void							ClearUniscribeData(vint glyphCount, vint length);
-					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoGlyphString* cache, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
+					bool							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, const wchar_t* runText, vint length, List<vint>& breakings, List<bool>& breakingAvailabilities);
 					void							BuildUniscribeData(Cairo::RefPtr<Cairo::Context> cr, const Pango::Item& scriptItem, PangoLogAttr* charLogattrs, const wchar_t* runText, vint length);
 				};
 
@@ -193,12 +191,14 @@ UniscribeTextRun
 
 				class UniscribeTextRun : public UniscribeRun
 				{
+                private:
+                    //***************************** Uniscribe Data
+                    PangoGlyphString*               scriptCache;
+                    double                          advance;
+                    bool							needFontFallback;
+
 				public:
-					//***************************** Uniscribe Data
-					PangoGlyphString*               scriptCache;
-					double                          advance;
-					UniscribeGlyphData				wholeGlyph;
-					bool							needFontFallback;
+                    UniscribeGlyphData				wholeGlyph;
 
 					UniscribeTextRun();
 					~UniscribeTextRun();
