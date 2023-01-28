@@ -53,7 +53,6 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../Source/GGacHelper.cpp
             ../Source/GGacControllerListener.cpp
             ../Source/GGacView.cpp
-            ../Source/Skin/Theme.cpp
             ../Source/GGacCursor.cpp
             )
     target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
