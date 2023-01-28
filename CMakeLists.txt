@@ -54,7 +54,6 @@ add_library(gGac SHARED
 		Source/GGacHelper.cpp
 		Source/GGacControllerListener.cpp
 		Source/GGacView.cpp
-		Source/Skin/Theme.cpp
 		Source/GGacCursor.cpp
 		)
 target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
@@ -63,7 +62,7 @@ include(GNUInstallDirs)
 
 set_target_properties(gGac PROPERTIES
 		VERSION ${PROJECT_VERSION}
-		PUBLIC_HEADER "Source/Renderers/GGacRenderer.h;Source/Skin/Theme.h")
+		PUBLIC_HEADER "Source/Renderers/GGacRenderer.h")
 install(TARGETS gGac
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gGac)
