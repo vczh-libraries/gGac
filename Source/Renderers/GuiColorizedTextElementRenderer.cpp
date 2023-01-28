@@ -1,5 +1,5 @@
 //
-// Created by css on 6/28/21.
+// Created by roodkcab on 6/28/21.
 //
 
 #include "GuiColorizedTextElementRenderer.h"
@@ -42,8 +42,6 @@ namespace vl {
 
 					if (renderTarget)
 					{
-						cr->save();
-
 						wchar_t passwordChar = element->GetPasswordChar();
 						Point viewPosition = element->GetViewPosition();
 						Rect viewBounds(viewPosition, bounds.GetSize());
@@ -139,8 +137,6 @@ namespace vl {
 							cr->line_to(p2.x, p2.y);
 							cr->stroke();
 						}
-
-						cr->restore();
 					}
 				}
 
