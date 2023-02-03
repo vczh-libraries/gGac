@@ -31,7 +31,6 @@ namespace vl {
                 int pos;
                 gtk_im_context_get_preedit_string(context, &str, &list, &pos);
                 auto text = u8tow((char8_t *)str);
-                console::Console::WriteLine(text);
             }
 
 			GGacWindow::GGacWindow(INativeWindow::WindowMode _mode)
@@ -96,7 +95,6 @@ namespace vl {
 				{
 					listeners[i]->Destroying();
 				}
-				nativeWindow->close();
 				blurHandler.disconnect();
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
@@ -449,7 +447,7 @@ namespace vl {
                                 listeners[i]->RenderingAsActivated();
                             }
                         }
-                        else
+                        /*else
                         {
                             gtk_im_context_focus_out(imContext);
                             for (vint i = 0; i < listeners.Count(); i++)
@@ -457,7 +455,7 @@ namespace vl {
                                 listeners[i]->RenderingAsDeactivated();
                                 listeners[i]->LostFocus();
                             }
-                        }
+                        }*/
                     }
                     break;
 
@@ -519,8 +517,8 @@ namespace vl {
                             {
                                 listeners[i]->AfterClosing();
                             }
-                            return false;
                         }
+                        return cancel;
                     }
                     break;
 
@@ -750,12 +748,12 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-                nativeWindow->set_visible(true);
+                nativeWindow->show();
 			}
 
 			void GGacWindow::ShowDeactivated()
 			{
-                nativeWindow->set_visible(true);
+                nativeWindow->show();
 			}
 
 			void GGacWindow::ShowRestored()
@@ -784,11 +782,15 @@ namespace vl {
 			{
                 if (closeWindow)
                 {
+                    if (!parentWindow)
+                    {
+                        nativeWindow->get_application()->release();
+                    }
                     nativeWindow->close();
                 }
                 else
                 {
-                    nativeWindow->set_visible(false);
+                    nativeWindow->hide();
                 }
             }
 

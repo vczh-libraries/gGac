@@ -58,13 +58,12 @@ namespace vl {
 					screenService.RefreshScreenInformation();
 
                     auto clipboard = Gtk::Clipboard::get();
-                    clipboard->signal_owner_change().connect(sigc::mem_fun(*this, &GGacController::HandleEventInternal));
+                    clipboard->signal_owner_change().connect(sigc::mem_fun(callbackService, &GGacCallbackService::InvokeClipboardUpdated));
 				}
 
                 ~GGacController()
 				{
 					inputService.StopTimer();
-                    app->quit();
 				}
 
 				void InvokeGlobalTimer()
@@ -72,11 +71,6 @@ namespace vl {
 					asyncService.ExecuteAsyncTasks();
 					callbackService.InvokeGlobalTimer();
 				}
-
-                void HandleEventInternal(GdkEventOwnerChange* event)
-                {
-                    callbackService.InvokeClipboardUpdated();
-                }
 
 				//========================================[INativeWindowService]========================================
 
@@ -107,8 +101,8 @@ namespace vl {
 				void Run(INativeWindow* window)
 				{
 					mainWindow = window;
-					mainWindow->Show();
-					app->run(*dynamic_cast<GGacWindow*>(mainWindow)->GetNativeWindow());
+                    app->hold();
+                    app->run(*dynamic_cast<GGacWindow*>(mainWindow)->GetNativeWindow());
 				}
 
 				INativeWindow* GetWindow(NativePoint location)

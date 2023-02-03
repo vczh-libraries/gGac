@@ -46,7 +46,7 @@ namespace vl {
 				}
 			}
 
-			void GGacCallbackService::InvokeClipboardUpdated()
+			void GGacCallbackService::InvokeClipboardUpdated(GdkEventOwnerChange* event)
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
