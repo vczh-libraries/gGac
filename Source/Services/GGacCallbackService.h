@@ -6,6 +6,7 @@
 #define GGAC_GGACCALLBACKSERVICE_H
 
 #include "GacUI.h"
+#include <gtkmm.h>
 
 namespace vl {
 
@@ -20,7 +21,7 @@ namespace vl {
 				bool UninstallListener(INativeControllerListener *listener) override;
 
 				void InvokeGlobalTimer();
-				void InvokeClipboardUpdated();
+				void InvokeClipboardUpdated(GdkEventOwnerChange* event);
 				void InvokeNativeWindowCreated(INativeWindow* window);
 				void InvokeNativeWindowDestroyed(INativeWindow* window);
 			};
