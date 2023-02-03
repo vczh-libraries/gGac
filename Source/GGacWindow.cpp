@@ -447,15 +447,16 @@ namespace vl {
                                 listeners[i]->RenderingAsActivated();
                             }
                         }
-                        /*else
+                        else
                         {
+                            signal_blur.emit();
                             gtk_im_context_focus_out(imContext);
                             for (vint i = 0; i < listeners.Count(); i++)
                             {
                                 listeners[i]->RenderingAsDeactivated();
                                 listeners[i]->LostFocus();
                             }
-                        }*/
+                        }
                     }
                     break;
 
