@@ -1353,7 +1353,7 @@ UniscribeParagraph (Initialization)
 
 					//split paragraph fragment into $lines
 					{
-						Regex regexLine(L"\r\n");
+						Regex regexLine(L"\n");
 						Ptr<UniscribeLine> line;
 						for (Ptr<UniscribeFragment> fragment : documentFragments)
 						{

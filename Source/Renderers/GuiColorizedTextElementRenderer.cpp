@@ -104,23 +104,30 @@ namespace vl {
 
 								if (!crlf)
 								{
-									Color c = color.text;
-									cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-									cr->fill();
-									Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
-									Glib::RefPtr<Pango::Layout> layout;
-									layout = Pango::Layout::create(cr);
-									layout->set_font_description(*gFont.Obj());
-                                    layout->set_text(Glib::ustring::format(passwordChar ? passwordChar : line.text[column]));
-									cr->move_to(tx, ty);
-									layout->show_in_cairo_context(cr);
+                                    if (column == startColumn)
+                                    {
+                                        Color c = color.text;
+                                        cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
+                                        cr->fill();
+                                        cr->move_to(tx, ty);
+                                    }
+                                    else if (column == endColumn - 1)
+                                    {
+                                        auto layout = Pango::Layout::create(cr);
+                                        layout->set_font_description(*gFont.Obj());
+                                        layout->set_auto_dir(false);
+                                        layout->set_text(Glib::ustring::format(line.text).substr(startColumn, endColumn-startColumn+1));
+                                        layout->show_in_cairo_context(cr);
+                                        cr->move_to(tx, ty);
+                                    }
 								}
-								x = x2;
-							}
-						}
+                                x = x2;
+                            }
 
-						//draw caret
-						if (element->GetCaretVisible() && element->GetLines().IsAvailable(element->GetCaretEnd()))
+                        }
+
+                        //draw caret
+                        if (element->GetCaretVisible() && element->GetLines().IsAvailable(element->GetCaretEnd()))
 						{
 							Point caretPoint = element->GetLines().GetPointFromTextPos(element->GetCaretEnd());
 							vint height = element->GetLines().GetRowHeight();

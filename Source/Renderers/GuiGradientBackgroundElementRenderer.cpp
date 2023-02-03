@@ -42,16 +42,16 @@ namespace vl {
                     switch (element->GetDirection())
                     {
                         case GuiGradientBackgroundElement::Horizontal:
-                            gGradient = Cairo::LinearGradient::create(0, 0, bounds.x2, 0);
+                            gGradient = Cairo::LinearGradient::create(bounds.x1, bounds.y1, bounds.x2, bounds.y1);
                             break;
                         case GuiGradientBackgroundElement::Vertical:
-                            gGradient = Cairo::LinearGradient::create(0, 0, 0, bounds.y2);
+                            gGradient = Cairo::LinearGradient::create(bounds.x1, bounds.y1, bounds.x1, bounds.y2);
                             break;
                         case GuiGradientBackgroundElement::Slash:
-                            gGradient = Cairo::LinearGradient::create(bounds.x2, bounds.y2, 0, 0);
+                            gGradient = Cairo::LinearGradient::create(bounds.x2, bounds.y2, bounds.x1, bounds.y1);
                             break;
                         case GuiGradientBackgroundElement::Backslash:
-                            gGradient = Cairo::LinearGradient::create(0, 0, bounds.x2, bounds.y2);
+                            gGradient = Cairo::LinearGradient::create(bounds.x1, bounds.y1, bounds.x2, bounds.y2);
                             break;
                     }
                     gGradient->add_color_stop_rgba(0.0, oldColor.key.r / 255.0, oldColor.key.g / 255.0, oldColor.key.b / 255.0, oldColor.key.a / 255.0);

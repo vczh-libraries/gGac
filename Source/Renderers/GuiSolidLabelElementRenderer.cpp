@@ -92,7 +92,6 @@ namespace vl {
 
 					Color c = element->GetColor();
 					cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-					cr->fill();
 
 					vint x = 0;
 					vint y = 0;
@@ -127,14 +126,14 @@ namespace vl {
 							break;
 					}
 
-					cr->move_to(x, y);
-					layout->show_in_cairo_context(cr);
 					if (oldMaxWidth != bounds.Width())
 					{
 						oldMaxWidth = bounds.Width();
 						UpdateMinSize();
 					}
 
+                    cr->move_to(x, y);
+                    layout->show_in_cairo_context(cr);
 				}
 
 			}
