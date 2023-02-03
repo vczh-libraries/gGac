@@ -18,7 +18,7 @@ namespace vl {
                     systemCursors[i]=Ptr(new GGacCursor((INativeCursor::SystemCursorType)i));
                 }
 				defaultFont.fontFamily = L"Segoe UI";
-				defaultFont.size = 11;
+				defaultFont.size = 13;
 				defaultFont.italic = false;
 				defaultFont.bold = false;
 				defaultFont.underline = false;
