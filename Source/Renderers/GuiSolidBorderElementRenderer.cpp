@@ -39,7 +39,7 @@ namespace vl {
                         break;
 
 						case ElementShapeType::Rectangle:
-							cr->rectangle(bounds.x1, bounds.y1, bounds.Width(), bounds.Height());
+							cr->rectangle(bounds.x1 + 0.5, bounds.y1 + 0.5, bounds.Width() - 1, bounds.Height() - 1);
 							cr->stroke();
 							break;
 
