@@ -55,7 +55,7 @@ namespace vl {
 					{
 						auto gFont = Ptr(new Pango::FontDescription());
 						gFont->set_family(Glib::ustring::format(font.fontFamily.Buffer()));
-						gFont->set_size(font.size * PANGO_SCALE);
+						gFont->set_absolute_size(font.size * PANGO_SCALE);
                         gFont->set_weight(font.bold ? Pango::WEIGHT_BOLD : Pango::WEIGHT_NORMAL);
                         gFont->set_style(font.italic ? Pango::STYLE_ITALIC : Pango::STYLE_NORMAL);
 						return gFont;
