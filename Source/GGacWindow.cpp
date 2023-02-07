@@ -603,19 +603,17 @@ namespace vl {
                 {
                     if (minSize.x < 0 || minSize.y < 0)
                     {
-                        int width, height;
-                        nativeWindow->get_size(width, height);
-                        if (width < size.x.value)
+                        if (minSize.x > size.x.value || minSize.x < 0)
                         {
                             minSize.x = size.x.value;
                         }
-                        if (height < size.y.value)
+                        if (minSize.y > size.y.value || minSize.y < 0)
                         {
                             minSize.y = size.y.value;
                         }
                         nativeWindow->set_size_request(minSize.x, minSize.y);
                     }
-                    nativeWindow->set_default_size(size.x.value, size.y.value);
+                    nativeWindow->resize(size.x.value, size.y.value);
                 }
 			}
 
