@@ -25,7 +25,6 @@ using gtkmm/cairomm/pangomm
 
 ## Current Progress:
 * 1.2.0.0 prereleasing
-* waiting for remove webdings in darkskin
 
 ## Known Issues/Limiations:
 * AsyncService::Semaphore::WaitForTime
