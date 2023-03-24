@@ -13,7 +13,7 @@ namespace vl {
 
 		namespace gtk {
 
-			extern INativeController*   CreateGGacController();
+			extern INativeController*   GetGGacController();
 			extern void                 DestroyGGacController(INativeController* controller);
 
 		}

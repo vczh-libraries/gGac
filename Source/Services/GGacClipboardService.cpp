@@ -2,6 +2,7 @@
 // Created by roodkcab on 6/27/21.
 //
 
+#include "GGacController.h"
 #include "GGacClipboardService.h"
 #include "GGacImageService.h"
 #include <gtkmm/clipboard.h>
@@ -80,7 +81,7 @@ namespace vl {
             {
                 auto clipboard = Gtk::Clipboard::get();
                 auto image = clipboard->wait_for_image();
-                return Ptr(new GGacImage(GetCurrentController()->ImageService(), Ptr(new Gtk::Image(image))));
+                return Ptr(new GGacImage(GetGGacController()->ImageService(), Ptr(new Gtk::Image(image))));
             }
 
 			Ptr<INativeClipboardReader> GGacClipboardService::ReadClipboard() 

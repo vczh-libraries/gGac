@@ -2,6 +2,7 @@
 // Created by roodkcab on 6/27/21.
 //
 
+#include "GGacController.h"
 #include "GGacWindow.h"
 #include "GGacHelper.h"
 #include "Services/GGacInputService.h"
@@ -406,7 +407,7 @@ namespace vl {
                                         break;
                                 }
 
-                                INativeCursor* cursor = GetCursorFromHitTest(r, GetCurrentController()->ResourceService());
+                                INativeCursor* cursor = GetCursorFromHitTest(r, GetGGacController()->ResourceService());
                                 if (cursor != nullptr)
                                 {
                                     SetWindowCursor(cursor);

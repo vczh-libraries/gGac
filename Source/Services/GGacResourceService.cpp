@@ -59,6 +59,10 @@ namespace vl {
 				defaultFont = value;
 			}
 
+			void GGacResourceService::EnumerateFonts(collections::List<WString>& fonts)
+			{
+			}
+
 		}
 
 	}

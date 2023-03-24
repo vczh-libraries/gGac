@@ -415,15 +415,15 @@ namespace vl {
 
 				int SetupGtkRenderer()
 				{
-					INativeController *controller = CreateGGacController();
-					SetCurrentController(controller);
+					INativeController *controller = GetGGacController();
+					SetNativeController(controller);
 					{
 						g_gGacControllerListener = new GGacControllerListener();
-						GetCurrentController()->CallbackService()->InstallListener(g_gGacControllerListener);
+						GetGGacController()->CallbackService()->InstallListener(g_gGacControllerListener);
 						GGacResourceManager resourceManager;
 						SetGuiGraphicsResourceManager(&resourceManager);
 						SetGGacResourceManager(&resourceManager);
-						GetCurrentController()->CallbackService()->InstallListener(&resourceManager);
+						GetGGacController()->CallbackService()->InstallListener(&resourceManager);
 						{
 							GuiSolidLabelElementRenderer::Register();
 							GuiSolidBorderElementRenderer::Register();
@@ -442,8 +442,8 @@ namespace vl {
 						{
 							GuiApplicationMain();
 						}
-						GetCurrentController()->CallbackService()->UninstallListener(&resourceManager);
-						GetCurrentController()->CallbackService()->UninstallListener(g_gGacControllerListener);
+						GetGGacController()->CallbackService()->UninstallListener(&resourceManager);
+						GetGGacController()->CallbackService()->UninstallListener(g_gGacControllerListener);
 						delete g_gGacControllerListener;
 					}
 					DestroyGGacController(controller);
