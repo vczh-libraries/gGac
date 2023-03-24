@@ -2,6 +2,7 @@
 // Created by roodkcab on 7/3/21.
 //
 
+#include "GGacController.h"
 #include "GGacView.h"
 #include "GGacWindow.h"
 #include "Services/GGacCallbackService.h"
@@ -40,7 +41,7 @@ namespace vl {
 			{
 				if (needRepaint)
 				{
-					dynamic_cast<GGacCallbackService *>(GetCurrentController()->CallbackService())->InvokeGlobalTimer();
+					dynamic_cast<GGacCallbackService *>(GetGGacController()->CallbackService())->InvokeGlobalTimer();
 					needRepaint = false;
 				}
 				cr->set_source(surface, 0, 0);

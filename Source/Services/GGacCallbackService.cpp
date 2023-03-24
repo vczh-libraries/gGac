@@ -38,6 +38,11 @@ namespace vl {
 				}
 			}
 
+			INativeCallbackInvoker *GGacCallbackService::Invoker()
+			{
+				return this;
+			}
+
 			void GGacCallbackService::InvokeGlobalTimer()
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
@@ -46,7 +51,7 @@ namespace vl {
 				}
 			}
 
-			void GGacCallbackService::InvokeClipboardUpdated(GdkEventOwnerChange* event)
+			void GGacCallbackService::InvokeClipboardUpdated()
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
 				{
@@ -62,7 +67,7 @@ namespace vl {
 				}
 			}
 
-			void GGacCallbackService::InvokeNativeWindowDestroyed(INativeWindow* window)
+			void GGacCallbackService::InvokeNativeWindowDestroying(INativeWindow* window)
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
 				{

@@ -14,16 +14,17 @@ namespace vl {
 
 		namespace gtk {
 
-			class GGacCallbackService : public Object, public INativeCallbackService
+			class GGacCallbackService : public Object, public INativeCallbackService, public INativeCallbackInvoker
 			{
 			public:
 				bool InstallListener(INativeControllerListener *listener) override;
 				bool UninstallListener(INativeControllerListener *listener) override;
+				INativeCallbackInvoker *Invoker() override;
 
-				void InvokeGlobalTimer();
-				void InvokeClipboardUpdated(GdkEventOwnerChange* event);
-				void InvokeNativeWindowCreated(INativeWindow* window);
-				void InvokeNativeWindowDestroyed(INativeWindow* window);
+				void InvokeGlobalTimer() override;
+				void InvokeClipboardUpdated() override;
+				void InvokeNativeWindowCreated(INativeWindow* window) override;
+				void InvokeNativeWindowDestroying(INativeWindow* window) override;
 			};
 
 		}

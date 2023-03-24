@@ -58,7 +58,9 @@ namespace vl {
 					screenService.RefreshScreenInformation();
 
                     auto clipboard = Gtk::Clipboard::get();
-                    clipboard->signal_owner_change().connect(sigc::mem_fun(callbackService, &GGacCallbackService::InvokeClipboardUpdated));
+                    clipboard->signal_owner_change().connect([this](GdkEventOwnerChange *) {
+						callbackService.InvokeClipboardUpdated();
+					});
 				}
 
                 ~GGacController()
@@ -87,7 +89,7 @@ namespace vl {
 					GGacWindow* window = dynamic_cast<GGacWindow*>(_window);
 					if (window != 0 && windows.Contains(window))
 					{
-						callbackService.InvokeNativeWindowDestroyed(window);
+						callbackService.InvokeNativeWindowDestroying(window);
 						windows.Remove(window);
 						delete window;
 					}
@@ -103,6 +105,11 @@ namespace vl {
 					mainWindow = window;
                     app->hold();
                     app->run(*dynamic_cast<GGacWindow*>(mainWindow)->GetNativeWindow());
+				}
+
+				bool RunOneCycle()
+				{
+					return true;
 				}
 
 				INativeWindow* GetWindow(NativePoint location)
@@ -185,9 +192,14 @@ namespace vl {
 
 			//========================================[Global Functions]========================================
 
-			INativeController* CreateGGacController()
+			INativeController *gGacController;
+
+			INativeController* GetGGacController()
 			{
-				return new GGacController();
+				if (!gGacController) {
+					gGacController = new GGacController();
+				}
+				return gGacController;
 			}
 
 			void DestroyGGacController(INativeController* controller)
@@ -197,7 +209,7 @@ namespace vl {
 
 			void GlobalTimerFunc()
 			{
-				dynamic_cast<GGacController*>(GetCurrentController())->InvokeGlobalTimer();
+				dynamic_cast<GGacController*>(GetGGacController())->InvokeGlobalTimer();
 			}
 
 		}
