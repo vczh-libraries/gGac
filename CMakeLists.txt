@@ -56,7 +56,7 @@ add_library(gGac SHARED
 		Source/GGacView.cpp
 		Source/GGacCursor.cpp
 		)
-target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
+target_link_libraries(gGac GacUI ${GTK3_LIBRARIES} X11)
 include_directories(GacUI/Import Source Source/Renderers Source/Services ${GTK3_INCLUDE_DIRS})
 include(GNUInstallDirs)
 

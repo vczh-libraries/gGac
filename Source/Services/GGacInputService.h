@@ -21,11 +21,12 @@ namespace vl {
 			protected:
 				TimerFunc 								timer;
 				bool      								isTimerEnabled;
+				int 									usedHotKeys;
 
 				collections::Dictionary<WString, VKEY>  keys;
 				collections::Array<WString>             keyNames;
-				wchar_t                                 asciiLowerMap[256];
-				wchar_t                                 asciiUpperMap[256];
+
+				void onAccelGroupActivate(vint id);
 
 			public:
 				GGacInputService(TimerFunc timer);
@@ -38,10 +39,11 @@ namespace vl {
 				bool IsKeyToggled(VKEY code) override;
 				WString GetKeyName(VKEY code) override;
 				VKEY GetKey(const WString &name) override;
+				vint RegisterGlobalShortcutKey(bool ctrl, bool shift, bool alt, VKEY code) override;
+				bool UnregisterGlobalShortcutKey(vint id) override;
 
 				void InitKeyMapping();
-				bool ConvertToPrintable(NativeWindowCharInfo& info, GdkEvent* event);
-
+				WString GetKeyNameInternal(VKEY code);
 			};
 
 		}

@@ -22,7 +22,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../GacUI/Import/VlppGlrParser.cpp
             ../GacUI/Import/VlppWorkflowLibrary.cpp
             ../GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
-            )
+            ../Source/Lib/Keybinder.c)
 
     add_library(gGac
             ../Source/Services/GGacCallbackService.cpp
@@ -54,8 +54,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../Source/GGacControllerListener.cpp
             ../Source/GGacView.cpp
             ../Source/GGacCursor.cpp
-            )
-    target_link_libraries(gGac GacUI ${GTK3_LIBRARIES})
+            ../Source/Lib/Keybinder.h)
+    target_link_libraries(gGac GacUI ${GTK3_LIBRARIES} X11)
     list(APPEND gGac_INCLUDE_DIRS ../GacUI/Import ../Source ../Source/Renderers ../Source/Services)
     list(APPEND gGac_LIBRARIES GacUI gGac)
     #list(APPEND FC_DEP_LIBS GacUI gGac)
@@ -100,6 +100,7 @@ add_subdirectory(GacUI_Controls/ContainersAndButtons)
 add_subdirectory(GacUI_Controls/DataGrid)
 add_subdirectory(GacUI_Controls/DocumentEditorRibbon)
 add_subdirectory(GacUI_Controls/DocumentEditorToolstrip)
+add_subdirectory(GacUI_Controls/GlobalHotKey)
 add_subdirectory(GacUI_Controls/ListControls)
 add_subdirectory(GacUI_Controls/Localization)
 add_subdirectory(GacUI_Controls/MenuVisibility)

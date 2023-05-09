@@ -4,6 +4,8 @@
 
 #include "GGacInputService.h"
 #include "../GGacHelper.h"
+#include "../Services/GGacCallbackService.h"
+#include "../Lib/Keybinder.h"
 
 namespace vl {
 
@@ -11,76 +13,62 @@ namespace vl {
 
 		namespace gtk {
 
+			void handler (const char *keystring, void *id) {
+				dynamic_cast<GGacCallbackService*>(GetCurrentController()->CallbackService())->InvokeGlobalShortcutKeyActivated(*(int*)id);
+			}
+
 			GGacInputService::GGacInputService(TimerFunc _timer)
-					:timer(_timer)
+				:usedHotKeys(0),
+				 keyNames(146),
+				 timer(_timer)
 			{
 				InitKeyMapping();
+				keybinder_init();
+			}
+
+			WString GGacInputService::GetKeyNameInternal(VKEY code)
+			{
+				if ((vint)code < 8) return L"?";
+				guint32 scanCode = gdk_keyval_to_unicode(static_cast<guint>(code));
+				switch ((vint)code) {
+					case GDK_KEY_Insert:
+					case GDK_KEY_Delete:
+					case GDK_KEY_Home:
+					case GDK_KEY_End:
+					case GDK_KEY_Page_Up:
+					case GDK_KEY_Page_Down:
+					case GDK_KEY_Left:
+					case GDK_KEY_Right:
+					case GDK_KEY_Up:
+					case GDK_KEY_Down:
+						scanCode |= 1 << 24;
+						break;
+					case GDK_KEY_Clear:
+					case GDK_KEY_Shift_L:
+					case GDK_KEY_Shift_R:
+					case GDK_KEY_Control_L:
+					case GDK_KEY_Control_R:
+					case GDK_KEY_Alt_L:
+					case GDK_KEY_Alt_R:
+						return L"?";
+				}
+				gchar* name = gdk_keyval_name(scanCode);
+				Glib::ustring result = name ? name : "?";
+				//g_free(name);
+				return atow(result.c_str());
 			}
 
 			void GGacInputService::InitKeyMapping()
 			{
-				memset(asciiLowerMap, 0, sizeof(wchar_t) * 256);
-				memset(asciiUpperMap, 0, sizeof(wchar_t) * 256);
-
-				asciiLowerMap[(int)VKEY::KEY_0] = L'0';
-				asciiLowerMap[(int)VKEY::KEY_1] = L'1';
-				asciiLowerMap[(int)VKEY::KEY_2] = L'2';
-				asciiLowerMap[(int)VKEY::KEY_3] = L'3';
-				asciiLowerMap[(int)VKEY::KEY_4] = L'4';
-				asciiLowerMap[(int)VKEY::KEY_5] = L'5';
-				asciiLowerMap[(int)VKEY::KEY_6] = L'6';
-				asciiLowerMap[(int)VKEY::KEY_7] = L'7';
-				asciiLowerMap[(int)VKEY::KEY_8] = L'8';
-				asciiLowerMap[(int)VKEY::KEY_9] = L'9';
-				asciiLowerMap[(int)VKEY::KEY_OEM_1] = L';';
-				asciiLowerMap[(int)VKEY::KEY_OEM_6] = L'[';
-				asciiLowerMap[(int)VKEY::KEY_OEM_4] = L']';
-				asciiLowerMap[(int)VKEY::KEY_OEM_7] = L'\'';
-				asciiLowerMap[(int)VKEY::KEY_OEM_COMMA] = L',';
-				asciiLowerMap[(int)VKEY::KEY_OEM_PERIOD] = L'.';
-				asciiLowerMap[(int)VKEY::KEY_OEM_2] = L'/';
-				asciiLowerMap[(int)VKEY::KEY_OEM_5] = L'\\';
-				asciiLowerMap[(int)VKEY::KEY_OEM_MINUS] = L'-';
-				asciiLowerMap[(int)VKEY::KEY_OEM_PLUS] = L'=';
-				asciiLowerMap[(int)VKEY::KEY_OEM_3] = L'`';
-				asciiLowerMap[(int)VKEY::KEY_SPACE] = L' ';
-				asciiLowerMap[(int)VKEY::KEY_RETURN] = (int)VKEY::KEY_RETURN;
-				asciiLowerMap[(int)VKEY::KEY_ESCAPE] = (int)VKEY::KEY_ESCAPE;
-				asciiLowerMap[(int)VKEY::KEY_BACK] = (int)VKEY::KEY_BACK;
-				for(int i=(int)VKEY::KEY_A; i<=(int)VKEY::KEY_Z; ++i)
-					asciiLowerMap[i] = L'a' + (i-(int)VKEY::KEY_A);
-				for(int i=(int)VKEY::KEY_NUMPAD0; i<(int)VKEY::KEY_NUMPAD9; ++i)
-					asciiLowerMap[i] = L'0' + (i-(int)VKEY::KEY_NUMPAD0);
-
-				asciiUpperMap[(int)VKEY::KEY_0] = L')';
-				asciiUpperMap[(int)VKEY::KEY_1] = L'!';
-				asciiUpperMap[(int)VKEY::KEY_2] = L'@';
-				asciiUpperMap[(int)VKEY::KEY_3] = L'#';
-				asciiUpperMap[(int)VKEY::KEY_4] = L'$';
-				asciiUpperMap[(int)VKEY::KEY_5] = L'%';
-				asciiUpperMap[(int)VKEY::KEY_6] = L'^';
-				asciiUpperMap[(int)VKEY::KEY_7] = L'&';
-				asciiUpperMap[(int)VKEY::KEY_8] = L'*';
-				asciiUpperMap[(int)VKEY::KEY_9] = L'(';
-				asciiUpperMap[(int)VKEY::KEY_OEM_1] = L':';
-				asciiUpperMap[(int)VKEY::KEY_OEM_6] = L'{';
-				asciiUpperMap[(int)VKEY::KEY_OEM_4] = L'}';
-				asciiUpperMap[(int)VKEY::KEY_OEM_7] = L'\"';
-				asciiUpperMap[(int)VKEY::KEY_OEM_COMMA] = L'<';
-				asciiUpperMap[(int)VKEY::KEY_OEM_PERIOD] = L'>';
-				asciiUpperMap[(int)VKEY::KEY_OEM_2] = L'?';
-				asciiUpperMap[(int)VKEY::KEY_OEM_5] = L'|';
-				asciiUpperMap[(int)VKEY::KEY_OEM_MINUS] = L'_';
-				asciiUpperMap[(int)VKEY::KEY_OEM_PLUS] = L'+';
-				asciiUpperMap[(int)VKEY::KEY_OEM_3] = L'~';
-				asciiUpperMap[(int)VKEY::KEY_SPACE] = L' ';
-				asciiUpperMap[(int)VKEY::KEY_RETURN] = (int)VKEY::KEY_RETURN;
-				asciiUpperMap[(int)VKEY::KEY_ESCAPE] = (int)VKEY::KEY_ESCAPE;
-				asciiUpperMap[(int)VKEY::KEY_BACK] = (int)VKEY::KEY_BACK;
-				for(int i=(int)VKEY::KEY_A; i<=(int)VKEY::KEY_Z; ++i)
-					asciiUpperMap[i] = L'A' + (i-(int)VKEY::KEY_A);
-				for(int i=(int)VKEY::KEY_NUMPAD0; i<(int)VKEY::KEY_NUMPAD9; ++i)
-					asciiLowerMap[i] = L'0' + (i-(int)VKEY::KEY_NUMPAD0);
+				for (vint i = 0; i < keyNames.Count(); i++)
+				{
+					keyNames[i] = GetKeyNameInternal((VKEY)i);
+					if (keyNames[i] != L"?")
+					{
+						//std::wcout << keyNames[i].Buffer() << " " << i << std::endl;
+						keys.Set(keyNames[i], (VKEY)i);
+					}
+				}
 			}
 
 			bool GGacInputService::StartGDKTimer()
@@ -118,35 +106,41 @@ namespace vl {
 
 			vl::WString GGacInputService::GetKeyName(vl::presentation::VKEY code)
 			{
-				return vl::WString();
+				if (0 <= (vint)code && (vint)code < keyNames.Count())
+				{
+					return keyNames[(vint)code];
+				}
+				else
+				{
+					return L"?";
+				}
 			}
 
 			vl::presentation::VKEY GGacInputService::GetKey(const vl::WString &name)
 			{
-				return VKEY::KEY_RCONTROL;
+				vint index = keys.Keys().IndexOf(name);
+				return index == -1 ? VKEY::KEY_UNKNOWN : keys.Values()[index];
 			}
 
-			bool GGacInputService::ConvertToPrintable(NativeWindowCharInfo &info, GdkEvent *event)
+			vint GGacInputService::RegisterGlobalShortcutKey(bool ctrl, bool shift, bool alt, VKEY code)
 			{
-				info.ctrl = event->key.state & GDK_CONTROL_MASK;
-				info.shift = event->key.state & GDK_SHIFT_MASK;
-				info.alt = event->key.state & GDK_MOD1_MASK;
-				info.capslock = event->key.state & GDK_LOCK_MASK;
+				++usedHotKeys;
+				WString accelstr = L"";
+				if (ctrl) accelstr += L"<Control>";
+				if (shift) accelstr += L"<Shift>";
+				if (alt) accelstr += L"<Alt>";
+				accelstr += wlower(this->GetKeyName(code));
+				keybinder_bind(wtoa(accelstr).Buffer(), handler, &usedHotKeys);
+				return usedHotKeys;
+			}
 
-				if (info.ctrl || info.alt)
-					return false;
-
-				int code = (int)GdkEventKeyCodeToGacKeyCode(event->key.keyval);
-				if(code >= 256)
-					return false;
-
-				info.code = asciiLowerMap[code];
-				if (info.capslock || info.shift)
-				{
-					info.code = asciiUpperMap[code];
+			bool GGacInputService::UnregisterGlobalShortcutKey(vint id)
+			{
+				if (id <= usedHotKeys) {
+					keybinder_unbind(id, handler);
+					return true;
 				}
-
-				return info.code != 0;
+				return false;
 			}
 		}
 

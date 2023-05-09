@@ -76,6 +76,21 @@ namespace vl {
 
 				//========================================[INativeWindowService]========================================
 
+				const NativeWindowFrameConfig& GetMainWindowFrameConfig()
+				{
+					return NativeWindowFrameConfig::Default;
+				}
+
+				const NativeWindowFrameConfig& GetNonMainWindowFrameConfig()
+				{
+					static const NativeWindowFrameConfig config = {
+							.MaximizedBoxOption = BoolOption::AlwaysFalse,
+							.MinimizedBoxOption = BoolOption::AlwaysFalse,
+							.CustomFrameEnabled = BoolOption::AlwaysTrue,
+					};
+					return config;
+				}
+
 				INativeWindow* CreateNativeWindow(INativeWindow::WindowMode mode)
 				{
 					GGacWindow* window = new GGacWindow(mode);
