@@ -237,8 +237,6 @@ namespace vl {
                 {
                     case GDK_BUTTON_PRESS:
                     {
-                        mouseDownX = info.x.value;
-                        mouseDownY = info.y.value;
                         if (mode == Menu || mode == Tooltip)
                         {
                             auto window = this;
@@ -248,6 +246,9 @@ namespace vl {
                                 window->keepPopup = true;
                             }
                         }
+						signal_blur.emit();
+						mouseDownX = info.x.value;
+						mouseDownY = info.y.value;
                         for (vint i = 0; i < listeners.Count(); i++)
                         {
                             switch (event->button.button) {
@@ -275,7 +276,6 @@ namespace vl {
 
                     case GDK_BUTTON_RELEASE:
                     {
-                        signal_blur.emit();
                         switch (event->button.button) {
                             case GDK_BUTTON_PRIMARY:
                                 for (vint i = 0; i < listeners.Count(); i++) {

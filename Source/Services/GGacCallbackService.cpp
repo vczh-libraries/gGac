@@ -59,6 +59,14 @@ namespace vl {
 				}
 			}
 
+			void GGacCallbackService::InvokeGlobalShortcutKeyActivated(vint id)
+			{
+				for (vint i = 0; i < listeners.Count(); i++)
+				{
+					listeners[i]->GlobalShortcutKeyActivated(id);
+				}
+			}
+
 			void GGacCallbackService::InvokeNativeWindowCreated(INativeWindow* window)
 			{
 				for (vint i = 0; i < listeners.Count(); i++)
