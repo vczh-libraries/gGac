@@ -28,7 +28,7 @@
 
 G_BEGIN_DECLS
 
-typedef void (* KeybinderHandler) (const char *keystring, void *user_data);
+typedef void (* KeybinderHandler) (const char *keystring, int id);
 
 void keybinder_init (void);
 
@@ -36,12 +36,12 @@ void keybinder_set_use_cooked_accelerators (gboolean use_cooked);
 
 gboolean keybinder_bind (const char *keystring,
 						 KeybinderHandler  handler,
-						 void *user_data);
+						 int id);
 
 gboolean
 keybinder_bind_full (const char *keystring,
 					 KeybinderHandler handler,
-					 void *user_data,
+					 int id,
 					 GDestroyNotify notify);
 
 void keybinder_unbind (int id,

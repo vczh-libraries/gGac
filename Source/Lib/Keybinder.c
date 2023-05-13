@@ -61,8 +61,8 @@
 
 struct Binding {
 	KeybinderHandler      handler;
-	void                 *user_data;
-	char                 *keystring;
+	int 				  id;
+	char                  *keystring;
 	GDestroyNotify        notify;
 	/* GDK "distilled" values */
 	guint                 keyval;
@@ -423,7 +423,7 @@ filter_func (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer data)
 									binding->keystring));
 
 					(binding->handler) (binding->keystring,
-										binding->user_data);
+										binding->id);
 				}
 			}
 
@@ -554,9 +554,9 @@ keybinder_set_use_cooked_accelerators (gboolean use_cooked)
 gboolean
 keybinder_bind (const char *keystring,
 				KeybinderHandler handler,
-				void *user_data)
+				int id)
 {
-	return keybinder_bind_full(keystring, handler, user_data, NULL);
+	return keybinder_bind_full(keystring, handler, id, NULL);
 }
 
 /**
@@ -576,7 +576,7 @@ keybinder_bind (const char *keystring,
 gboolean
 keybinder_bind_full (const char *keystring,
 					 KeybinderHandler handler,
-					 void *user_data,
+					 int id,
 					 GDestroyNotify notify)
 {
 	struct Binding *binding;
@@ -585,7 +585,7 @@ keybinder_bind_full (const char *keystring,
 	binding = g_new0 (struct Binding, 1);
 	binding->keystring = g_strdup (keystring);
 	binding->handler = handler;
-	binding->user_data = user_data;
+	binding->id = id;
 	binding->notify = notify;
 
 	/* Sets the binding's keycode and modifiers */
@@ -621,7 +621,7 @@ keybinder_unbind (int id, KeybinderHandler handler)
 	for (iter = bindings; iter != NULL; iter = iter->next) {
 		struct Binding *binding = iter->data;
 
-		if (id == *(int*)binding->user_data || handler != binding->handler)
+		if (id == binding->id || handler != binding->handler)
 			continue;
 
 		do_ungrab_key (binding);
@@ -629,7 +629,7 @@ keybinder_unbind (int id, KeybinderHandler handler)
 
 		TRACE (g_print("unbind, notify: %p\n", binding->notify));
 		if (binding->notify) {
-			binding->notify(binding->user_data);
+			binding->notify(&binding->id);
 		}
 		g_free (binding->keystring);
 		g_free (binding);
@@ -660,7 +660,7 @@ void keybinder_unbind_all (const char *keystring)
 
 		TRACE (g_print("unbind_all, notify: %p\n", binding->notify));
 		if (binding->notify) {
-			binding->notify(binding->user_data);
+			binding->notify(&binding->id);
 		}
 		g_free (binding->keystring);
 		g_free (binding);
