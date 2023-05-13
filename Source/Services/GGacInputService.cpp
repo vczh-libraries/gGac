@@ -13,8 +13,8 @@ namespace vl {
 
 		namespace gtk {
 
-			void handler (const char *keystring, void *id) {
-				dynamic_cast<GGacCallbackService*>(GetCurrentController()->CallbackService())->InvokeGlobalShortcutKeyActivated(*(int*)id);
+			void handler (const char *keystring, int id) {
+				dynamic_cast<GGacCallbackService*>(GetCurrentController()->CallbackService())->InvokeGlobalShortcutKeyActivated(id);
 			}
 
 			GGacInputService::GGacInputService(TimerFunc _timer)
@@ -130,14 +130,14 @@ namespace vl {
 				if (shift) accelstr += L"<Shift>";
 				if (alt) accelstr += L"<Alt>";
 				accelstr += wlower(this->GetKeyName(code));
-				keybinder_bind(wtoa(accelstr).Buffer(), handler, &usedHotKeys);
+				keybinder_bind(wtoa(accelstr).Buffer(), handler, (int)usedHotKeys);
 				return usedHotKeys;
 			}
 
 			bool GGacInputService::UnregisterGlobalShortcutKey(vint id)
 			{
 				if (id <= usedHotKeys) {
-					keybinder_unbind(id, handler);
+					keybinder_unbind((int)id, handler);
 					return true;
 				}
 				return false;
