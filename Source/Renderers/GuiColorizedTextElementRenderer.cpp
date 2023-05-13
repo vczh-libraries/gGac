@@ -60,6 +60,7 @@ namespace vl {
 							vint endColumn = element->GetLines().GetTextPosFromPoint(Point(viewBounds.x2, startPoint.y)).column;
 							text::TextLine& line = element->GetLines().GetLine(row);
 							vint x = startColumn == 0 ? 0 : line.att[startColumn-1].rightOffset;
+							vint sx = 0, sy = 0;
 
 							//draw each column of text
 							for (vint column = startColumn; column <= endColumn; column++)
@@ -104,19 +105,23 @@ namespace vl {
 
 								if (!crlf)
 								{
-                                    if (column == startColumn)
-                                    {
-                                        Color c = color.text;
-                                        cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-                                        cr->fill();
-                                        cr->move_to(tx, ty);
-                                    }
-                                    else if (column == endColumn - 1)
-                                    {
+									if (column == startColumn)
+									{
+										sx = tx;
+										sy = ty;
+									}
+									if (column == endColumn - 1)
+									{
+										cr->move_to(sx, sy);
+										if (color.text.a > 0)
+										{
+											Color c = color.text;
+											cr->set_source_rgba(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
+										}
                                         auto layout = Pango::Layout::create(cr);
                                         layout->set_font_description(*gFont.Obj());
                                         layout->set_auto_dir(false);
-                                        layout->set_text(Glib::ustring::format(line.text).substr(startColumn, endColumn-startColumn+1));
+                                        layout->set_text(Glib::ustring::format(WString(line.text).Sub(startColumn, endColumn - startColumn).Buffer()));
                                         layout->show_in_cairo_context(cr);
                                         cr->move_to(tx, ty);
                                     }

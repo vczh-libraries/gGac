@@ -748,7 +748,8 @@ namespace vl {
 
 			void GGacWindow::Show()
 			{
-                nativeWindow->show();
+				nativeWindow->present();
+				nativeWindow->grab_focus();
 			}
 
 			void GGacWindow::ShowDeactivated()
