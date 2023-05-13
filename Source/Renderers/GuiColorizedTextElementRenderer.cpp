@@ -121,7 +121,16 @@ namespace vl {
                                         auto layout = Pango::Layout::create(cr);
                                         layout->set_font_description(*gFont.Obj());
                                         layout->set_auto_dir(false);
-                                        layout->set_text(Glib::ustring::format(WString(line.text).Sub(startColumn, endColumn - startColumn).Buffer()));
+										if (passwordChar)
+										{
+											WString text = L"";
+											for (vint i = 0; i < endColumn - startColumn; i++) { text += WString::FromChar(passwordChar); }
+											layout->set_text(Glib::ustring::format(text.Buffer()));
+										}
+										else
+										{
+											layout->set_text(Glib::ustring::format(WString(line.text).Sub(startColumn, endColumn - startColumn).Buffer()));
+										}
                                         layout->show_in_cairo_context(cr);
                                         cr->move_to(tx, ty);
                                     }
