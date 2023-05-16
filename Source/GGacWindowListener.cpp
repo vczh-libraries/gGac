@@ -79,7 +79,7 @@ namespace vl {
                 }
             }
 
-            /*void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
+			/*void GGacWindowListener::LeftButtonUp(const NativeWindowMouseInfo &info)
             {
             }
 

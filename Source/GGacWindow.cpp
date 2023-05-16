@@ -77,7 +77,7 @@ namespace vl {
 				}
 				nativeWindow->signal_size_allocate().connect(sigc::mem_fun(*this, &GGacWindow::onSizeChanged));
                 nativeWindow->signal_event().connect(sigc::mem_fun(*this, &GGacWindow::HandleEventInternal));
-                nativeWindow->add_events(Gdk::EventMask::ALL_EVENTS_MASK);
+                nativeWindow->set_events(Gdk::EventMask::ALL_EVENTS_MASK);
 
                 imContext = gtk_im_multicontext_new();
                 if (imContext)
@@ -256,11 +256,12 @@ namespace vl {
                                     listeners[i]->LeftButtonDown(info);
                                     if (edge > 0)
                                     {
-                                        nativeWindow->begin_resize_drag((Gdk::WindowEdge)edge, 1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+                                        nativeWindow->begin_resize_drag((Gdk::WindowEdge)edge, GDK_BUTTON_PRIMARY, mouseLastX, mouseLastY, gtk_get_current_event_time());
                                     }
                                     else if (edge == -2)
                                     {
-                                        nativeWindow->begin_move_drag(1, mouseLastX, mouseLastY, gtk_get_current_event_time());
+                                        moving = true;
+                                        nativeWindow->begin_move_drag(GDK_BUTTON_PRIMARY, mouseLastX, mouseLastY, gtk_get_current_event_time());
                                     }
                                     break;
                                 case GDK_BUTTON_SECONDARY:
@@ -427,6 +428,10 @@ namespace vl {
                     }
                     break;
 
+                    case GDK_PROPERTY_NOTIFY:
+                        moving = false;
+                    break;
+
                     case GDK_LEAVE_NOTIFY:
                     {
                         for (vint i = 0; i < listeners.Count(); i++)
@@ -448,7 +453,7 @@ namespace vl {
                                 listeners[i]->RenderingAsActivated();
                             }
                         }
-                        else
+                        else if (!moving)
                         {
                             signal_blur.emit();
                             gtk_im_context_focus_out(imContext);
@@ -463,13 +468,11 @@ namespace vl {
 
                     case GDK_KEY_PRESS:
                     {
-                        if (!gtk_im_context_filter_keypress(imContext, &event->key))
+                        gtk_im_context_filter_keypress(imContext, &event->key);
+                        NativeWindowKeyInfo keyInfo = createKeyInfo(event);
+                        for (vint i = 0; i < listeners.Count(); i++)
                         {
-                            NativeWindowKeyInfo keyInfo = createKeyInfo(event);
-                            for (vint i = 0; i < listeners.Count(); i++)
-                            {
-                                listeners[i]->KeyDown(keyInfo);
-                            }
+                            listeners[i]->KeyDown(keyInfo);
                         }
                     }
                     break;
