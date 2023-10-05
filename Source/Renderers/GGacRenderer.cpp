@@ -162,10 +162,6 @@ namespace vl {
 							return;
 
 						SetCurrentRenderTarget(this);
-						cr->set_source_rgba(0, 0, 0, 0);
-						Gtk::Allocation allocation = view->get_allocation();
-						cr->rectangle(allocation.get_x(), allocation.get_y(), allocation.get_width(), allocation.get_height());
-						cr->fill();
 						cr->save();
 					}
 

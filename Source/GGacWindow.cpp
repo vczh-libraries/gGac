@@ -596,9 +596,13 @@ namespace vl {
 
 			NativeSize GGacWindow::GetClientSize()
 			{
-				int x, y;
-				nativeWindow->get_size(x, y);
-				return NativeSize(x, y);
+				int x1, y1, x2, y2;
+				nativeWindow->get_size(x1, y1);
+				if (y1 > 1) {
+					return NativeSize(x1, y1);
+				}
+				nativeWindow->get_size_request(x2, y2);
+				return NativeSize(x2, y2);
 			}
 
 			void GGacWindow::SetClientSize(NativeSize size)
