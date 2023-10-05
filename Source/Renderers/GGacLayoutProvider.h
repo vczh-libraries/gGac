@@ -49,12 +49,7 @@ namespace vl {
 					UniscribeColorRange(){}
 					UniscribeColorRange(vint _start, vint _end):start(_start),end(_end){}
 
-					bool operator==(const UniscribeColorRange& range) const { return start==range.start; }
-					bool operator!=(const UniscribeColorRange& range) const { return start!=range.start; }
-					bool operator<(const UniscribeColorRange& range) const { return start<range.start; }
-					bool operator<=(const UniscribeColorRange& range) const { return start<=range.start; }
-					bool operator>(const UniscribeColorRange& range) const { return start>range.start; }
-					bool operator>=(const UniscribeColorRange& range) const { return start>=range.start; }
+					GUI_DEFINE_COMPARE_OPERATORS(UniscribeColorRange)
 				};
 
 				struct UniscribeColor
