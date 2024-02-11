@@ -22,6 +22,7 @@ using gtkmm/cairomm/pangomm
   * cmake ../ 
   * make -j16
 * use ```console::Console::WriteLine(L"xxx")``` to log anything interesting to console output, remember to set LC_ALL to your native lanaguage.
+* to use vscode, you have to set ```cmake.sourceDirectory``` in .vscode/settings.json to ```Tests``` directory in order to debug Demo projects.
 
 ## Current Progress:
 * 1.2.0.0 prereleasing
