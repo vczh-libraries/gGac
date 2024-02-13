@@ -22,9 +22,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../GacUI/Import/VlppGlrParser.cpp
             ../GacUI/Import/VlppWorkflowLibrary.cpp
             ../GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
-            ../Source/Lib/Keybinder.c)
+            )
 
     add_library(gGac
+            ../Source/Lib/Keybinder.c
             ../Source/Services/GGacCallbackService.cpp
             ../Source/Services/GGacInputService.cpp
             ../Source/Services/GGacAsyncService.cpp
