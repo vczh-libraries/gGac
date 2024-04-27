@@ -11,6 +11,10 @@ namespace vl {
 
 			namespace gtk {
 
+				GuiGGacElementRenderer::GuiGGacElementRenderer()
+				{
+				}
+
 				void GuiGGacElementRenderer::InitializeInternal()
 				{
 
@@ -39,22 +43,17 @@ namespace vl {
 					}
 				}
 
-				GuiGGacElementRenderer::GuiGGacElementRenderer()
-				{
-
-				}
-
 				void GuiGGacElementRenderer::Render(Rect bounds)
 				{
 					if (renderTarget)
 					{
-						renderTarget->PushClipper(bounds);
+						renderTarget->PushClipper(bounds, element);
 						if (!renderTarget->IsClipperCoverWholeTarget())
 						{
 							GuiGGacElementEventArgs arguments(element, bounds, GetCurrentGGacContextFromRenderTarget());
 							element->Rendering.Execute(arguments);
 						}
-						renderTarget->PopClipper();
+						renderTarget->PopClipper(element);
 					}
 				}
 

@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(GuiFocusRectangleElementRenderer)
+				void GuiFocusRectangleElementRenderer::InitializeInternal()
+				{
+				}
+
+				void GuiFocusRectangleElementRenderer::FinalizeInternal()
+				{
+				}
+
+				void GuiFocusRectangleElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+				{
+				}
+
+				void GuiFocusRectangleElementRenderer::OnElementStateChanged()
+				{
+				}
+
+				void GuiFocusRectangleElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);

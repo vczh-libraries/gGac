@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(Gui3DBorderElementRenderer)
+                void Gui3DBorderElementRenderer::InitializeInternal()
+                {
+                }
+
+                void Gui3DBorderElementRenderer::FinalizeInternal()
+                {
+                }
+
+                void Gui3DBorderElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+                {
+                }
+
+                void Gui3DBorderElementRenderer::OnElementStateChanged()
+                {
+                }
+
+				void Gui3DBorderElementRenderer::Render(Rect bounds)
 				{
                     Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
                     Color c1 = element->GetColor1();

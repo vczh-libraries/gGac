@@ -1,4 +1,4 @@
-#include "gGac/GGacRenderer.h"
+#include "GGacRenderer.h"
 #include "Skins/DarkSkin/DarkSkin.h"
 
 using namespace vl;

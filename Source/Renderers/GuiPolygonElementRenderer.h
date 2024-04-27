@@ -15,10 +15,9 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiPolygonElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiPolygonElementRenderer : public GuiElementRendererBase<GuiPolygonElement, GuiPolygonElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_GUI_GRAPHICS_RENDERER(GuiPolygonElement, GuiPolygonElementRenderer, IGGacRenderTarget)
-
+					friend class GuiElementRendererBase<GuiPolygonElement, GuiPolygonElementRenderer, IGGacRenderTarget>;
 				public:
 					GuiPolygonElementRenderer();
 					~GuiPolygonElementRenderer();

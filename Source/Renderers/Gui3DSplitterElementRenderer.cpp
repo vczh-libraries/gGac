@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(Gui3DSplitterElementRenderer)
+                void Gui3DSplitterElementRenderer::InitializeInternal()
+                {
+                }
+
+                void Gui3DSplitterElementRenderer::FinalizeInternal()
+                {
+                }
+
+                void Gui3DSplitterElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+                {
+                }
+
+                void Gui3DSplitterElementRenderer::OnElementStateChanged()
+                {
+                }
+
+                void Gui3DSplitterElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
                     Point p11, p12, p21, p22;

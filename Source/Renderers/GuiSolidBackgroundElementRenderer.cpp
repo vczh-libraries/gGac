@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-                IMPLEMENT_ELEMENT_RENDERER(GuiSolidBackgroundElementRenderer)
+				void GuiSolidBackgroundElementRenderer::InitializeInternal()
+				{
+				}
+
+				void GuiSolidBackgroundElementRenderer::FinalizeInternal()
+				{
+				}
+
+				void GuiSolidBackgroundElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+				{
+				}
+
+				void GuiSolidBackgroundElementRenderer::OnElementStateChanged()
+				{
+				}
+
+                void GuiSolidBackgroundElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();

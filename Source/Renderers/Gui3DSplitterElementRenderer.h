@@ -15,12 +15,20 @@ namespace vl {
 
 			namespace gtk {
 
-				class Gui3DSplitterElementRenderer : public Object, public IGuiGraphicsRenderer
+				class Gui3DSplitterElementRenderer : public GuiElementRendererBase<Gui3DSplitterElement, Gui3DSplitterElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_ELEMENT_RENDERER(Gui3DSplitterElement, Gui3DSplitterElementRenderer, Color)
+					friend class GuiElementRendererBase<Gui3DSplitterElement, Gui3DSplitterElementRenderer, IGGacRenderTarget>;
                 protected:
                     Color					oldColor1;
                     Color					oldColor2;
+
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget *oldRenderTarget, IGGacRenderTarget *newRenderTarget);
+
+				public:
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
                 };
 
 			}

@@ -12,10 +12,6 @@ namespace vl {
 
 			namespace gtk {
 
-				GuiColorizedTextElementRenderer::GuiColorizedTextElementRenderer()
-				{
-				}
-
 				void GuiColorizedTextElementRenderer::OnElementStateChanged()
 				{
 
@@ -24,7 +20,7 @@ namespace vl {
 				void GuiColorizedTextElementRenderer::InitializeInternal()
 				{
 					gFont = 0;
-					element->SetCallback(this);
+					//element->SetCallback(this);
 				}
 
 				void GuiColorizedTextElementRenderer::FinalizeInternal()

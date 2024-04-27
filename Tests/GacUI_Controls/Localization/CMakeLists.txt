@@ -1,6 +1,6 @@
 project(Localization)
 add_executable(Localization
-    ../../../GacUI/Tutorial/GacUI_Controls/Localization/UI/Source/DemoPartialClasses.cpp
-    ../../../GacUI/Tutorial/GacUI_Controls/Localization/Main.cpp
+    ../../../Release/Tutorial/GacUI_Controls/Localization/UI/Source/DemoPartialClasses.cpp
+    ../../../Release/Tutorial/GacUI_Controls/Localization/Main.cpp
     ../../App.cpp)
 target_link_libraries (Localization ${gGac_LIBRARIES})

@@ -34,15 +34,22 @@ namespace vl {
 
 				typedef collections::Array<ColorEntryResource> ColorArray;
 
-				class GuiColorizedTextElementRenderer : public Object, public IGuiGraphicsRenderer, public GuiColorizedTextElement::ICallback
+				class GuiColorizedTextElementRenderer : public GuiElementRendererBase<GuiColorizedTextElement, GuiColorizedTextElementRenderer, IGGacRenderTarget>
 				{
+					friend class GuiElementRendererBase<GuiColorizedTextElement, GuiColorizedTextElementRenderer, IGGacRenderTarget>;
 				protected:
 					Ptr<Pango::FontDescription> gFont;
 					ColorArray colors;
 
-				DEFINE_ELEMENT_RENDERER(GuiColorizedTextElement, GuiColorizedTextElementRenderer, Color)
-				void ColorChanged() override;
-				void FontChanged() override;
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget *oldRenderTarget, IGGacRenderTarget *newRenderTarget);
+
+				public:
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
+					void FontChanged(); 
+					void ColorChanged();
 				};
 
 			}

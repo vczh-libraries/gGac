@@ -15,17 +15,22 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiGradientBackgroundElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiGradientBackgroundElementRenderer : public GuiElementRendererBase<GuiGradientBackgroundElement, GuiGradientBackgroundElementRenderer, IGGacRenderTarget>
 				{
+					friend class GuiElementRendererBase<GuiGradientBackgroundElement, GuiGradientBackgroundElementRenderer, IGGacRenderTarget>;
+				public:
+					GuiGradientBackgroundElementRenderer();
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
 					typedef collections::Pair<Color, Color> ColorPair;
-					DEFINE_ELEMENT_RENDERER(GuiGradientBackgroundElement, GuiGradientBackgroundElementRenderer, ColorPair)
-
 					virtual ~GuiGradientBackgroundElementRenderer();
 
 				protected:
 					collections::Pair<Color, Color>     oldColor;
 					Cairo::RefPtr<Cairo::LinearGradient> gGradient;
-
 					void CreateGGacGradient();
 				};
 

@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(GuiSolidBorderElementRenderer)
+				void GuiSolidBorderElementRenderer::InitializeInternal()
+				{
+				}
+
+				void GuiSolidBorderElementRenderer::FinalizeInternal()
+				{
+				}
+
+				void GuiSolidBorderElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+				{
+				}
+
+				void GuiSolidBorderElementRenderer::OnElementStateChanged()
+				{
+				}
+
+				void GuiSolidBorderElementRenderer::Render(Rect bounds)
 				{
 					Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
 					Color c = element->GetColor();

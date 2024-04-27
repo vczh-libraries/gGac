@@ -15,9 +15,17 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiInnerShadowElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiInnerShadowElementRenderer : public GuiElementRendererBase<GuiInnerShadowElement, GuiInnerShadowElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_ELEMENT_RENDERER(GuiInnerShadowElement, GuiInnerShadowElementRenderer, GGacRenderTarget)
+					friend class GuiElementRendererBase<GuiInnerShadowElement, GuiInnerShadowElementRenderer, IGGacRenderTarget>;
+
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget *oldRenderTarget, IGGacRenderTarget *newRenderTarget);
+
+				public:
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
 				};
 
 			}

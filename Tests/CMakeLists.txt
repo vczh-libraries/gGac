@@ -11,17 +11,17 @@ pkg_check_modules(GTK3 REQUIRED gtkmm-3.0 sigc++-2.0)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_library(GacUI
-            ../GacUI/Import/GacUI.cpp
-            ../GacUI/Import/Vlpp.cpp
-            ../GacUI/Import/Vlpp.Linux.cpp
-            ../GacUI/Import/VlppOS.cpp
-            ../GacUI/Import/VlppOS.Linux.cpp
-            ../GacUI/Import/VlppRegex.cpp
-            ../GacUI/Import/VlppReflection.cpp
-            ../GacUI/Import/VlppParser.cpp
-            ../GacUI/Import/VlppGlrParser.cpp
-            ../GacUI/Import/VlppWorkflowLibrary.cpp
-            ../GacUI/Import/Skins/DarkSkin/DarkSkin.cpp
+            ../Release/Import/GacUI.cpp
+            ../Release/Import/Vlpp.cpp
+            ../Release/Import/Vlpp.Linux.cpp
+            ../Release/Import/VlppOS.cpp
+            ../Release/Import/VlppOS.Linux.cpp
+            ../Release/Import/VlppRegex.cpp
+            ../Release/Import/VlppReflection.cpp
+            ../Release/Import/VlppParser.cpp
+            ../Release/Import/VlppGlrParser.cpp
+            ../Release/Import/VlppWorkflowLibrary.cpp
+            ../Release/Import/Skins/DarkSkin/DarkSkin.cpp
             )
 
     add_library(gGac
@@ -57,7 +57,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             ../Source/GGacCursor.cpp
             ../Source/Lib/Keybinder.h)
     target_link_libraries(gGac GacUI ${GTK3_LIBRARIES} X11)
-    list(APPEND gGac_INCLUDE_DIRS ../GacUI/Import ../Source ../Source/Renderers ../Source/Services)
+    list(APPEND gGac_INCLUDE_DIRS ../Release/Import ../Source ../Source/Renderers ../Source/Services)
     list(APPEND gGac_LIBRARIES GacUI gGac)
     #list(APPEND FC_DEP_LIBS GacUI gGac)
 else()
@@ -114,6 +114,6 @@ add_subdirectory(GacUI_ControlTemplate/WindowSkin)
 list(APPEND CATEGORIES GacUI_Controls GacUI_ControlTemplate GacUI_HelloWorlds GacUI_Layout GacUI_Xml)
 foreach(CATEGORY IN LISTS CATEGORIES)
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/../GacUI/Tutorial/${CATEGORY}/UIRes
+            ${CMAKE_CURRENT_SOURCE_DIR}/../Release/Tutorial/${CATEGORY}/UIRes
             ${CMAKE_CURRENT_BINARY_DIR}/${CATEGORY}/UIRes)
 endforeach()

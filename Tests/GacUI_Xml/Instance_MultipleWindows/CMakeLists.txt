@@ -1,7 +1,7 @@
 project(Instance_MultipleWindows)
 add_executable(Instance_MultipleWindows
-    ../../../GacUI/Tutorial/GacUI_Xml/Instance_MultipleWindows/UI/Source/DemoPartialClasses.cpp
-    ../../../GacUI/Tutorial/GacUI_Xml/Instance_MultipleWindows/UI/Source/MainWindow.cpp
-    ../../../GacUI/Tutorial/GacUI_Xml/Instance_MultipleWindows/Main.cpp
+    ../../../Release/Tutorial/GacUI_Xml/Instance_MultipleWindows/UI/Source/DemoPartialClasses.cpp
+    ../../../Release/Tutorial/GacUI_Xml/Instance_MultipleWindows/UI/Source/MainWindow.cpp
+    ../../../Release/Tutorial/GacUI_Xml/Instance_MultipleWindows/Main.cpp
     ../../App.cpp)
 target_link_libraries (Instance_MultipleWindows ${gGac_LIBRARIES})

@@ -8,6 +8,58 @@
 #include "GacUI.h"
 #include <gtkmm.h>
 
+#define DEFINE_GUI_GRAPHICS_RENDERER(TELEMENT, TRENDERER, TTARGET)                                                              \
+public:                                                                                                                         \
+	class Factory : public Object, public IGuiGraphicsRendererFactory                                                           \
+	{                                                                                                                           \
+	public:                                                                                                                     \
+		IGuiGraphicsRenderer *Create()                                                                                          \
+		{                                                                                                                       \
+			TRENDERER *renderer = new TRENDERER;                                                                                \
+			renderer->factory = this;                                                                                           \
+			renderer->element = nullptr;                                                                                        \
+			renderer->renderTarget = nullptr;                                                                                   \
+			return renderer;                                                                                                    \
+		}                                                                                                                       \
+	};                                                                                                                          \
+                                                                                                                                \
+protected:                                                                                                                      \
+	IGuiGraphicsRendererFactory *factory;                                                                                       \
+	TELEMENT *element;                                                                                                          \
+	TTARGET *renderTarget;                                                                                                      \
+	Size minSize;                                                                                                               \
+                                                                                                                                \
+public:                                                                                                                         \
+	static void Register()                                                                                                      \
+	{                                                                                                                           \
+		auto manager = GetGuiGraphicsResourceManager();                                                                         \
+		CHECK_ERROR(manager != nullptr, L"SetGuiGraphicsResourceManager must be called before registering element renderers."); \
+		manager->RegisterRendererFactory(TELEMENT::GetElementType(), Ptr(new TRENDERER::Factory));                              \
+	}                                                                                                                           \
+	IGuiGraphicsRendererFactory *GetFactory() override                                                                          \
+	{                                                                                                                           \
+		return factory;                                                                                                         \
+	}                                                                                                                           \
+	void Initialize(IGuiGraphicsElement *_element) override                                                                     \
+	{                                                                                                                           \
+		element = dynamic_cast<TELEMENT *>(_element);                                                                           \
+		InitializeInternal();                                                                                                   \
+	}                                                                                                                           \
+	void Finalize() override                                                                                                    \
+	{                                                                                                                           \
+		FinalizeInternal();                                                                                                     \
+	}                                                                                                                           \
+	void SetRenderTarget(IGuiGraphicsRenderTarget *_renderTarget) override                                                      \
+	{                                                                                                                           \
+		TTARGET *oldRenderTarget = renderTarget;                                                                                \
+		renderTarget = dynamic_cast<TTARGET *>(_renderTarget);                                                                  \
+		RenderTargetChangedInternal(oldRenderTarget, renderTarget);                                                             \
+	}                                                                                                                           \
+	Size GetMinSize() override                                                                                                  \
+	{                                                                                                                           \
+		return minSize;                                                                                                         \
+	}
+
 #define DEFINE_ELEMENT_RENDERER(TELEMENT, TRENDERER, TBRUSHCOLOR)\
 	    DEFINE_GUI_GRAPHICS_RENDERER(TELEMENT, TRENDERER, IGGacRenderTarget)\
 				public:\
@@ -64,7 +116,9 @@ namespace vl {
 
 				class GuiGGacElement : public GuiElementBase<GuiGGacElement>
 				{
-					DEFINE_GUI_GRAPHICS_ELEMENT(GuiGGacElement, L"GGacElement")
+					friend class GuiElementBase<GuiGGacElement>;
+					static constexpr const wchar_t* ElementTypeName = L"GGacElement";
+					//DEFINE_GUI_GRAPHICS_ELEMENT(GuiGGacElement, L"GGacElement")
 
 				protected:
 					GuiGGacElement();

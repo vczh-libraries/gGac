@@ -12,7 +12,23 @@ namespace vl {
 
 			namespace gtk {
 
-				IMPLEMENT_ELEMENT_RENDERER(GuiInnerShadowElementRenderer)
+                void GuiInnerShadowElementRenderer::InitializeInternal()
+                {
+                }
+
+                void GuiInnerShadowElementRenderer::FinalizeInternal()
+                {
+                }
+
+                void GuiInnerShadowElementRenderer::RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget)
+                {
+                }
+
+                void GuiInnerShadowElementRenderer::OnElementStateChanged()
+                {
+                }
+
+				void GuiInnerShadowElementRenderer::Render(Rect bounds)
 				{
                     Cairo::RefPtr<Cairo::Context> cr = GetCurrentGGacContextFromRenderTarget();
                     vint width = bounds.Width();

@@ -15,9 +15,19 @@ namespace vl {
 
 			namespace gtk {
 
-				class Gui3DBorderElementRenderer : public Object, public IGuiGraphicsRenderer
+				class Gui3DBorderElementRenderer : public GuiElementRendererBase<Gui3DBorderElement, Gui3DBorderElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_ELEMENT_RENDERER(Gui3DBorderElement, Gui3DBorderElementRenderer, Color)
+					friend class GuiElementRendererBase<Gui3DBorderElement, Gui3DBorderElementRenderer, IGGacRenderTarget>;
+				protected:
+					Color color1;
+					Color color2;
+
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
+				public:
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
 				};
 
 			}

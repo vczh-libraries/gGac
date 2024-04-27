@@ -15,9 +15,17 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiFocusRectangleElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiFocusRectangleElementRenderer : public GuiElementRendererBase<GuiFocusRectangleElement, GuiFocusRectangleElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_ELEMENT_RENDERER(GuiFocusRectangleElement, GuiFocusRectangleElementRenderer, GGacRenderTarget)
+					friend class GuiElementRendererBase<GuiFocusRectangleElement, GuiFocusRectangleElementRenderer, IGGacRenderTarget>;
+
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget *oldRenderTarget, IGGacRenderTarget *newRenderTarget);
+
+				public:
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
 				};
 
 			}

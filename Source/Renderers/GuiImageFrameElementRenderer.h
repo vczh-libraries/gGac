@@ -15,9 +15,16 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiImageFrameElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiImageFrameElementRenderer : public GuiElementRendererBase<GuiImageFrameElement, GuiImageFrameElementRenderer, IGGacRenderTarget>
 				{
-				DEFINE_ELEMENT_RENDERER(GuiImageFrameElement, GuiImageFrameElementRenderer, Color)
+					friend class GuiElementRendererBase<GuiImageFrameElement, GuiImageFrameElementRenderer, IGGacRenderTarget>;
+				public:
+					GuiImageFrameElementRenderer();
+					void Render(Rect bounds) override;
+					void OnElementStateChanged() override;
+					void InitializeInternal();
+					void FinalizeInternal();
+					void RenderTargetChangedInternal(IGGacRenderTarget* oldRenderTarget, IGGacRenderTarget* newRenderTarget);
 				};
 
 			}

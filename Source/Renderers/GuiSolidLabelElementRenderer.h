@@ -15,10 +15,9 @@ namespace vl {
 
 			namespace gtk {
 
-				class GuiSolidLabelElementRenderer : public Object, public IGuiGraphicsRenderer
+				class GuiSolidLabelElementRenderer : public GuiElementRendererBase<GuiSolidLabelElement, GuiSolidLabelElementRenderer, IGGacRenderTarget>
 				{
-					DEFINE_GUI_GRAPHICS_RENDERER(GuiSolidLabelElement, GuiSolidLabelElementRenderer, IGGacRenderTarget)
-
+					friend class GuiElementRendererBase<GuiSolidLabelElement, GuiSolidLabelElementRenderer, IGGacRenderTarget>;
 				protected:
 					Glib::RefPtr<Pango::Layout> layout;
 					Color 						oldColor;

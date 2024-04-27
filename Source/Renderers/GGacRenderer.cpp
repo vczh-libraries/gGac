@@ -43,9 +43,8 @@ namespace vl {
 
 				///
 
-				class CachedGGacFontAllocator
+				class CachedGGacFontAllocator : public GuiCachedResourceAllocatorBase<CachedGGacFontAllocator, FontProperties, Ptr<Pango::FontDescription>>
 				{
-				DEFINE_CACHED_RESOURCE_ALLOCATOR(FontProperties, Ptr<Pango::FontDescription>)
 
 				public:
 					~CachedGGacFontAllocator() {
@@ -68,10 +67,8 @@ namespace vl {
 				};
 
 				///
-
-				class CachedCharMeasurerAllocator
+				class CachedCharMeasurerAllocator : public GuiCachedResourceAllocatorBase<CachedCharMeasurerAllocator, FontProperties, Ptr<text::CharMeasurer>>
 				{
-				DEFINE_CACHED_RESOURCE_ALLOCATOR(FontProperties, Ptr<text::CharMeasurer>)
 
 				protected:
 					class GGacCharMeasurer: public text::CharMeasurer
@@ -119,6 +116,7 @@ namespace vl {
 						}
 					};
 
+				public:
 					Ptr<text::CharMeasurer> CreateInternal(const FontProperties& font)
 					{
 						return Ptr(new GGacCharMeasurer(CachedGGacFontAllocator::CreateGGacFont(font)));
@@ -181,7 +179,7 @@ namespace vl {
 						return !moved ? RenderTargetFailure::None : RenderTargetFailure::ResizeWhileRendering;
 					}
 
-					void PushClipper(Rect clipper) override
+					void PushClipper(Rect clipper, reflection::DescriptableObject* generator) override
 					{
 						if (clipperCoverWholeTargetCounter > 0)
 						{
@@ -211,7 +209,7 @@ namespace vl {
 						}
 					}
 
-					void PopClipper() override
+					void PopClipper(reflection::DescriptableObject *generator) override
 					{
 						if (clippers.Count() > 0)
 						{
