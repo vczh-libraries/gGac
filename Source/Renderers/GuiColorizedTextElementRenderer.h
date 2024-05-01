@@ -34,7 +34,7 @@ namespace vl {
 
 				typedef collections::Array<ColorEntryResource> ColorArray;
 
-				class GuiColorizedTextElementRenderer : public GuiElementRendererBase<GuiColorizedTextElement, GuiColorizedTextElementRenderer, IGGacRenderTarget>
+				class GuiColorizedTextElementRenderer : public GuiElementRendererBase<GuiColorizedTextElement, GuiColorizedTextElementRenderer, IGGacRenderTarget>, protected GuiColorizedTextElement::ICallback
 				{
 					friend class GuiElementRendererBase<GuiColorizedTextElement, GuiColorizedTextElementRenderer, IGGacRenderTarget>;
 				protected:
@@ -48,8 +48,8 @@ namespace vl {
 				public:
 					void Render(Rect bounds) override;
 					void OnElementStateChanged() override;
-					void FontChanged(); 
-					void ColorChanged();
+					void FontChanged() override; 
+					void ColorChanged() override;
 				};
 
 			}
