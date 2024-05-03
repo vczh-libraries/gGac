@@ -468,11 +468,12 @@ namespace vl {
 
                     case GDK_KEY_PRESS:
                     {
-                        gtk_im_context_filter_keypress(imContext, &event->key);
-                        NativeWindowKeyInfo keyInfo = createKeyInfo(event);
-                        for (vint i = 0; i < listeners.Count(); i++)
-                        {
-                            listeners[i]->KeyDown(keyInfo);
+                        if (!gtk_im_context_filter_keypress(imContext, &event->key)) {
+                            NativeWindowKeyInfo keyInfo = createKeyInfo(event);
+                            for (vint i = 0; i < listeners.Count(); i++)
+                            {
+                                listeners[i]->KeyDown(keyInfo);
+                            }
                         }
                     }
                     break;

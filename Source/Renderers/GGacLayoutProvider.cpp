@@ -2265,7 +2265,6 @@ UniscribeParagraph (Caret)
 
 					if(position==IGuiGraphicsParagraph::CaretMoveLeft)
 					{
-						console::Console::WriteLine(L"move left");
 						return comparingCaret==0?0:GetNearestCaretFromTextPos(comparingCaret-1, true);
 					}
 					if(position==IGuiGraphicsParagraph::CaretMoveRight)
