@@ -2265,10 +2265,12 @@ UniscribeParagraph (Caret)
 
 					if(position==IGuiGraphicsParagraph::CaretMoveLeft)
 					{
+						console::Console::WriteLine(L"move left");
 						return comparingCaret==0?0:GetNearestCaretFromTextPos(comparingCaret-1, true);
 					}
 					if(position==IGuiGraphicsParagraph::CaretMoveRight)
 					{
+						console::Console::WriteLine(L"move right");
 						return comparingCaret==paragraphText.Length()?paragraphText.Length():GetNearestCaretFromTextPos(comparingCaret+1, false);
 					}
 
@@ -2319,7 +2321,7 @@ UniscribeParagraph (Caret)
 								return GetCaretFromXWithLine(bounds.x1, frontLine, virtualLineIndex);
 							}
 						}
-							break;
+						break;
 						case IGuiGraphicsParagraph::CaretMoveDown:
 						{
 							if(frontLine==lines.Count()-1 && virtualLineIndex==line->virtualLines.Count()-1) return comparingCaret;
@@ -2339,7 +2341,11 @@ UniscribeParagraph (Caret)
 								return GetCaretFromXWithLine(bounds.x1, frontLine, virtualLineIndex);
 							}
 						}
-							break;
+						break;
+						case IGuiGraphicsParagraph::CaretMoveLeft:
+						break;
+						case IGuiGraphicsParagraph::CaretMoveRight:
+						break;
 					}
 					return -1;
 				}
@@ -2481,17 +2487,17 @@ UniscribeParagraph (Caret)
 						}
 					}
 
-					Cairo::RefPtr<Cairo::Context> GetGGacContext()
+					Cairo::RefPtr<Cairo::Context> GetGGacContext() override
 					{
 						return paragraphCr;
 					}
 
-					Point GetParagraphOffset()
+					Point GetParagraphOffset() override
 					{
 						return paragraphOffset;
 					}
 
-					IGuiGraphicsParagraphCallback* GetParagraphCallback()
+					IGuiGraphicsParagraphCallback* GetParagraphCallback() override
 					{
 						return paragraphCallback;
 					}
@@ -2530,11 +2536,13 @@ UniscribeParagraph (Caret)
 
 					bool GetWrapLine()override
 					{
+						//TODO: implement wrap line
 						return true;
 					}
 
 					void SetWrapLine(bool value)override
 					{
+						//TODO: implement wrap line 
 					}
 
 					vint GetMaxWidth()override
@@ -2703,15 +2711,13 @@ UniscribeParagraph (Caret)
 
 						if(caret!=-1)
 						{
+							//render caret
 							Rect caretBounds=GetCaretBounds(caret, caretFrontSide);
 							vint x=caretBounds.x1+bounds.x1;
 							vint y1=caretBounds.y1+bounds.y1;
-							vint y2=y1+(vint)(caretBounds.Height()*1.5);
+							vint y2=y1+(vint)(caretBounds.Height()*1.4);
 
-							//dc->SetPen(caretPen);
 							paragraphCr->set_source_rgba(caretColor.r / 255.f, caretColor.g / 255.f, caretColor.b / 255.f, caretColor.a / 255.f);
-							paragraphCr->move_to(x-1, y1);
-							paragraphCr->line_to(x-1, y2);
 							paragraphCr->move_to(x, y1);
 							paragraphCr->line_to(x, y2);
 							paragraphCr->stroke();
