@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(gGac VERSION 1.2.0.0 DESCRIPTION "Linux port for GacLib")
+project(gGac VERSION 1.12.10.1 DESCRIPTION "Linux port for GacLib")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
